@@ -1,0 +1,5 @@
+@mixin flex($justifiy-content, $aligin-item) {
+    display: flex;
+    justify-content: $justifiy-content;
+    align-items: $aligin-item;
+}
