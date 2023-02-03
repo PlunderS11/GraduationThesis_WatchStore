@@ -1,0 +1,164 @@
+{
+    "button": {
+        "moreInfor": "More information",
+        "search": "Search",
+        "submitButton": "Submit",
+        "viewAll": "View All",
+        "viewDetail": "Shop the look",
+        "order": "Order",
+        "buy": "buy now",
+        "addToCart": "add to cart"
+    },
+    "cart": {
+        "checkout": "Checkout",
+        "noItem": "You have not selected any products!",
+        "total": "Total"
+    },
+    "footer": {
+        "address": "Address",
+        "copyright": "Mynh Bake clone to learning React.",
+        "privacy": "Privacy policy",
+        "terms": "Terms & conditions"
+    },
+    "gallery": {
+        "headingProducts": "Related products"
+    },
+    "header": {
+        "home": "Home",
+        "aboutUs": "About us",
+        "accessory": "Accessory",
+        "box": "The box",
+        "gallery": "Gallery",
+        "login": "Login",
+        "man": "Man",
+        "woman": "Woman",
+        "register": "Register",
+        "blogs": "Blogs"
+    },
+    "home": {
+        "brandName": "Mynh Bake Watch",
+        "description": "Mynh Bake' latest masterpiece with its luxurious, minimalistic, modern design has made many fashionistas super happy. It's more surprising that it can be combined with any fashion style you love.",
+        "introduce": "Introduce",
+        "menWatches": "Men's Watches",
+        "womenWatches": "Women's Watches",
+        "miyotaMachine": "Japan Miyota Machine",
+        "scratchResistant": "Scratch resistant Sapphire glass",
+        "selling": "Selling products",
+        "slogan": "Simplicity is always trendy.",
+        "waterResistant": "5ATM water resistant"
+    },
+    "login": {
+        "clickHere": "Click here",
+        "dontHaveAccount": "You don't have account?",
+        "errors": {
+            "invalidUser": "Email or phone not exists.",
+            "wrongPassword": "Wrong password."
+        },
+        "forgot": "Forgot password",
+        "login": "Login",
+        "orLogin": "Or login with",
+        "password": "Password",
+        "passwordError": "Input password!",
+        "remember": "Remember me",
+        "user": "Email or phone number",
+        "userError": "Input email or phone number!"
+    },
+    "newsletter": {
+        "error": "We get some error. Please try again later.",
+        "invalidEmail": "Invalid email",
+        "mailContent": "Thank you for subscribing to MYNH BAKE information. We will notify you of new product information and promotions as quickly as possible.",
+        "mailDear": "Dear you",
+        "mailThanks": "Thanks for subscribing.",
+        "newsletter": "Newsletter",
+        "newsletterPlaceholder": "Enter your email to receive offers...",
+        "pending": "Processing...",
+        "requiredEmail": "Required",
+        "subject": "Thanks for subscribing!",
+        "existsEmail": "Email exists!"
+    },
+    "productCard": {
+        "outOfStock": "Out of stock"
+    },
+    "productDetail": {
+        "addToCart": "Add to cart successfully.",
+        "chooseOption": "Please choose product options."
+    },
+    "register": {
+        "accept": "I have reviewed and agree to the Mynh Bake's policy.",
+        "address": "Address",
+        "confirmPassword": "Confirm password",
+        "confirmPasswordError": "Confirm password not match!",
+        "error": {
+            "400": "Email or phone exists."
+        },
+        "haveAccount": "You already have an account.",
+        "invalidEmail": "Invalid email!",
+        "minPassword": "Password must be at least 8 characters!",
+        "name": "Name",
+        "password": "Password",
+        "phone": "Phone",
+        "register": "Register",
+        "requiredAccept": "Please accept the creation of a new customer account!",
+        "requiredAddress": "Address required!",
+        "requiredConfirmPassword": "Confirm password required!",
+        "requiredEmail": "Email required!",
+        "requiredName": "Name required!",
+        "requiredPassword": "Password required!",
+        "requiredPhone": "Phone required!",
+        "success": "Create new account successfully. Redirecting to login page."
+    },
+    "search": {
+        "noResult": "No search results for",
+        "placeHolder": "Enter search keyword...",
+        "searchResult": "Search result"
+    },
+    "slider": {
+        "next": "Next",
+        "previous": "Previous"
+    },
+    "viewedProduct": "Viewed products",
+    "checkout": {
+        "orderTitle": "Your order ({{totalItems}} items)",
+        "unitPrice": "Unit price",
+        "quantity": "Quantity",
+        "total": "Total",
+        "remove": "Remove",
+        "contactInfo": "Contact information",
+        "name": "Name",
+        "requiredName": "Name required!",
+        "invalidEmail": "Invalid email!",
+        "requiredEmail": "Email required!",
+        "requiredAddress": "Address required!",
+        "selectCity": "Select province/city!",
+        "requiredPhone": "Phone required!",
+        "invalidPhone": "Invalid phone!",
+        "selectCityFirst": "Select province/city first!",
+        "selectDistrict": "Select district!",
+        "selectDistrictFirst": "Select district first!",
+        "selectWard": "Select ward!",
+        "phone": "Phone",
+        "address": "Address",
+        "note": "Note",
+        "checkout": "Checkout",
+        "itemsPrice": "Items price",
+        "shippingPrice": "Shipping price",
+        "selectCityOption": "Select province/city",
+        "selectDistrictOption": "Select district",
+        "selectWardOption": "Select ward"
+    },
+    "aboutUs": {
+        "introduce": "Introduce",
+        "introduceDescription": "With the motto “never looking back”, the latter can only be better than the former - these models are Mynh Bake' latest masterpiece. A luxurious, streamlined, modern design that can be combined with any fashion sense, along with the extremely high durability of the product.",
+        "highlights": "Highlights",
+        "highlightsDescription": "One thing Mynh Bake is sure of: The watches we make are more than just tools to tell the time - they are symbols of personality, your trusted partner in every tick of time.",
+        "scratchResistant": "Scratch resistant Sapphire glass",
+        "scratchResistantDescription": "Is a type of glass with high strength, absolute scratch resistance, often used in high-end brands.",
+        "waterResistant": "Water resistant 5ATM",
+        "waterResistantDescription": "Perfectly assembled, providing optimal protection for the watch, withstanding 5ATM water pressure.",
+        "machine": "Japan Miyota Machine",
+        "machineDescription": "Powerful and precise time control movement, famous brand all over the world.",
+        "trend": "Follow the trend",
+        "trendDescription": "Be one of the first to get your hands on the Mynh Bake Watch, the latest wristwatch that marks the return of Mynh Bake. The product is completely redesigned compared to its “elder” will be an indispensable accessory in your modern life.",
+        "finish": "Mynh Bake Watch is the result of our hard work. And Mynh Bake will continue to strive to create more and more universally appealing timepieces."
+    }
+}

@@ -1,14 +1,24 @@
-import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 import ScrollToTop from './layouts/components/ScrollToTop/ScrollToTop';
 import MasterLayout from './layouts/Masterlayout/MasterLayout';
+import { publicRouter, restrictRoutes } from './routes';
 
 function App() {
     return (
         <ScrollToTop>
             <MasterLayout>
-                <div className="App">
-                    <span>123</span>
-                </div>
+                <Routes>
+                    {/* publicRouter */}
+                    {publicRouter.map((router, i) => {
+                        const Page = router.component;
+                        return <Route key={i} path={router.path} element={<Page />} />;
+                    })}
+                    {/* restrictRoutes */}
+                    {restrictRoutes.map((router, i) => {
+                        const Page = router.component;
+                        return <Route key={i} path={router.path} element={<Page />} />;
+                    })}
+                </Routes>
             </MasterLayout>
         </ScrollToTop>
     );

@@ -1,0 +1,114 @@
+@use '../../components/GlobalStyles/' as *;
+
+.item {
+    position: relative;
+    padding: 21rem 0;
+    width: 100%;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        @include overlay();
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background-image: linear-gradient(to top, $text-dark, rgba($text-dark, 0));
+    }
+
+    &.active > .content > .info {
+        .brand-name,
+        .slogun {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .brand-name {
+            transition-delay: 0.3s;
+        }
+
+        .slogun {
+            transition-delay: 0.6s;
+        }
+    }
+
+    &.active > .content > .poster {
+        img {
+            transform: scale(1);
+        }
+    }
+}
+
+.content {
+    position: absolute;
+    @include flex(flex-end, unset);
+    right: 0;
+    bottom: 0;
+    margin-right: 100px;
+    margin-bottom: 100px;
+    text-align: center;
+}
+
+.info {
+    margin-right: 5rem;
+    color: $text-light;
+
+    @include tablet {
+        width: 100%;
+    }
+
+    & > * ~ * {
+        margin-top: 2rem;
+    }
+}
+
+.brand-name {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+
+    @include tablet {
+        font-size: 4rem;
+    }
+}
+
+.slogun {
+    font-size: 35px;
+    font-weight: 700;
+}
+
+.poster {
+    position: relative;
+
+    img {
+        width: 300px;
+        border-radius: 10px;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+        transform: scale(0);
+        transition: transform 0.7s ease;
+
+        @include tablet {
+            display: none;
+        }
+    }
+}
+
+.brand-name,
+.slogun {
+    opacity: 0;
+    transform: translateY(-100px);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}

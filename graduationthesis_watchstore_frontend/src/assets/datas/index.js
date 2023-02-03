@@ -1,10 +1,11 @@
 const menuHeader = [
-    { title: 'box', link: '/product-category/box' },
+    { title: 'home', link: '/' },
     { title: 'man', link: '/product-category/man' },
     { title: 'woman', link: '/product-category/woman' },
+    { title: 'box', link: '/product-category/box' },
     { title: 'accessory', link: '/product-category/accessory' },
     { title: 'gallery', link: '/gallery' },
-    // { title: 'Blogs', link: '/blogs' },
+    { title: 'blogs', link: '/blogs' },
     { title: 'aboutUs', link: '/about-us' },
 ];
 
@@ -15,19 +16,29 @@ const menuFooter = [
         list: [
             {
                 titlevi: 'Đồng hồ nam',
-                titleen: "Men's watches",
+                titleen: "Men's Watches",
                 link: '/product-category/man',
             },
             {
                 titlevi: 'Đồng hồ nữ',
-                titleen: "Women's watches",
+                titleen: "Women's Watches",
                 link: '/product-category/woman',
+            },
+            {
+                titlevi: 'Hộp',
+                titleen: 'The box',
+                link: '/product-category/box',
+            },
+            {
+                titlevi: 'Phụ kiện',
+                titleen: 'Accessory',
+                link: '/product-category/accessory',
             },
         ],
     },
     {
-        titlevi: 'Về DYOSS',
-        titleen: 'About DYOSS',
+        titlevi: 'Về MYNH BAKE',
+        titleen: 'About MYNH BAKE',
         list: [
             {
                 titlevi: 'Giới thiệu',
@@ -112,8 +123,8 @@ const menuFooter = [
 
 const showrooms = [
     {
-        namevi: 'SHOWROOM 1 VÀ BẢO HÀNH DYOSS',
-        nameen: 'SHOWROOM 1 AND DYOSS WARRANTY',
+        namevi: 'SHOWROOM 1 VÀ BẢO HÀNH MYNH BAKE',
+        nameen: 'SHOWROOM 1 AND MYNH BAKE WARRANTY',
         addressvi: '453/32 Nguyễn Đình Chiểu, Phường 5, Quận 3, Thành Phố Hồ Chí Minh.',
         addressen: '453/32 Nguyen Dinh Chieu, Ward 5, District 3, Ho Chi Minh City.',
         hotline: '0123 456 789',

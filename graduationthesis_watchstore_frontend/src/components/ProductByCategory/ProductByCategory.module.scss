@@ -1,0 +1,31 @@
+@use '../GlobalStyles/' as *;
+
+.product-by-category {
+    margin: 50px 0;
+}
+
+.title {
+    text-align: center;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 30px;
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+    font-family: 'Gotham Light';
+}
+
+.description {
+    padding: 0 130px;
+    margin: 0 auto 24px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.product-item {
+    width: calc(100% / var(--column));
+    padding: 10px;
+}
