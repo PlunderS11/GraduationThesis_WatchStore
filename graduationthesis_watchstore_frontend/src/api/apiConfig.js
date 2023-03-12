@@ -1,5 +1,4 @@
 const apiConfig = {
-    baseUrl: 'http://localhost:8000/api',
+    baseURL: process.env.REACT_APP_BACKEND_API_URL,
 };
-
 export default apiConfig;

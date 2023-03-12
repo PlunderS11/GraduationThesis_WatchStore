@@ -1,68 +1,43 @@
 import SwiperCore, { Autoplay } from 'swiper';
+import { useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import classNames from 'classnames/bind';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 
-import style from './Home.module.scss';
 import { imagesSlide } from '../../assets/images';
 import { images } from '../../assets/images';
 import HomeSlideItem from '../../components/HomeSlideItem/HomeSlideItem';
 import ProductByCategory from '../../components/ProductByCategory/ProductByCategory';
 import Button from '../../components/Button/Button';
+import { changeProgress } from '../../features/loader';
+import { fetchProducts } from '../../features/products';
 import ProductSlider from '../../components/ProductSlider/ProductSlider';
 import ProductViewed from '../../components/ProductViewed/ProductViewed';
+import style from './Home.module.scss';
+SwiperCore.use([Autoplay]);
 
 const cx = classNames.bind(style);
 
-const sellingProducts = [
-    {
-        id: 39,
-        type: 'wacth',
-        sex: true,
-        brand: 'Dyoss',
-        size: 34,
-        strap: 'metal',
-        color: 'red',
-        images: '["https://www.dyoss.com/app/uploads/2017/07/upweb_gocchinh12.jpg","https://www.dyoss.com/app/uploads/2017/09/upweb_gocnghieng_11.jpg","https://www.dyoss.com/app/uploads/2017/09/upweb_goc34_den.jpg","https://www.dyoss.com/app/uploads/2017/09/upweb_gocsau_den.jpg"]',
-        link: 'gatsby-matte-mesh-36',
-        name: 'Gatsby - Matte/Mesh/36',
-        price: 3100000,
-        stock: 0,
-    },
-    {
-        id: 20,
-        type: 'wacth',
-        sex: true,
-        brand: 'Dyoss',
-        size: 34,
-        strap: 'metal',
-        color: 'red',
-        images: '["https://www.dyoss.com/app/uploads/2019/06/02.jpg","https://www.dyoss.com/app/uploads/2019/06/06.jpg"]',
-        link: 'mystique-rose-rose-mesh-34',
-        name: 'Mystique - Rose/Rose Mesh/34',
-        price: 3100000,
-        stock: 72,
-    },
-    {
-        id: 3,
-        type: 'wacth',
-        sex: true,
-        brand: 'Dyoss',
-        size: 34,
-        strap: 'metal',
-        color: 'red',
-        images: '["https://www.dyoss.com/app/uploads/2017/07/upweb_gocchinh_15-1.jpg","https://www.dyoss.com/app/uploads/2017/07/upweb_gocnghieng_15-1.jpg","https://www.dyoss.com/app/uploads/2017/07/upweb_gocsau_13-1.jpg"]',
-        link: 'iconic-black-brown-40',
-        name: 'Iconic - Black/Brown/40',
-        price: 2890000,
-        stock: 0,
-    },
-];
-
 const Home = () => {
-    SwiperCore.use([Autoplay]);
-
+    const dispatch = useDispatch();
     const { t } = useTranslation();
+
+    const productStatus = useSelector(state => state.products.status);
+    const sellingProducts = useSelector(state => state.products.sellingProducts);
+    const manProducts = useSelector(state => state.products.manProducts);
+    const womanProducts = useSelector(state => state.products.womanProducts);
+
+    useEffect(() => {
+        if (productStatus === 'idle') {
+            dispatch(changeProgress(98));
+            dispatch(fetchProducts());
+        }
+        if (productStatus === 'succeeded') {
+            dispatch(changeProgress(100));
+        }
+    }, [productStatus, dispatch]);
+
     return (
         <div className={cx('home')}>
             {/*Hero_slide*/}
@@ -87,7 +62,7 @@ const Home = () => {
             <div className="selling">
                 <div className={cx('container')}>
                     {sellingProducts.length > 0 && (
-                        <ProductByCategory title={t('home.selling')} description={''} listProduct={sellingProducts} />
+                        <ProductByCategory title={t('home.selling')} listProduct={sellingProducts} />
                     )}
                 </div>
             </div>
@@ -101,7 +76,7 @@ const Home = () => {
                     <Button to={'/product-category/woman'}>{t('button.viewAll')}</Button>
                 </div>
                 <div className={cx('product-slider')}>
-                    {sellingProducts.length > 0 && <ProductSlider listData={sellingProducts} navigation autoplay />}
+                    {womanProducts.length > 0 && <ProductSlider listData={womanProducts} navigation autoplay />}
                 </div>
             </div>
 
@@ -131,7 +106,18 @@ const Home = () => {
                     <img src={images.aboutImage} alt="Product" />
                 </div>
             </div>
+            <div className={cx('sex-block')}>
+                <div className={cx('category')}>
+                    <img src={images.menCategory} alt="Products" />
+                    <h2>{t('home.menWatches')}</h2>
+                    <Button to={'/product-category/man'}>{t('button.viewAll')}</Button>
+                </div>
+                <div className={cx('product-slider')}>
+                    {manProducts.length > 0 && <ProductSlider listData={manProducts} navigation autoplay />}
+                </div>
+            </div>
             {/* Products Silde */}
+
             {/* Viewed Product */}
             <div className={cx('container')}>
                 <ProductViewed />

@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import * as http from '~/utils/http';
+import axiosClient from '../../api/axiosClient';
 
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-    const response = await http.get(http.Dyoss, 'home');
+    const response = await axiosClient.get('product/home');
     return response;
 });

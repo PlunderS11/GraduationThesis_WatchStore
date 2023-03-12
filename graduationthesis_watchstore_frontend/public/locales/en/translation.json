@@ -24,6 +24,7 @@
         "headingProducts": "Related products"
     },
     "header": {
+        "slogan": "Exquisite & luxury",
         "home": "Home",
         "aboutUs": "About us",
         "accessory": "Accessory",
@@ -33,7 +34,13 @@
         "man": "Man",
         "woman": "Woman",
         "register": "Register",
-        "blogs": "Blogs"
+        "blogs": "Blogs",
+        "userOption": {
+            "userInfo": "Personal information",
+            "orderInfo": "Order Information",
+            "addressInfo": "Address",
+            "logout": "Logout"
+        }
     },
     "home": {
         "brandName": "Mynh Bake Watch",
@@ -48,11 +55,12 @@
         "waterResistant": "5ATM water resistant"
     },
     "login": {
+        "success": "Login success.",
         "clickHere": "Click here",
         "dontHaveAccount": "You don't have account?",
-        "errors": {
-            "invalidUser": "Email or phone not exists.",
-            "wrongPassword": "Wrong password."
+        "error": {
+            "404": "Email not exists.",
+            "500": "Email or password is wrong."
         },
         "forgot": "Forgot password",
         "login": "Login",
@@ -60,8 +68,8 @@
         "password": "Password",
         "passwordError": "Input password!",
         "remember": "Remember me",
-        "user": "Email or phone number",
-        "userError": "Input email or phone number!"
+        "user": "Email",
+        "userError": "Input email!"
     },
     "newsletter": {
         "error": "We get some error. Please try again later.",
@@ -81,7 +89,9 @@
     },
     "productDetail": {
         "addToCart": "Add to cart successfully.",
-        "chooseOption": "Please choose product options."
+        "chooseOption": "Please choose product options.",
+        "titleOptionWatch": "Choose a clock",
+        "titleOptionStrap": "Choose a strap"
     },
     "register": {
         "accept": "I have reviewed and agree to the Mynh Bake's policy.",
@@ -94,7 +104,7 @@
         "haveAccount": "You already have an account.",
         "invalidEmail": "Invalid email!",
         "minPassword": "Password must be at least 8 characters!",
-        "name": "Name",
+        "username": "Username",
         "password": "Password",
         "phone": "Phone",
         "register": "Register",
@@ -105,7 +115,7 @@
         "requiredName": "Name required!",
         "requiredPassword": "Password required!",
         "requiredPhone": "Phone required!",
-        "success": "Create new account successfully. Redirecting to login page."
+        "success": "Create new account successfully."
     },
     "search": {
         "noResult": "No search results for",
@@ -160,5 +170,9 @@
         "trend": "Follow the trend",
         "trendDescription": "Be one of the first to get your hands on the Mynh Bake Watch, the latest wristwatch that marks the return of Mynh Bake. The product is completely redesigned compared to its “elder” will be an indispensable accessory in your modern life.",
         "finish": "Mynh Bake Watch is the result of our hard work. And Mynh Bake will continue to strive to create more and more universally appealing timepieces."
+    },
+    "accountInfo": {
+        "updateInfor": "Update Information",
+        "generalInfo": "General Information"
     }
 }

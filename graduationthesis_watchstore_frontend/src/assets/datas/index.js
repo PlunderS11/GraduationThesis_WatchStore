@@ -9,6 +9,13 @@ const menuHeader = [
     { title: 'aboutUs', link: '/about-us' },
 ];
 
+const accountOptions = [
+    { path: '/account/profile', name: 'userInfo' },
+    { path: '/account/orders', name: 'orderInfo' },
+    { path: '/account/address', name: 'addressInfo' },
+    { path: '/', name: 'logout' },
+];
+
 const menuFooter = [
     {
         titlevi: 'Sản phẩm',
@@ -138,4 +145,4 @@ const showrooms = [
     },
 ];
 
-export { menuFooter, showrooms, menuHeader };
+export { menuFooter, accountOptions, showrooms, menuHeader };

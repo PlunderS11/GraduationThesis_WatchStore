@@ -1,14 +1,3 @@
-export {
-    default,
-    addToCart,
-    changeStatus,
-    updateCartItem,
-    removeItem,
-} from './cartSlice';
+export { default, addToCart, updateCartItem, removeItem } from './cartSlice';
 
-export {
-    selectCartItems,
-    selectTotalItems,
-    selectTotalPrice,
-    selectShowStatus,
-} from './cartSelector';
+export { selectCartItems, selectTotalItems, selectTotalPrice } from './cartSelector';

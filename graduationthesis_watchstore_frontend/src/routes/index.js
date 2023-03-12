@@ -1,4 +1,5 @@
 import AboutUs from '../pages/AboutUs/AboutUs';
+import AccountInfo from '../pages/AccountInfo/AccountInfo';
 import Blogs from '../pages/Blogs/Blogs';
 import Checkout from '../pages/Checkout/Checkout';
 import Gallery from '../pages/Gallery/Gallery';
@@ -18,6 +19,7 @@ const publicRouter = [
     { path: '/product/:slug', component: ProductDetail },
     { path: '/product-category/:type', component: ProductCategory },
     { path: '/search', component: SearchResult },
+    { path: '/account/:category', component: AccountInfo },
 ];
 
 const restrictRoutes = [

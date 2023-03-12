@@ -2,13 +2,15 @@ import classNames from 'classnames/bind';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 import { images } from '../../../assets/images';
 import { menuHeader } from '../../../assets/datas';
-import style from './Header.module.scss';
 import i18n from '../../../i18n';
 import Search from '../../../components/Search/Search';
 import Cart from '../../../components/Cart/Cart';
+import UserOption from '../../../components/UserOption/UserOption';
+import style from './Header.module.scss';
 
 const cx = classNames.bind(style);
 
@@ -17,6 +19,9 @@ const Header = () => {
     const location = useLocation();
     const { t } = useTranslation();
     const [shrink, setShrinke] = useState(false);
+
+    const userLogin = useSelector(state => state.user);
+
     useEffect(() => {
         const shrinkHeader = () => {
             if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
@@ -39,18 +44,22 @@ const Header = () => {
                             <Link to={'/'} className={cx('logo-home')}>
                                 <img src={images.logoWhite} alt="Mynh" />
                             </Link>
-                            <div className={cx('slogun')}>Tinh te vai lon</div>
+                            <div className={cx('slogun')}>{t('header.slogan')}</div>
                             <div className={cx('hotline')}>Hotline: 0123456789</div>
                         </div>
                         <div className={cx('topbar-right')}>
-                            <div className={cx('options')}>
-                                <Link to={'/login'} className={cx('right-item')}>
-                                    {t('header.login')}
-                                </Link>
-                                <Link to={'/register'} className={cx('right-item')}>
-                                    {t('header.register')}
-                                </Link>
-                            </div>
+                            {!userLogin.isLogin ? (
+                                <div className={cx('login-options')}>
+                                    <Link to={'/login'} className={cx('right-item')}>
+                                        {t('header.login')}
+                                    </Link>
+                                    <Link to={'/register'} className={cx('right-item')}>
+                                        {t('header.register')}
+                                    </Link>
+                                </div>
+                            ) : (
+                                <UserOption username={userLogin.user.username} />
+                            )}
                             <div className={cx('right-item', 'flag')}>
                                 {i18n.language === 'en' ? (
                                     <img

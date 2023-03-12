@@ -2,8 +2,7 @@ import { createSlice, nanoid } from '@reduxjs/toolkit';
 import * as _ from 'lodash';
 
 const initialState = {
-    items: [],
-    showStatus: false,
+    items: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [],
 };
 
 const cartSlice = createSlice({
@@ -22,7 +21,7 @@ const cartSlice = createSlice({
                     state.items.push(action.payload);
                 }
 
-                state.showStatus = true;
+                localStorage.setItem('cartItems', JSON.stringify(state.items));
             },
             prepare(id, name, price, link, image, option) {
                 return {
@@ -39,9 +38,6 @@ const cartSlice = createSlice({
                 };
             },
         },
-        changeStatus(state, action) {
-            state.showStatus = action.payload.status === 'auto' ? !state.showStatus : action.payload.status;
-        },
         updateCartItem(state, action) {
             const { cartId, type } = action.payload;
 
@@ -56,11 +52,13 @@ const cartSlice = createSlice({
                     state.items = state.items.filter(item => item.cartId !== existsItem.cartId);
                 }
             }
+            localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
         removeItem(state, action) {
             const { cartId } = action.payload;
 
             state.items = state.items.filter(item => item.cartId !== cartId);
+            localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
     },
 });
