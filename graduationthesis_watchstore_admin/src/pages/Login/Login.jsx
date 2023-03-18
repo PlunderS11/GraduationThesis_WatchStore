@@ -38,8 +38,6 @@ const Login = () => {
                     password: password,
                 });
 
-                console.log(values);
-
                 toast.success('Đăng nhập thành công!');
                 localStorage.setItem('mynhbake_token', res.data.token);
                 dispatch(setCurrentUser(res.data.token));

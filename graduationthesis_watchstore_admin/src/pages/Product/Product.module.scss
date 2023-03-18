@@ -23,7 +23,8 @@
 }
 
 .product-top {
-    display: flex;
+    // display: flex;
+    flex: 1;
 }
 
 .product-top-left,
@@ -140,4 +141,32 @@
     color: white;
     font-weight: 600;
     cursor: pointer;
+}
+
+.add-product-item {
+    width: 550px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.button {
+    margin: 10px 10px 10px 0px;
+    width: 550px;
+}
+
+.select-item {
+    border: 1px solid #cccccc;
+    height: 46px;
+}
+.input-feedback {
+    font-size: 11px;
+    margin-bottom: 15px;
+    color: red;
+    display: block;
+
+    &::before {
+        content: '* ';
+        font-size: 13px;
+    }
 }

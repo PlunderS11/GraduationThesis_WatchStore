@@ -33,18 +33,3 @@
     margin: 10px 10px 10px 0px;
     width: 500px;
 }
-
-.select-item {
-    border: 1px solid #cccccc;
-}
-.input-feedback {
-    font-size: 11px;
-    margin-bottom: 15px;
-    color: red;
-    display: block;
-
-    &::before {
-        content: '* ';
-        font-size: 13px;
-    }
-}
