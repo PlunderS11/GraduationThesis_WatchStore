@@ -19,7 +19,7 @@ const verifyToken = (req, res, next) => {
 
 const verifyTokenAndAuthorization = (req, res, next) => {
     verifyToken(req, res, () => {
-        if (req.user.id === req.params.id || req.user.isAdmin) {
+        if (req.user.id === req.params.id || req.user.role==='admin') {
             next();
         } else {
             if (err) res.status(403).json({ data: {}, message: 'You are not alowed to do that!', status: 403 });
@@ -29,11 +29,11 @@ const verifyTokenAndAuthorization = (req, res, next) => {
 
 const verifyTokenAndAdmin = (req, res, next) => {
     verifyToken(req, res, () => {
-        if (req.user.isAdmin) {
+        if (req.user.role==='admin') {
             next();
-        } else {
-            if (err) res.status(403).json({ data: {}, message: 'You are not alowed to do that!', status: 403 });
-        }
+        } else 
+         res.status(403).json({ data: {}, message: 'You are not alowed to do that!', status: 403 });
+        
     });
 };
 

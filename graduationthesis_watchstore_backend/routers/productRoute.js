@@ -20,9 +20,9 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
         docCol.products.push(newProduct);
         const savedProduct = await newProduct.save();
         await docCol.save();
-        res.status(200).json(savedProduct);
+        res.status(200).json({ data: { product: savedProduct }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
@@ -36,20 +36,21 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
-        res.status(200).json(updateProduct);
+        
+        res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
 // DELETE
-router.delete('/delete:/id', verifyTokenAndAdmin, async (req, res) => {
+router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
-        res.status(200).json('Product has been deleted...');
+        res.status(200).json({ data: 'Product has been deleted...', message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
@@ -57,9 +58,9 @@ router.delete('/delete:/id', verifyTokenAndAdmin, async (req, res) => {
 router.get('/link', async (req, res) => {
     try {
         const product = await Product.findOne({ link: req.query.link }).exec();
-        res.status(200).json(product);
+        res.status(200).json({ data: { product: product }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
@@ -83,7 +84,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
             products = await Product.find();
         }
 
-        res.status(200).json(products);
+        res.status(200).json({ data: { products: products }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
@@ -98,9 +99,9 @@ router.get('/home', async (req, res) => {
         let manProducts = await Product.find({ sex: { $in: ['m'] } });
         let womanProducts = await Product.find({ sex: { $in: ['w'] } });
         product.push(sellingProducts, manProducts, womanProducts);
-        res.status(200).json(product);
+        res.status(200).json({ data: { product: product }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
@@ -116,10 +117,22 @@ router.get('/detail/:slug/:amount', async (req, res) => {
             detail,
             relatedProducts,
         };
-        res.status(200).json(detailProduct);
+        res.status(200).json({ data: { detailProduct: detailProduct }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// GET PRODUCT BY ID
+router.get('/detail/:id', async (req, res) => {
+    try {
+        const product = await Product.findOne({ _id: req.params.id }).exec();
+        
+        res.status(200).json({ data: { detailProduct: product }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
@@ -127,9 +140,10 @@ router.get('/detail/:slug/:amount', async (req, res) => {
 router.get('/viewed', async (req, res) => {
     try {
         const productViewed = await Product.find({ _id: { $in: [...req.query.id.split(',')] } });
-        res.status(200).json(productViewed);
+        
+        res.status(200).json({ data: { productViewed: productViewed }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 
@@ -140,10 +154,10 @@ router.get('/options/:slug', async (req, res) => {
         const s = await Option.find({ link: req.params.slug }).populate('straps').exec();
 
         const option = { watchs: w.watchs || [], straps: s.straps || [] };
-        res.status(200).json(option);
+        res.status(200).json({ data: { option: option }, message: 'success', status: 200 });
     } catch (error) {
-        console.log(error);
-        res.status(500).json(error);
+        
+        res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
 

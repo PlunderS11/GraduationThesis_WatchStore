@@ -34,7 +34,7 @@ const ProductSchema = new mongoose.Schema(
             type: String,
             require: true,
         },
-        descriptionvni: {
+        descriptionvi: {
             type: String,
         },
         descriptionen: {
