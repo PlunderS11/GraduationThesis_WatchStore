@@ -7,6 +7,8 @@ const auth = require('./routers/auth');
 const userRoute = require('./routers/userRoute');
 const productRoute = require('./routers/productRoute');
 const collectionRoute = require('./routers/collectionRoute');
+const orderRoute = require('./routers/orderRoute');
+const promotionRoute = require('./routers/promotionRoute');
 
 connectDB();
 
@@ -19,5 +21,7 @@ app.use('/api/auth', auth);
 app.use('/api/user', userRoute);
 app.use('/api/product', productRoute);
 app.use('/api/collections', collectionRoute);
+app.use('/api/order', orderRoute);
+app.use('/api/promotion', promotionRoute);
 
 app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));

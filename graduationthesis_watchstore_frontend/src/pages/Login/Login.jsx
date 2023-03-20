@@ -12,7 +12,7 @@ import * as Yup from 'yup';
 import axiosClient from '../../api/axiosClient';
 import InputField from '../../components/InputField/InputField';
 import Button from '../../components/Button/Button';
-import { setCurrentUser } from '../../features/user/userSlice';
+import { setTokenUser } from '../../features/user/userSlice';
 import style from './Login.module.scss';
 
 const cx = classNames.bind(style);
@@ -43,7 +43,7 @@ const Login = () => {
                 });
                 toast.success(t('login.success'));
                 localStorage.setItem('mynhbake_token', res.data.token);
-                dispatch(setCurrentUser(res.data.token));
+                dispatch(setTokenUser(res.data.token));
                 navigate('/');
             } catch (error) {
                 toast.error(t(`login.error.${error.response.status}`));

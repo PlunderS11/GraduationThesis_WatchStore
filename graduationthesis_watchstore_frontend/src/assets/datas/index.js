@@ -2,7 +2,6 @@ const menuHeader = [
     { title: 'home', link: '/' },
     { title: 'man', link: '/product-category/man' },
     { title: 'woman', link: '/product-category/woman' },
-    { title: 'box', link: '/product-category/box' },
     { title: 'accessory', link: '/product-category/accessory' },
     { title: 'gallery', link: '/gallery' },
     { title: 'blogs', link: '/blogs' },

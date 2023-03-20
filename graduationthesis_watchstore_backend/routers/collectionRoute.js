@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
+const { verifyTokenAndAdmin } = require('../middleware/verifyToken');
 
 const Collection = require('../models/collectionModel');
 const Product = require('../models/productModel');
@@ -29,7 +29,7 @@ router.get('/allCols/', verifyTokenAndAdmin, async (req, res) => {
     const query = req.query.new;
     try {
         const collections = query ? await Collection.find().sort({ _id: -1 }).limit(5) : await Collection.find();
-        
+
         res.status(200).json({ data: { collections: collections }, message: 'success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error, status: 500 });
@@ -40,9 +40,9 @@ router.get('/allCols/', verifyTokenAndAdmin, async (req, res) => {
 router.post('/', verifyTokenAndAdmin, async (req, res) => {
     try {
         const newCollection = new Collection(req.body);
-        
+
         const savedProduct = await newCollection.save();
-        
+
         res.status(200).json({ data: { collection: savedProduct }, message: 'success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error, status: 500 });

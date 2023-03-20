@@ -23,14 +23,10 @@ const ProductSchema = new mongoose.Schema(
             require: true,
         },
         images: {
-            type: String,
+            type: Array,
             require: true,
         },
-        collectionName: {
-            type: String,
-            require: true,
-        },
-        link: {
+        collectionId: {
             type: String,
             require: true,
         },
@@ -55,6 +51,11 @@ const ProductSchema = new mongoose.Schema(
         },
         stock: {
             type: Number,
+            require: true,
+        },
+        isDelete: {
+            type: Boolean,
+            default: false,
             require: true,
         },
     },

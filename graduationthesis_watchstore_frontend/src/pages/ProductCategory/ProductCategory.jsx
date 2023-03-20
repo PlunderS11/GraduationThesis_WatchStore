@@ -22,9 +22,6 @@ const ProductCategory = () => {
         dispatch(changeProgress(95));
         let url;
         switch (params.type) {
-            case 'box':
-                url = 'collections?type=box';
-                break;
             case 'man':
                 url = 'collections?type=watch&sex=m';
                 break;
@@ -38,7 +35,7 @@ const ProductCategory = () => {
         }
         const getProducts = async () => {
             const res = await axiosClient.get(url);
-            setProducts(res);
+            setProducts(res.data.prodCategory);
             dispatch(changeProgress(100));
         };
         getProducts();
