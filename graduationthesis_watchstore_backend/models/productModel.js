@@ -57,6 +57,10 @@ const ProductSchema = new mongoose.Schema(
             type: Number,
             require: true,
         },
+        isDelete: {
+            type: Boolean,
+            require: true,
+        },
     },
     { timestamps: true }
 );
