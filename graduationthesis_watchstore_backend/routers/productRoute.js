@@ -24,22 +24,9 @@ const storage = multer.memoryStorage({
     },
 });
 
-const checkFileType = (file, cb) => {
-    const fileTypes = /jpeg|jpg|png|gif|jfif/;
-
-    const extname = fileTypes.test(path.extname(file?.originalname).toLowerCase());
-    const mineType = fileTypes.test(file?.mimetype);
-    if (extname && mineType) {
-        return cb(null, true);
-    }
-    return cb('Error');
-};
 const upload = multer({
     storage,
     limits: { fileSize: 3000000 },
-    fileFilter(req, file, cb) {
-        checkFileType(file, cb);
-    },
 });
 
 // POST
@@ -90,7 +77,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                 await docCol.save();
                 res.status(200).json({ data: { product: savedProduct }, message: 'success', status: 200 });
             } catch (error) {
-                console.log(error);
+                console.log('Loi', error);
                 res.status(500).json({ data: {}, message: error, status: 500 });
             }
         }
@@ -115,16 +102,6 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
-// DELETE
-router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
-    try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.status(200).json({ data: 'Product has been deleted...', message: 'success', status: 200 });
-    } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
-    }
-});
-
 // GET PRODUCT BY LINK INSTAGRAM
 router.get('/link', async (req, res) => {
     try {
@@ -137,24 +114,8 @@ router.get('/link', async (req, res) => {
 
 // GET ALL PRODUCT
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
-    const qNew = req.query.new;
-    const qCategory = req.query.category;
-
     try {
-        let products;
-
-        if (qNew) {
-            products = await Product.find().sort({ createdAt: -1 }).limit(1);
-        } else if (qCategory) {
-            products = await Product.find({
-                categories: {
-                    $in: [qCategory],
-                },
-            });
-        } else {
-            products = await Product.find();
-        }
-
+        const products = await Product.find();
         res.status(200).json({ data: { products: products }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);
@@ -228,7 +189,7 @@ router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
-        
+
         res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
@@ -246,7 +207,7 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
-        
+
         res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
