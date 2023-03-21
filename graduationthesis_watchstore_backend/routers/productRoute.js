@@ -218,4 +218,40 @@ router.get('/viewed', async (req, res) => {
     }
 });
 
+// DELETE PRODUCt
+router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const updateProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: true,
+            },
+            { new: true }
+        );
+        
+        res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// RESTORE PRODUCt
+router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const updateProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: false,
+            },
+            { new: true }
+        );
+        
+        res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
 module.exports = router;

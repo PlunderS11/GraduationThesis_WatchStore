@@ -59,7 +59,6 @@ const ProductSchema = new mongoose.Schema(
         },
         isDelete: {
             type: Boolean,
-            default: false,
             require: true,
         },
     },
