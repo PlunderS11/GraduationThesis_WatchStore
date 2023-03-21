@@ -1,6 +1,6 @@
 import jwt_decode from 'jwt-decode';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
 import ScrollToTop from './layouts/components/ScrollToTop/ScrollToTop';
@@ -11,6 +11,7 @@ import axiosClient from './api/axiosClient';
 
 function App() {
     const dispatch = useDispatch();
+    const token = useSelector(state => state.user.token);
     const [lastSessionLoaded, setLastSessionLoaded] = useState(false);
 
     //Check access token exists in local storage
@@ -30,10 +31,9 @@ function App() {
                 //Hết hạn
             }
         }
-        console.log(12);
         setLastSessionLoaded(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [token]);
     return (
         <>
             {lastSessionLoaded && (

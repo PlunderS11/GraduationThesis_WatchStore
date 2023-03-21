@@ -23,6 +23,8 @@
 
 body {
     font-family: 'Gotham Book';
+    -webkit-user-select: none;
+    -moz-user-select: none;
     user-select: none;
 }
 

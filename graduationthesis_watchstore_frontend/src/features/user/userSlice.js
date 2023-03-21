@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     user: {},
+    token: '',
     isLogin: false,
     error: '',
 };
@@ -10,6 +11,9 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        setTokenUser: (state, action) => {
+            state.token = action.payload;
+        },
         setCurrentUser: {
             reducer(state, action) {
                 const { username, role, phone, sex, address, email } = action.payload;
@@ -42,7 +46,6 @@ const userSlice = createSlice({
             },
             prepare() {
                 localStorage.removeItem('mynhbake_token');
-
                 return {
                     payload: {},
                 };
@@ -51,6 +54,6 @@ const userSlice = createSlice({
     },
 });
 
-export const { setCurrentUser, logOut } = userSlice.actions;
+export const { setTokenUser, setCurrentUser, logOut } = userSlice.actions;
 
 export default userSlice.reducer;

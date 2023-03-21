@@ -3,20 +3,12 @@ const router = require('express').Router();
 const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
 const Product = require('../models/productModel');
 const Collection = require('../models/collectionModel');
-const Option = require('../models/optionModel');
 
 // POST
 router.post('/', verifyTokenAndAdmin, async (req, res) => {
     try {
         const newProduct = new Product(req.body);
-        const docCol = await Collection.findOne({ name: req.body.collectionName });
-        // CREATE OPTION IF BOX
-        if (req.body.type === 'box') {
-            const docOption = await new Option({ link: req.body.link });
-            req.body.watchs && docOption.watchs.push(...req.body.watchs);
-            req.body.straps && docOption.straps.push(...req.body.straps);
-            await docOption.save();
-        }
+        const docCol = await Collection.findById(req.body.collectionId);
         docCol.products.push(newProduct);
         const savedProduct = await newProduct.save();
         await docCol.save();
@@ -36,7 +28,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
-        
+
         res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
@@ -128,7 +120,7 @@ router.get('/detail/:slug/:amount', async (req, res) => {
 router.get('/detail/:id', async (req, res) => {
     try {
         const product = await Product.findOne({ _id: req.params.id }).exec();
-        
+
         res.status(200).json({ data: { detailProduct: product }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
@@ -140,23 +132,9 @@ router.get('/detail/:id', async (req, res) => {
 router.get('/viewed', async (req, res) => {
     try {
         const productViewed = await Product.find({ _id: { $in: [...req.query.id.split(',')] } });
-        
+
         res.status(200).json({ data: { productViewed: productViewed }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
-    }
-});
-
-// GET PRODUCT OPTIONS
-router.get('/options/:slug', async (req, res) => {
-    try {
-        const w = await Option.findOne({ link: req.params.slug }).populate('watchs').exec();
-        const s = await Option.find({ link: req.params.slug }).populate('straps').exec();
-
-        const option = { watchs: w.watchs || [], straps: s.straps || [] };
-        res.status(200).json({ data: { option: option }, message: 'success', status: 200 });
-    } catch (error) {
-        
         res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
