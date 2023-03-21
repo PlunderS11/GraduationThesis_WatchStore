@@ -55,10 +55,6 @@ const ProductSchema = new mongoose.Schema(
         },
         isDelete: {
             type: Boolean,
-<<<<<<< HEAD
-=======
-            default: false,
->>>>>>> b48b053572fc1ce957819b31305936dc5dbb886a
             require: true,
         },
     },
