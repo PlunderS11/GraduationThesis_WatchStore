@@ -33,7 +33,9 @@ const verifyTokenAndAdmin = (req, res, next) => {
         if (req.user.role === 'admin') {
             req.user = req.user;
             next();
-        } else res.status(403).json({ data: {}, message: 'You are not alowed to do that!', status: 403 });
+        } else {
+            res.status(403).json({ data: {}, message: 'You are not alowed to do that!', status: 403 });
+        }
     });
 };
 
