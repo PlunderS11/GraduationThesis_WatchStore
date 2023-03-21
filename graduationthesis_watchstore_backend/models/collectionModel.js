@@ -15,6 +15,10 @@ const CollectionSchema = mongoose.Schema(
             type: String,
             require: true,
         },
+        isDelete: {
+            type: Boolean,
+            require: true,
+        },
     },
     { timestamps: true }
 );

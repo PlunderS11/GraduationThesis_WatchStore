@@ -43,9 +43,17 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
 // DELETE
 router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        await Promotion.findByIdAndDelete(req.params.id);
-        res.status(200).json({ data: 'Promotion has been deleted...', message: 'success', status: 200 });
+        await Promotion.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: false,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: 'Delete promotion success', status: 200 });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });

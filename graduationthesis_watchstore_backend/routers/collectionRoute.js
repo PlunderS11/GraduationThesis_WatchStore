@@ -8,7 +8,7 @@ const Product = require('../models/productModel');
 // GET PRODUCT BY CATEGORY
 router.get('/', async (req, res) => {
     try {
-        const prod = await Collection.find().populate('products').exec();
+        const prod = await Collection.find({ isDelete: false }).populate('products').exec();
         const prodCategory = prod.reduce((acc, cur) => {
             cur.products = cur.products.filter(i =>
                 req.query.sex && req.query.type
@@ -52,9 +52,17 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
 // DELETE COLLECTION
 router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        await Collection.findByIdAndDelete(req.params.id);
-        res.status(200).json({ data: 'Collection has been deleted...', message: 'success', status: 200 });
+        await Collection.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: false,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: 'Delete collection success', status: 200 });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ data: {}, message: error, status: 500 });
     }
 });
