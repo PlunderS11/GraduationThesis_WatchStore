@@ -14,6 +14,7 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
             value: req.body.value,
             startDate: timestampsStart,
             endDate: timestampsEnd,
+            isDelete: req.body.isDelete,
         });
         await newPromotion.save();
         res.status(200).json({ data: { newPromotion }, message: 'success', status: 200 });
@@ -22,6 +23,23 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+// UPDATE
+// router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
+//     try {
+//         const updatePromotion = await Promotion.findByIdAndUpdate(
+//             req.params.id,
+//             {
+//                 $set: req.body,
+//             },
+//             { new: true }
+//         );
+
+//         res.status(200).json({ data: { promotion: updatePromotion }, message: 'success', status: 200 });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ data: {}, message: error, status: 500 });
+//     }
+// });
 // UPDATE
 router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
@@ -47,7 +65,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
 });
 
 // DELETE
-router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
+router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         await Promotion.findByIdAndUpdate(
             req.params.id,
@@ -58,6 +76,48 @@ router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
         );
 
         res.status(200).json({ data: {}, message: 'Delete promotion success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// RESTORE
+router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        await Promotion.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: false,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: 'Restore promotion success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+//GET ALL PROMOTION
+router.get('/', verifyTokenAndAdmin, async (req, res) => {
+    const query = req.query.new;
+    try {
+        const promotions = query ? await Promotion.find().sort({ _id: -1 }).limit(5) : await Promotion.find();
+
+        res.status(200).json({ data: { promotions: promotions }, message: 'success', status: 200 });
+    } catch (error) {
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// GET PROMOTION BY ID
+router.get('/detail/:id', async (req, res) => {
+    try {
+        const promotion = await Promotion.findOne({ _id: req.params.id }).exec();
+
+        res.status(200).json({ data: { detailPromotion: promotion }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error, status: 500 });

@@ -31,6 +31,7 @@ const upload = multer({
 
 // POST
 router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
+    // console.log(req.body,req.files);
     const images = req.files;
     if (typeof images !== 'undefined') {
         if (images.length > 0) {
@@ -70,6 +71,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     finalPrice: Number(req.body.originalPrice),
                     sold: 0,
                     stock: Number(req.body.stock),
+                    isDelete: req.body.isDelete,
                 });
                 const docCol = await Collection.findById(req.body.collectionId);
                 docCol.products.push(newProduct);
