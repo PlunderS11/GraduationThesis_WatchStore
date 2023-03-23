@@ -9,9 +9,13 @@ const OrderDetailSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    price: {
+    originalPrice: {
         type: Number,
-        required: true,
+        require: true,
+    },
+    finalPrice: {
+        type: Number,
+        require: true,
     },
 });
 

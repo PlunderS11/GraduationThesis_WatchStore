@@ -55,7 +55,7 @@ router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
         await Collection.findByIdAndUpdate(
             req.params.id,
             {
-                isDelete: false,
+                isDelete: true,
             },
             { new: true }
         );

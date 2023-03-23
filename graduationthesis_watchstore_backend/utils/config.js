@@ -29,6 +29,28 @@ GHN.interceptors.response.use(
     }
 );
 
+const address = async (type, id) => {
+    var resGHN = {};
+    switch (type) {
+        case 'province':
+            resGHN = await GHN.post('master-data/province');
+            break;
+        case 'district':
+            resGHN = await GHN.post('master-data/district', {
+                province_id: id,
+            });
+            break;
+        case 'ward':
+            resGHN = await GHN.post('master-data/ward', {
+                district_id: id,
+            });
+            break;
+        default:
+            break;
+    }
+    return resGHN.data;
+};
+
 const estimate = async (districtId, wardId) => {
     const resGHN = await GHN.post('v2/shipping-order/fee', {
         shop_id: process.env.SHOPID,
@@ -57,4 +79,4 @@ const leadtime = async (districtId, wardId) => {
     return resLeadtime.data.leadtime;
 };
 
-module.exports = { MONGO_URL, PORT, GHN, estimate, leadtime };
+module.exports = { MONGO_URL, PORT, GHN, estimate, leadtime, address };

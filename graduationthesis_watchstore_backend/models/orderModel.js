@@ -3,6 +3,18 @@ const mongoose = require('mongoose');
 const OrderSchema = mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        addressProvince: {
+            type: Object,
+            require: true,
+        },
+        addressDistrict: {
+            type: Object,
+            require: true,
+        },
+        addressWard: {
+            type: Object,
+            require: true,
+        },
         promotion: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion', require: false },
         orderDetails: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderDetail' }],
         note: {

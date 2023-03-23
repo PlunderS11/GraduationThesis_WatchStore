@@ -25,12 +25,18 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
 // UPDATE
 router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
+        const startDate = req.body.startDate && new Date(req.body.startDate);
+        const timestampsStart = startDate && Math.floor(startDate.getTime());
+        const endDate = req.body.endDate && new Date(req.body.endDate);
+        const timestampsEnd = endDate && Math.floor(endDate.getTime());
+        console.log(timestampsStart, timestampsEnd);
+
         const updatePromotion = await Promotion.findByIdAndUpdate(
             req.params.id,
             {
-                $set: req.body,
+                $set: { ...req.body, startDate: timestampsStart, endDate: timestampsEnd },
             },
-            { new: true }
+            { new: true, omitUndefined: true }
         );
 
         res.status(200).json({ data: { promotion: updatePromotion }, message: 'success', status: 200 });
@@ -46,7 +52,7 @@ router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
         await Promotion.findByIdAndUpdate(
             req.params.id,
             {
-                isDelete: false,
+                isDelete: true,
             },
             { new: true }
         );
