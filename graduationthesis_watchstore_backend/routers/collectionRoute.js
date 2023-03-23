@@ -67,4 +67,70 @@ router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+// GET COLLECTION BY ID
+router.get('/detail/:id', async (req, res) => {
+    try {
+        const collection = await Collection.findOne({ _id: req.params.id }).exec();
+
+        res.status(200).json({ data: { detailCollection: collection }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// DELETE COLLECTION
+router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const updateCollection = await Collection.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: true,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: ' Delete collection success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// DELETE COLLECTION
+router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const updateCollection = await Collection.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: false,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: ' Restore collection success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+// UPDATE
+router.put('/update/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const updateCollection = await Collection.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: { collection: updateCollection }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
 module.exports = router;

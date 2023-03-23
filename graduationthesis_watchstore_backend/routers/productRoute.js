@@ -31,6 +31,7 @@ const upload = multer({
 
 // POST
 router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
+    // console.log(req.body,req.files);
     const images = req.files;
     if (typeof images !== 'undefined') {
         if (images.length > 0) {
@@ -70,6 +71,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     finalPrice: Number(req.body.originalPrice),
                     sold: 0,
                     stock: Number(req.body.stock),
+                    isDelete: req.body.isDelete,
                 });
                 const docCol = await Collection.findById(req.body.collectionId);
                 docCol.products.push(newProduct);
@@ -85,20 +87,58 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
 });
 
 // UPDATE
-router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
-    try {
-        const updateProduct = await Product.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: req.body,
-            },
-            { new: true }
-        );
+router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
+    const images = req.files;
+    if (images?.length > 0) {
+        var images_url = [];
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i].mimetype;
+            const fileType = image.split('/')[1];
+            var filePath = `${uuid() + Date.now().toString()}.${fileType}`;
+            const uploadS3 = {
+                Bucket: 'mynh-bake-store',
+                Key: filePath,
+                Body: images[i].buffer,
+            };
+            s3.upload(uploadS3, (err, data) => {
+                if (err) {
+                    console.log('Loi s3: ' + err);
+                } else {
+                    console.log('S3 thanh cong');
+                }
+            });
+            images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
+        }
 
-        res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        try {
+            const updateProduct = await Product.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: { ...req.body, images: images_url },
+                },
+                { new: true }
+            );
+
+            res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ data: {}, message: error, status: 500 });
+        }
+    } else {
+        try {
+            const updateProduct = await Product.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: { ...req.body },
+                },
+                { new: true }
+            );
+
+            res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ data: {}, message: error, status: 500 });
+        }
     }
 });
 
