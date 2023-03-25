@@ -36,6 +36,30 @@ router.get('/allCols/', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+//GET COLLECTIONS UNDELETED
+router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const collections_undeleted = await Collection.find({ isDelete: false }).exec();
+
+        res.status(200).json({ data: { collections_undeleted: collections_undeleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+//GET COLLECTIONS DELETED
+router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const collections_deleted = await Collection.find({ isDelete: true }).exec();
+
+        res.status(200).json({ data: { collections_deleted: collections_deleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
 //POST COLLECTION
 router.post('/', verifyTokenAndAdmin, async (req, res) => {
     try {

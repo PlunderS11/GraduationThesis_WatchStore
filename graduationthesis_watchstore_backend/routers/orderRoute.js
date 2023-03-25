@@ -147,7 +147,7 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
         .exec();
 
     if (!orderList) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {orderList:orderList}, message: error, status: 500 });
     }
     res.status(200).json({ data: { orderList, total: orderList.length }, message: 'success', status: 200 });
 });
