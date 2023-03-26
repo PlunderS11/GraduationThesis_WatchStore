@@ -4,41 +4,41 @@ const UserSchema = new mongoose.Schema(
     {
         username: {
             type: String,
-            require: true,
+            required: true,
         },
         email: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
         },
         password: {
             type: String,
-            require: true,
+            required: true,
         },
         phone: {
             type: String,
-            require: true,
+            required: true,
             default: '',
         },
         address: {
             type: String,
-            require: true,
+            required: true,
             default: '',
         },
         sex: {
             type: String,
-            require: true,
+            required: true,
             default: '',
         },
         role: {
             type: String,
             default: 'user',
-            require: true,
+            required: true,
         },
         isDelete: {
             type: Boolean,
             default: false,
-            require: true,
+            required: true,
         },
     },
     { timestamps: true }

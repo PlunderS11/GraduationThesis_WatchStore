@@ -32,36 +32,35 @@ const upload = multer({
 // POST
 router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
     // console.log(req.body,req.files);
-    const images = req.files;
-    if (typeof images !== 'undefined') {
-        if (images.length > 0) {
-            var images_url = [];
-            for (let i = 0; i < images.length; i++) {
-                const image = images[i].mimetype;
-                const fileType = image.split('/')[1];
-                var filePath = `${uuid() + Date.now().toString()}.${fileType}`;
-                const uploadS3 = {
-                    Bucket: 'mynh-bake-store',
-                    Key: filePath,
-                    Body: images[i].buffer,
-                };
-                s3.upload(uploadS3, (err, data) => {
-                    if (err) {
-                        console.log('Loi s3: ' + err);
-                    } else {
-                        console.log('S3 thanh cong');
+    try {
+        const images = req.files;
+        if (typeof images !== 'undefined') {
+            if (images.length > 0) {
+                var images_url = [];
+                for (let i = 0; i < images.length; i++) {
+                    const image = images[i].mimetype;
+                    const fileType = image.split('/')[1];
+                    var filePath = `${uuid() + Date.now().toString()}.${fileType}`;
+                    const uploadS3 = {
+                        Bucket: 'mynh-bake-store',
+                        Key: filePath,
+                        Body: images[i].buffer,
+                    };
+                    try {
+                        await s3.upload(uploadS3);
+                        images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
+                    } catch (error) {
+                        return res.status(500).json({ data: {}, message: 'Lỗi S3', status: 500 });
                     }
-                });
-                images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
-            }
-            try {
+                }
+                const docCol = await Collection.findById(req.body.collectionId);
                 const newProduct = new Product({
                     name: req.body.name,
                     brand: req.body.brand,
                     type: req.body.type,
                     sex: req.body.sex,
                     images: images_url,
-                    collectionId: req.body.collectionId,
+                    collectionObj: docCol,
                     descriptionvi: req.body.descriptionvi,
                     descriptionen: req.body.descriptionen,
                     featuresvi: req.body.featuresvi,
@@ -73,16 +72,15 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     stock: Number(req.body.stock),
                     isDelete: req.body.isDelete,
                 });
-                const docCol = await Collection.findById(req.body.collectionId);
                 docCol.products.push(newProduct);
-                const savedProduct = await newProduct.save();
                 await docCol.save();
+                const savedProduct = await newProduct.save();
                 res.status(200).json({ data: { product: savedProduct }, message: 'success', status: 200 });
-            } catch (error) {
-                console.log('Loi', error);
-                res.status(500).json({ data: {}, message: error, status: 500 });
             }
         }
+    } catch (error) {
+        console.log('Loi', error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -122,7 +120,7 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
             res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ data: {}, message: error, status: 500 });
+            res.status(500).json({ data: {}, message: error.message, status: 500 });
         }
     } else {
         try {
@@ -137,7 +135,7 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
             res.status(200).json({ data: { product: updateProduct }, message: 'success', status: 200 });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ data: {}, message: error, status: 500 });
+            res.status(500).json({ data: {}, message: error.message, status: 500 });
         }
     }
 });
@@ -148,7 +146,7 @@ router.get('/link', async (req, res) => {
         const product = await Product.findOne({ link: req.query.link }).exec();
         res.status(200).json({ data: { product: product }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -173,7 +171,7 @@ router.get('/home', async (req, res) => {
         product.push(sellingProducts, manProducts, womanProducts);
         res.status(200).json({ data: { product: product }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -192,7 +190,7 @@ router.get('/detail/:slug/:amount', async (req, res) => {
         res.status(200).json({ data: { detailProduct: detailProduct }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -204,7 +202,7 @@ router.get('/detail/:id', async (req, res) => {
         res.status(200).json({ data: { detailProduct: product }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -215,7 +213,7 @@ router.get('/viewed', async (req, res) => {
 
         res.status(200).json({ data: { productViewed: productViewed }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -233,7 +231,7 @@ router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: {}, message: ' Delete product success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -251,7 +249,7 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: {}, message: 'Restore product success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 

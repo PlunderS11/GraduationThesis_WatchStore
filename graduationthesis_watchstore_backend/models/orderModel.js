@@ -1,69 +1,98 @@
 const mongoose = require('mongoose');
 
+const orderStatus = {
+    state: {
+        type: String,
+        enum: ['PENDING', 'PACKAGE', 'DELIVERING', 'COMPLETE', 'CANCEL'],
+        required: true,
+    },
+    pendingDate: {
+        type: Date,
+        required: true,
+    },
+    packageDate: {
+        type: Date,
+        required: true,
+    },
+    deliveringDate: {
+        type: Date,
+        required: true,
+    },
+    completeDate: {
+        type: Date,
+        required: true,
+    },
+};
+
 const OrderSchema = mongoose.Schema(
     {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
         addressProvince: {
             type: Object,
-            require: true,
+            required: true,
         },
         addressDistrict: {
             type: Object,
-            require: true,
+            required: true,
         },
         addressWard: {
             type: Object,
-            require: true,
+            required: true,
         },
-        promotion: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion', require: false },
-        orderDetails: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderDetail' }],
+        promotion: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion', required: false },
+        orderDetails: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderDetail', required: true }],
+        code: {
+            type: String,
+            required: true,
+        },
         note: {
             type: String,
-            require: true,
+            required: false,
         },
         paymentStatus: {
             type: String,
-            require: true,
+            required: true,
         },
         paymentType: {
             type: String,
-            require: true,
+            required: true,
         },
         status: {
-            type: String,
-            require: true,
+            type: orderStatus,
+            required: true,
         },
         address: {
             type: String,
-            require: true,
+            required: true,
         },
         phone: {
             type: String,
-            require: true,
+            required: true,
         },
         originalPrice: {
             type: Number,
-            require: true,
+            required: true,
         },
         shipPrice: {
             type: Number,
-            require: true,
+            required: true,
         },
         discountPrice: {
             type: Number,
-            require: true,
+            required: true,
         },
         finalPrice: {
             type: Number,
-            require: true,
+            required: true,
         },
         leadtime: {
             type: String,
-            require: true,
+            required: true,
         },
         dateOrdered: {
             type: Date,
             default: Date.now,
+            required: true,
         },
     },
     { timestamps: true }

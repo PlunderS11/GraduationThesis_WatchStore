@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
         }, []);
         res.status(200).json({ data: { prodCategory: prodCategory }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -32,7 +32,7 @@ router.get('/allCols/', verifyTokenAndAdmin, async (req, res) => {
 
         res.status(200).json({ data: { collections: collections }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -45,7 +45,8 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
 
         res.status(200).json({ data: { collection: savedProduct }, message: 'success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -63,7 +64,7 @@ router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: {}, message: 'Delete collection success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -75,7 +76,7 @@ router.get('/detail/:id', async (req, res) => {
         res.status(200).json({ data: { detailCollection: collection }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -93,7 +94,7 @@ router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: {}, message: ' Delete collection success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -111,7 +112,7 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: {}, message: ' Restore collection success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -129,7 +130,7 @@ router.put('/update/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: { collection: updateCollection }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: eerror.messagerror, status: 500 });
     }
 });
 
