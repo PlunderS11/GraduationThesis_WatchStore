@@ -303,6 +303,9 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+
+
+
 // GET ALL ORDER BY ID USER
 router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
     try {

@@ -163,6 +163,30 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+//GET COLLECTIONS UNDELETED
+router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const products_undeleted = await Product.find({ isDelete: false }).exec();
+
+        res.status(200).json({ data: { products_undeleted: products_undeleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+//GET COLLECTIONS DELETED
+router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const products_deleted = await Product.find({ isDelete: true }).exec();
+
+        res.status(200).json({ data: { products_deleted: products_deleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
 // GET PRODUCT HOME
 router.get('/home', async (req, res) => {
     let product = [];
