@@ -47,7 +47,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                         Body: images[i].buffer,
                     };
                     try {
-                        await s3.upload(uploadS3);
+                        await s3.upload(uploadS3).promise();
                         images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
                     } catch (error) {
                         return res.status(500).json({ data: {}, message: 'Lỗi S3', status: 500 });
@@ -60,7 +60,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     type: req.body.type,
                     sex: req.body.sex,
                     images: images_url,
-                    collectionObj: docCol,
+                    collectionName: docCol.name,
                     descriptionvi: req.body.descriptionvi,
                     descriptionen: req.body.descriptionen,
                     featuresvi: req.body.featuresvi,
@@ -74,8 +74,8 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                 });
                 docCol.products.push(newProduct);
                 await docCol.save();
-                const savedProduct = await newProduct.save();
-                res.status(200).json({ data: { product: savedProduct }, message: 'success', status: 200 });
+                await newProduct.save();
+                res.status(200).json({ data: { product: newProduct }, message: 'success', status: 200 });
             }
         }
     } catch (error) {

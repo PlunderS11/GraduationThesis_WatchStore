@@ -30,7 +30,10 @@ const ProductSchema = new mongoose.Schema(
             type: Array,
             required: true,
         },
-        collectionObj: { type: mongoose.Schema.Types.ObjectId, ref: 'Collection', required: true },
+        collectionName: {
+            type: String,
+            required: true,
+        },
         descriptionvi: {
             type: String,
             required: true,
