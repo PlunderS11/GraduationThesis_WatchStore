@@ -290,17 +290,6 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL ORDER
 // ADMIN
 router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
-<<<<<<< HEAD
-    const orderList = await Order.find()
-        .populate('user')
-        .populate('orderDetails')
-        .populate('promotion')
-        .sort({ dateOrdered: -1 })
-        .exec();
-
-    if (!orderList) {
-        res.status(500).json({ data: {orders:orderList}, message: error, status: 500 });
-=======
     try {
         const orderList = await Order.find()
             .populate('user')
@@ -311,9 +300,11 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: { orderList, total: orderList.length }, message: 'success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
->>>>>>> be39c0f71dc110663cbea56206caa7c854cb6cac
     }
 });
+
+
+
 
 // GET ALL ORDER BY ID USER
 router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
