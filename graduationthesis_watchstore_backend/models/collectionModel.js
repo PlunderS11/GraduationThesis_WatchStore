@@ -4,20 +4,21 @@ const CollectionSchema = mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
         },
         products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
         descriptionvi: {
             type: String,
-            require: true,
+            required: true,
         },
         descriptionen: {
             type: String,
-            require: true,
+            required: true,
         },
         isDelete: {
             type: Boolean,
-            require: true,
+            default: false,
+            required: true,
         },
     },
     { timestamps: true }

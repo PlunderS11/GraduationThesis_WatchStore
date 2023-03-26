@@ -4,28 +4,28 @@ const PromotionSchema = new mongoose.Schema(
     {
         title: {
             type: String,
-            require: true,
+            required: true,
         },
         code: {
             type: String,
-            require: true,
+            required: true,
         },
         value: {
             type: Number,
-            require: true,
+            required: true,
         },
         startDate: {
             type: Date,
-            require: true,
+            required: true,
         },
         endDate: {
             type: Date,
-            require: true,
+            required: true,
         },
         isDelete: {
             type: Boolean,
             default: false,
-            require: true,
+            required: true,
         },
     },
     { timestamps: true }

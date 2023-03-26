@@ -4,62 +4,64 @@ const ProductSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
         },
         brand: {
             type: String,
-            require: true,
+            required: true,
         },
         type: {
             type: String,
-            require: true,
+            required: true,
         },
         originalPrice: {
             type: Number,
-            require: true,
+            required: true,
         },
         finalPrice: {
             type: Number,
-            require: true,
+            required: true,
         },
         sex: {
             type: String,
-            require: true,
+            required: true,
         },
         images: {
             type: Array,
-            require: true,
+            required: true,
         },
-        collectionId: {
-            type: String,
-            require: true,
-        },
+        collectionObj: { type: mongoose.Schema.Types.ObjectId, ref: 'Collection', required: true },
         descriptionvi: {
             type: String,
+            required: true,
         },
         descriptionen: {
             type: String,
+            required: true,
         },
         featuresvi: {
             type: Array,
+            required: true,
         },
         featuresen: {
             type: Array,
+            required: true,
         },
         note: {
             type: String,
         },
         sold: {
             type: Number,
-            require: true,
+            required: true,
         },
         stock: {
             type: Number,
-            require: true,
+            required: true,
         },
         isDelete: {
             type: Boolean,
-            require: true,
+            default: false,
+            required: true,
         },
     },
     { timestamps: true }

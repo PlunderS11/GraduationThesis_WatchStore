@@ -10,7 +10,7 @@ router.get('/userInfo', verifyToken, async (req, res) => {
         const { password, ...other } = user._doc;
         res.status(200).json({ data: { ...other }, message: 'Success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -30,7 +30,7 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
         res.status(200).json({ data: { ...updateUser }, message: 'Success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -48,7 +48,7 @@ router.delete('delete:/id', verifyTokenAndAdmin, async (req, res) => {
         );
         res.status(200).json({ data: {}, message: 'User has been deleted...', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -59,7 +59,7 @@ router.get('/find/:id', verifyTokenAndAdmin, async (req, res) => {
         const { password, ...other } = user._doc;
         res.status(200).json({ data: { ...other }, message: 'Success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -69,7 +69,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
         const users = query ? await User.find().sort({ _id: -1 }).limit(5) : await User.find();
         res.status(200).json({ data: { ...users }, message: 'Success', status: 200 });
     } catch (error) {
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
