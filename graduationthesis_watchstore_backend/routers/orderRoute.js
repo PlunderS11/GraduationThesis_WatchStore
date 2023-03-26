@@ -290,17 +290,17 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL ORDER
 // ADMIN
 router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
-    const orderList = await Order.find()
-        .populate('user')
-        .populate('orderDetails')
-        .populate('promotion')
-        .sort({ dateOrdered: -1 })
-        .exec();
-
-    if (!orderList) {
+    try {
+        const orderList = await Order.find()
+            .populate('user')
+            .populate('orderDetails')
+            .populate('promotion')
+            .sort({ dateOrdered: -1 })
+            .exec();
+        res.status(200).json({ data: { orderList, total: orderList.length }, message: 'success', status: 200 });
+    } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
-    res.status(200).json({ data: { orderList, total: orderList.length }, message: 'success', status: 200 });
 });
 
 // GET ALL ORDER BY ID USER

@@ -86,6 +86,8 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
 
 // UPDATE
 router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
+    // console.log(req.body,req.files);
+
     const images = req.files;
     if (images?.length > 0) {
         var images_url = [];
