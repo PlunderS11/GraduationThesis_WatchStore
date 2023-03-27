@@ -6,7 +6,6 @@ const CollectionSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
         descriptionvi: {
             type: String,
             required: true,

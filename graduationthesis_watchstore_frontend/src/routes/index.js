@@ -1,6 +1,7 @@
 import AboutUs from '../pages/AboutUs/AboutUs';
 import AccountInfo from '../pages/AccountInfo/AccountInfo';
 import Blogs from '../pages/Blogs/Blogs';
+import Cart from '../pages/Cart/Cart';
 import Checkout from '../pages/Checkout/Checkout';
 import Gallery from '../pages/Gallery/Gallery';
 import Home from '../pages/Home/Home';
@@ -14,6 +15,7 @@ const publicRouter = [
     { path: '/', component: Home },
     { path: '/about-us', component: AboutUs },
     { path: '/blogs', component: Blogs },
+    { path: '/cart', component: Cart },
     { path: '/checkout', component: Checkout },
     { path: '/gallery', component: Gallery },
     { path: '/product/:slug', component: ProductDetail },

@@ -6,6 +6,7 @@ const ProductSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        collectionObj: { type: mongoose.Schema.Types.ObjectId, ref: 'Collection', require: true },
         brand: {
             type: String,
             required: true,
@@ -28,10 +29,6 @@ const ProductSchema = new mongoose.Schema(
         },
         images: {
             type: Array,
-            required: true,
-        },
-        collectionName: {
-            type: String,
             required: true,
         },
         descriptionvi: {

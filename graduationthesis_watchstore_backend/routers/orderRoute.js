@@ -95,15 +95,16 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
         const addressDistrict = district.find(item => item.DistrictID === req.body.districtId);
         const ward = await address('ward', req.body.districtId);
         const addressWard = ward.find(item => item.WardCode === req.body.wardId);
-        let promotion = {};
+        var promotion = {};
+        var promotionExist = {};
         if (req.body.promotionCode) {
             promotion = await Promotion.findOne({ code: req.body.promotionCode });
+            const allPromotion = await Order.find().populate('user').populate('promotion').exec();
+            promotionExist = allPromotion.find(
+                item => item.user._id.toString() === req.user.id && item.promotion.code === req.body.promotionCode
+            );
         }
         // check da su dung ma KM chua
-        const allPromotion = await Order.find().populate('user').populate('promotion').exec();
-        const promotionExist = allPromotion.find(
-            item => item.user._id.toString() === req.user.id && item.promotion.code === req.body.promotionCode
-        );
         let discountValue = 0;
         if (promotion.value) {
             if (promotion.isDelete)
@@ -302,9 +303,6 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
-
-
-
 
 // GET ALL ORDER BY ID USER
 router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {

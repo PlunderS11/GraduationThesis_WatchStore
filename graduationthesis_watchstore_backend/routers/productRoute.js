@@ -60,7 +60,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     type: req.body.type,
                     sex: req.body.sex,
                     images: images_url,
-                    collectionName: docCol.name,
+                    collectionObj: docCol,
                     descriptionvi: req.body.descriptionvi,
                     descriptionen: req.body.descriptionen,
                     featuresvi: req.body.featuresvi,
@@ -72,8 +72,6 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     stock: Number(req.body.stock),
                     isDelete: req.body.isDelete,
                 });
-                docCol.products.push(newProduct);
-                await docCol.save();
                 await newProduct.save();
                 res.status(200).json({ data: { product: newProduct }, message: 'success', status: 200 });
             }
@@ -100,14 +98,12 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
                 Key: filePath,
                 Body: images[i].buffer,
             };
-            s3.upload(uploadS3, (err, data) => {
-                if (err) {
-                    console.log('Loi s3: ' + err);
-                } else {
-                    console.log('S3 thanh cong');
-                }
-            });
-            images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
+            try {
+                await s3.upload(uploadS3).promise();
+                images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
+            } catch (error) {
+                return res.status(500).json({ data: {}, message: 'Lỗi S3', status: 500 });
+            }
         }
 
         try {

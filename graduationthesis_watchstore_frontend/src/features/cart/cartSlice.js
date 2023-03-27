@@ -1,5 +1,4 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
-import * as _ from 'lodash';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     items: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [],
@@ -9,45 +8,27 @@ const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        addToCart: {
-            reducer(state, action) {
-                const { id, option } = action.payload;
+        addToCart: (state, action) => {
+            const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
 
-                const existsItem = state.items.find(item => item.id === id && _.isEqual(item.option, option));
+            if (existsItem) {
+                existsItem.quantity += action.payload.quantity;
+            } else {
+                state.items.push(action.payload);
+            }
 
-                if (existsItem) {
-                    existsItem.amount++;
-                } else {
-                    state.items.push(action.payload);
-                }
-
-                localStorage.setItem('cartItems', JSON.stringify(state.items));
-            },
-            prepare(id, name, price, link, image, option) {
-                return {
-                    payload: {
-                        cartId: nanoid(),
-                        amount: 1,
-                        id,
-                        name,
-                        price,
-                        link,
-                        image,
-                        option,
-                    },
-                };
-            },
+            localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
-        updateCartItem(state, action) {
-            const { cartId, type } = action.payload;
 
-            const existsItem = state.items.find(item => item.cartId === cartId);
+        updateCartItem(state, action) {
+            const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
+            const type = action.payload.type;
 
             if (type === 'increase') {
-                existsItem.amount++;
+                existsItem.quantity++;
             } else if (type === 'decrease') {
-                if (existsItem.amount > 1) {
-                    existsItem.amount--;
+                if (existsItem.quantity > 1) {
+                    existsItem.quantity--;
                 } else {
                     state.items = state.items.filter(item => item.cartId !== existsItem.cartId);
                 }
@@ -55,9 +36,7 @@ const cartSlice = createSlice({
             localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
         removeItem(state, action) {
-            const { cartId } = action.payload;
-
-            state.items = state.items.filter(item => item.cartId !== cartId);
+            state.items = state.items.filter(item => item.product._id !== action.payload.product._id);
             localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
     },

@@ -17,17 +17,17 @@ const UserSchema = new mongoose.Schema(
         },
         phone: {
             type: String,
-            required: true,
+            required: false,
             default: '',
         },
         address: {
-            type: String,
-            required: true,
-            default: '',
+            type: Object,
+            required: false,
+            default: {},
         },
         sex: {
             type: String,
-            required: true,
+            required: false,
             default: '',
         },
         role: {

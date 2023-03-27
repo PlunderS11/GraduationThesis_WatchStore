@@ -44,7 +44,7 @@ const AccountInfo = () => {
                         <Col span={18}>
                             {params.category === 'profile' && <Profile />}
                             {params.category === 'orders' && <Order />}
-                            {params.category === 'addresses' && <Address />}
+                            {params.category === 'address' && <Address />}
                         </Col>
                     </Row>
                 </div>

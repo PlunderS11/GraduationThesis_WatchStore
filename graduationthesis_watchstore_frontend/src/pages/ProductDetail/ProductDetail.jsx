@@ -12,7 +12,6 @@ import { addToCart } from '../../features/cart';
 import ProductSlider from '../../components/ProductSlider/ProductSlider';
 import ProductByCategory from '../../components/ProductByCategory/ProductByCategory';
 import Button from '../../components/Button/Button';
-import ProductOption from '../../components/ProductOption/ProductOption';
 import { NumberWithCommas } from '../../functions';
 import i18n from '../../i18n';
 
@@ -27,16 +26,13 @@ const ProductDetail = () => {
     const dispatch = useDispatch();
 
     const [product, setProduct] = useState({});
-    const [options, setOptions] = useState({});
     const [relatedProducts, setRelatedProducts] = useState([]);
-    const [optionSelected, setOptionSelected] = useState({});
 
     useEffect(() => {
         const getProductDetail = async () => {
             const res = await axiosClient.get(`product/detail/${params.slug}/3`);
             if (!_.isEmpty(res)) {
-                const prod = res.detail;
-                prod.images = JSON.parse(prod.images);
+                const prod = res.data.detailProduct.detail;
                 setProduct(prod);
                 setRelatedProducts(res.relatedProducts);
                 dispatch(changeProgress(80));
@@ -68,42 +64,13 @@ const ProductDetail = () => {
                 items += product._id;
             }
             sessionStorage.setItem('productsViewed', items);
-            // get the box options
-            const getTheBoxOptions = async () => {
-                const res = await axiosClient.get(`product/options/${params.slug}`);
-                setOptions(res);
-            };
-            if (product.type === 'box') {
-                getTheBoxOptions();
-                dispatch(changeProgress(90));
-            } else {
-                dispatch(changeProgress(90));
-            }
             dispatch(changeProgress(100));
         }
     }, [dispatch, params.slug, product]);
 
-    const handleChoseItem = (type, item) => {
-        setOptionSelected({ ...optionSelected, [type]: item });
-    };
-
     const handleAddToCart = () => {
-        const optionExists = [];
-        for (const [key, value] of Object.entries(options)) {
-            if (value.length > 0) {
-                optionExists.push(key);
-            }
-        }
-        const check = optionExists.every(r => Object.keys(optionSelected).indexOf(r) >= 0);
-
-        if (check) {
-            dispatch(
-                addToCart(product._id, product.name, product.price, product.link, product.images[0], optionSelected)
-            );
-            toast.success(t('productDetail.addToCart'));
-        } else {
-            toast.error(t('productDetail.chooseOption'));
-        }
+        dispatch(addToCart({ product, quantity: 2 }));
+        toast.success(t('productDetail.addToCart'));
     };
     return (
         <div className={cx('product-detail-page')}>
@@ -119,31 +86,11 @@ const ProductDetail = () => {
                             <h1 className={cx('name')}>{product.name}</h1>
                             <p className={cx('price')}>
                                 {product.stock > 0
-                                    ? `${NumberWithCommas(product.price)}đ`
+                                    ? `${NumberWithCommas(product.finalPrice)}đ`
                                     : t('productCard.outOfStock')}
                             </p>
                             <p className={cx('description')}>{product[`description${i18n.language}`]}</p>
                             <p className={cx('note')}>{product.note}</p>
-                            <div className={cx('options')}>
-                                {!_.isEmpty(options) && options.watchs.length > 0 && (
-                                    <ProductOption
-                                        title={t('productDetail.titleOptionWatch')}
-                                        options={options.watchs}
-                                        type={'watchs'}
-                                        current={optionSelected.watchs}
-                                        onChose={handleChoseItem}
-                                    />
-                                )}
-                                {!_.isEmpty(options) && options.straps.length > 0 && (
-                                    <ProductOption
-                                        title={t('productDetail.titleOptionStrap')}
-                                        options={options.straps}
-                                        type={'straps'}
-                                        current={optionSelected.straps}
-                                        onChose={handleChoseItem}
-                                    />
-                                )}
-                            </div>
                             {product.stock > 0 && (
                                 <div className={cx('buy')}>
                                     <Button onClick={handleAddToCart}>{t('button.addToCart')}</Button>

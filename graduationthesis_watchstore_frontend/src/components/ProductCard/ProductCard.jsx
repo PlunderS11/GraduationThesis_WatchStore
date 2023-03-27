@@ -9,17 +9,16 @@ const cx = classNames.bind(style);
 
 function ProductCard({ product, customClass }) {
     const { t } = useTranslation();
-    const images = JSON.parse(product.images);
 
     return (
-        <Link to={`/product/${product.link}`} className={cx('product-card')}>
+        <Link to={`/product/${product._id}`} className={cx('product-card')}>
             <div className={cx('product-images', customClass?.['product-images'])}>
-                <img src={images[0]} alt={product.name} />
-                {images[1] && <img src={images[1]} alt={product.name} className={cx('image-hover')} />}
+                <img src={product.images[0]} alt={product.name} />
+                {product.images[1] && <img src={product.images[1]} alt={product.name} className={cx('image-hover')} />}
             </div>
             <h3 className={cx('product-name', customClass?.['product-name'])}>{product.name}</h3>
             <p className={cx('product-price', customClass?.['product-price'])}>
-                {product.stock > 0 ? `${NumberWithCommas(product.price)}đ` : t('productCard.outOfStock')}
+                {product.stock > 0 ? `${NumberWithCommas(product.finalPrice)}đ` : t('productCard.outOfStock')}
             </p>
         </Link>
     );

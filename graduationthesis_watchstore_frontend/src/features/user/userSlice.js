@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     user: {},
-    token: '',
+    token: localStorage.getItem('mynhbake_token') ? localStorage.getItem('mynhbake_token') : '',
     isLogin: false,
     error: '',
 };
@@ -14,30 +14,11 @@ const userSlice = createSlice({
         setTokenUser: (state, action) => {
             state.token = action.payload;
         },
-        setCurrentUser: {
-            reducer(state, action) {
-                const { username, role, phone, sex, address, email } = action.payload;
-                state.user.username = username;
-                state.user.email = email;
-                state.user.role = role;
-                state.user.phone = phone;
-                state.user.sex = sex;
-                state.user.address = address;
-                state.isLogin = true;
-            },
-            prepare(user) {
-                return {
-                    payload: {
-                        username: user.username,
-                        email: user.email,
-                        phone: user.phone,
-                        sex: user.sex,
-                        address: user.address,
-                        role: user.role,
-                    },
-                };
-            },
+        setCurrentUser: (state, action) => {
+            state.user = action.payload;
+            state.isLogin = true;
         },
+
         logOut: {
             reducer(state, action) {
                 state.user = {};

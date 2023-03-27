@@ -27,7 +27,7 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
             },
             { new: true }
         );
-        res.status(200).json({ data: { ...updateUser }, message: 'Success', status: 200 });
+        res.status(200).json({ data: { updateUser }, message: 'Success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });

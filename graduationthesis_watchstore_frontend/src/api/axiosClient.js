@@ -107,4 +107,27 @@ Instagram.interceptors.response.use(
     }
 );
 
+export const GHN = axios.create({
+    baseURL: 'https://online-gateway.ghn.vn/shiip/public-api/',
+    headers: {
+        'Content-Type': 'application/json',
+        Token: process.env.REACT_APP_TOKEN_GHN,
+        ShopId: process.env.REACT_APP_SHOPID,
+    },
+});
+
+GHN.interceptors.request.use(async config => config);
+
+GHN.interceptors.response.use(
+    response => {
+        if (response && response.data) {
+            return response.data;
+        }
+        return response;
+    },
+    error => {
+        throw error;
+    }
+);
+
 export default axiosClient;
