@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row, Form, Input, Button, Select } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import axiosClient, { GHN } from '../../../api/axiosClient';
-import { useSelector } from 'react-redux';
+import { setCurrentUser } from '../../../features/user/userSlice';
 
 import style from './Address.module.scss';
 import classNames from 'classnames/bind';
@@ -13,42 +15,45 @@ const cx = classNames.bind(style);
 const Address = () => {
     const navigate = useNavigate();
     const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
     const { state } = useLocation();
     const [loading, setLoading] = useState(false);
     const [province, setProvince] = useState([]);
     const [district, setDistrict] = useState([]);
     const [ward, setWard] = useState([]);
-    const [form] = useForm();
+    const [form] = Form.useForm();
 
-    console.log(user);
     useEffect(() => {
-        if (user.user.address?.address !== undefined) {
-            form.setFieldValue({
-                username: user.user.address.name,
-                phone: user.user.address.phone,
-                province: user.user.address.province.ProvinceID,
-                district: user.user.address.district.DistrictID,
-                ward: user.user.address.ward.WardCode,
-            });
-        }
-        const handleGetAddressProvince = async () => {
-            const resP = await GHN.post('master-data/province');
-            setProvince(resP.data);
-            if (user.user.address?.address) {
+        const getUserInfor = async () => {
+            const res = await axiosClient.get('user/userInfo');
+            dispatch(setCurrentUser(res.data));
+            if (res.data.address?.address !== undefined) {
+                form.setFieldsValue({
+                    username: res.data.address.name,
+                    phone: res.data.address.phone,
+                    province: res.data.address.province.ProvinceID,
+                    district: res.data.address.district.DistrictID,
+                    ward: res.data.address.ward.WardCode,
+                    address: res.data.address.address,
+                });
                 const resD = await GHN.post('master-data/district', {
-                    province_id: user.user.address.province.ProvinceID,
+                    province_id: res.data.address.province.ProvinceID,
                 });
                 const resW = await await GHN.post('master-data/ward', {
-                    district_id: user.user.address.district.DistrictID,
+                    district_id: res.data.address.district.DistrictID,
                 });
                 setDistrict(resD.data);
                 setWard(resW.data);
             }
         };
+        const handleGetAddressProvince = async () => {
+            const resP = await GHN.post('master-data/province');
+            setProvince(resP.data);
+        };
+        getUserInfor();
         handleGetAddressProvince();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    console.log(district);
 
     const handleGetAddressDistrict = async value => {
         const res = await GHN.post('master-data/district', {
@@ -191,14 +196,14 @@ const Address = () => {
                                 <Button
                                     type="primary"
                                     style={{
-                                        backgroundColor: '#47991f',
+                                        backgroundColor: '#3d464d',
                                         height: '100%',
                                         padding: '7px 16px',
                                     }}
                                     htmlType="submit"
                                     loading={loading}
                                 >
-                                    {user.user.address ? 'Cập nhật' : 'Lưu'}
+                                    {user.user.address?.address ? 'Cập nhật' : 'Lưu'}
                                 </Button>
                             </Form.Item>
                         </Col>

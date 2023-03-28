@@ -84,8 +84,6 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
 
 // UPDATE
 router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
-    // console.log(req.body,req.files);
-
     const images = req.files;
     if (images?.length > 0) {
         var images_url = [];
@@ -151,7 +149,7 @@ router.get('/link', async (req, res) => {
 // GET ALL PRODUCT
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find().populate('collectionObj');
         res.status(200).json({ data: { products: products }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Table } from 'antd';
+import { Col, Modal, Table } from 'antd';
 import ImageCustom from '../../components/ImageCustom/ImageCustom';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
@@ -8,12 +8,15 @@ import style from './Cart.module.scss';
 
 import Button from '../../components/Button/Button';
 import { NumberWithCommas } from '../../functions';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectCartItems, selectTotalItems } from '../../features/cart';
+import Column from 'antd/es/table/Column';
 
 const cx = classNames.bind(style);
 
 const Cart = () => {
+    const user = useSelector(state => state.user);
+    const dispatch = useDispatch();
     const products = useSelector(selectCartItems);
     const totalItems = useSelector(selectTotalItems);
     const navigate = useNavigate();
@@ -38,103 +41,6 @@ const Cart = () => {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    // table
-    const columns = [
-        {
-            key: 'image',
-            title: 'Hình ảnh',
-            dataIndex: 'book',
-            align: 'center',
-            render: (value, record, index) => {
-                console.log(record);
-                return (
-                    <div key={index} style={{ width: '80px' }}>
-                        <Link to={`shop/products/${record.product._id}`} className={cx('product-image')}>
-                            <ImageCustom src={record.product.images[0]} />
-                        </Link>
-                    </div>
-                );
-            },
-        },
-        {
-            key: 'name',
-            title: 'Sản phẩm',
-            dataIndex: 'book',
-            render: (value, record, index) => (
-                <div key={index} className={cx('product-info')}>
-                    <Link to={`shop/products/${record.product._id}`}>{record.product.name}</Link>
-                </div>
-            ),
-        },
-        {
-            key: 'price',
-            title: 'Đơn giá',
-            dataIndex: 'book',
-            align: 'right',
-            render: (value, record, index) => (
-                <span key={index}>{NumberWithCommas(record.product.finalPrice)}&nbsp;₫</span>
-            ),
-        },
-
-        {
-            key: 'amount',
-            title: 'Số lượng',
-            dataIndex: 'quantity',
-            align: 'center',
-            render: (text, record, index) => {
-                return (
-                    <div key={index} className={cx('action__btnCount')} style={{ marginLeft: '22%' }}>
-                        <div
-                            className={cx('btnCount-btnSub')}
-                            onClick={() => text > 1 && handleDecrease(record.product)}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width={15} height={15}>
-                                <path d="M416 256c0 17.7-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
-                            </svg>
-                        </div>
-                        <input id={String(index)} type="text" className={cx('btnCount-input')} value={text} />
-                        <div className={cx('btnCount-btnAdd')} onClick={() => handleIncrease(record.product)}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width={15} height={15}>
-                                <path d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z" />
-                            </svg>
-                        </div>
-                    </div>
-                );
-            },
-        },
-        {
-            key: 'total',
-            title: 'Thành tiền',
-            dataIndex: 'book',
-            render: (value, record, index) => (
-                <div key={index}>
-                    <span style={{ color: '#ff424e' }}>
-                        {NumberWithCommas(record.product.finalPrice * record.quantity)}&nbsp;₫
-                    </span>
-                </div>
-            ),
-        },
-        {
-            key: 'del',
-            title: '',
-            dataIndex: 'book',
-            render: (value, record, index) => (
-                <div key={index}>
-                    <button className={cx('menu-item-btn')} onClick={() => handleRemoveCart(record)}>
-                        {/* {cartStore.isLoading ? (
-                            <LoadingOutlined />
-                        ) :  */}
-                        (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
-                            <path d="M8.8 8.8c-.4.4-1 .4-1.4 0L5 6.4 2.6 8.8c-.4.4-1 .4-1.4 0-.4-.4-.4-1 0-1.4L3.6 5 1.2 2.6c-.4-.4-.4-1 0-1.4.4-.4 1-.4 1.4 0L5 3.6l2.4-2.4c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4L6.4 5l2.4 2.4c.4.4.4 1 0 1.4z"></path>
-                        </svg>
-                        )
-                    </button>
-                </div>
-            ),
-        },
-    ];
-    const data = products;
 
     return (
         <div className={cx('cart-page')}>
@@ -149,7 +55,113 @@ const Cart = () => {
                 <div className="page">
                     <div className="container">
                         <div className={cx('product')}>
-                            <Table columns={columns} dataSource={data} pagination={{ position: [] }} />
+                            <Table rowKey="id" dataSource={products} pagination={{ position: [] }}>
+                                <Column
+                                    title="Hình ảnh"
+                                    align="center"
+                                    render={(value, record, index) => (
+                                        <div style={{ width: '80px' }}>
+                                            <Link
+                                                to={`shop/products/${record.product._id}`}
+                                                className={cx('product-image')}
+                                            >
+                                                <ImageCustom src={record.product.images[0]} />
+                                            </Link>
+                                        </div>
+                                    )}
+                                />
+                                <Column
+                                    title="Sản phẩm"
+                                    render={(value, record, index) => (
+                                        <div className={cx('product-info')}>
+                                            <Link to={`shop/products/${record.product._id}`}>
+                                                {record.product.name}
+                                            </Link>
+                                        </div>
+                                    )}
+                                />
+                                <Column
+                                    title="Đơn giá"
+                                    align="right"
+                                    render={(value, record, index) => (
+                                        <span>{NumberWithCommas(record.product.finalPrice)}&nbsp;₫</span>
+                                    )}
+                                />
+                                <Column
+                                    title="Số lượng"
+                                    align="center"
+                                    dataIndex={'quantity'}
+                                    render={(text, record, index) => {
+                                        return (
+                                            <div className={cx('action__btnCount')} style={{ marginLeft: '22%' }}>
+                                                <div
+                                                    className={cx('btnCount-btnSub')}
+                                                    onClick={() => text > 1 && handleDecrease(record.product)}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 448 512"
+                                                        width={15}
+                                                        height={15}
+                                                    >
+                                                        <path d="M416 256c0 17.7-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
+                                                    </svg>
+                                                </div>
+                                                <input
+                                                    id={String(index)}
+                                                    type="text"
+                                                    className={cx('btnCount-input')}
+                                                    defaultValue={text}
+                                                    // value={text}
+                                                />
+                                                <div
+                                                    className={cx('btnCount-btnAdd')}
+                                                    onClick={() => handleIncrease(record.product)}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 448 512"
+                                                        width={15}
+                                                        height={15}
+                                                    >
+                                                        <path d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        );
+                                    }}
+                                />
+                                <Column
+                                    title="Thành tiền"
+                                    render={(value, record, index) => (
+                                        <div>
+                                            <span style={{ color: '#ff424e' }}>
+                                                {NumberWithCommas(record.product.finalPrice * record.quantity)}&nbsp;₫
+                                            </span>
+                                        </div>
+                                    )}
+                                />
+                                <Column
+                                    title=""
+                                    render={(value, record, index) => (
+                                        <div>
+                                            <button
+                                                className={cx('menu-item-btn')}
+                                                onClick={() => handleRemoveCart(record)}
+                                            >
+                                                {/* {cartStore.isLoading ? (
+                                                    <LoadingOutlined />
+                                                ) :  */}
+                                                (
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+                                                    <path d="M8.8 8.8c-.4.4-1 .4-1.4 0L5 6.4 2.6 8.8c-.4.4-1 .4-1.4 0-.4-.4-.4-1 0-1.4L3.6 5 1.2 2.6c-.4-.4-.4-1 0-1.4.4-.4 1-.4 1.4 0L5 3.6l2.4-2.4c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4L6.4 5l2.4 2.4c.4.4.4 1 0 1.4z"></path>
+                                                </svg>
+                                                )
+                                            </button>
+                                        </div>
+                                    )}
+                                />
+                            </Table>
                         </div>
                         <div className={cx('actions')}>
                             <div>
@@ -158,21 +170,22 @@ const Cart = () => {
                                         <span style={{ fontWeight: 600 }}>Giao tới</span>
                                         <div
                                             className={cx('change-a')}
-                                            onClick={() => navigate('/account/addresses', { state: true })}
+                                            onClick={() => navigate('/account/address', { state: true })}
                                         >
                                             Thay đổi
                                         </div>
                                     </div>
                                     <div className={cx('add')}>
-                                        {/* {payStore.address ? (
+                                        {user.user.address?.address ? (
                                             <>
-                                                <div className="address-add-phone">{`${payStore.getName} | ${payStore.getPhone}`}</div>
+                                                <div className="address-add-phone">{`${user.user.address?.name} | ${user.user.address?.phone}`}</div>
                                                 <div className="address-add-address">
-                                                    {`${payStore.getAddress}, ${payStore.getWard.nameWithType}, ${payStore.getDistrict.nameWithType}, ${payStore.getCity.nameWithType}`}
+                                                    {`${user.user.address?.address}, ${user.user.address?.ward.WardName}, ${user.user.address?.district.DistrictName}, ${user.user.address?.province.NameExtension[1]}`}
                                                 </div>
                                             </>
-                                        ) : */}
-                                        (<Link to={'/account/addresses'}>+ Thêm địa chỉ</Link>)
+                                        ) : (
+                                            <Link to={'/account/addresses'}>+ Thêm địa chỉ</Link>
+                                        )}
                                     </div>
                                 </div>
                                 {/* Modal coupon */}
@@ -202,24 +215,21 @@ const Cart = () => {
                                 </Modal>
                                 <div className={cx('coupon')}>
                                     <span>Hebec Khuyến Mãi</span>
-                                    {/* {payStore.getOrderEstimate.moneyDiscount > 0 ? (
-                                        <div className="coupon-chonse">
-                                            {`Tiền khuyến mãi được giảm ${NumberWithCommas(
-                                                payStore.getOrderEstimate.moneyDiscount
-                                            )}`}
+                                    {5 > 0 ? (
+                                        <div className={cx('coupon-chonse')}>
+                                            {`Tiền khuyến mãi được giảm ${NumberWithCommas(5)}`}
                                             &nbsp;₫
                                         </div>
-                                    ) :  */}
-                                    (
-                                    <div className={cx('coupon-chonse')} onClick={showModal}>
-                                        <img
-                                            src="https://hebec.vn/images/coupon_icon.svg"
-                                            alt=""
-                                            style={{ marginRight: '4px' }}
-                                        />
-                                        Chọn hoặc nhập khuyến mãi
-                                    </div>
-                                    )
+                                    ) : (
+                                        <div className={cx('coupon-chonse')} onClick={showModal}>
+                                            <img
+                                                src="https://hebec.vn/images/coupon_icon.svg"
+                                                alt=""
+                                                style={{ marginRight: '4px' }}
+                                            />
+                                            Chọn hoặc nhập khuyến mãi
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div>
