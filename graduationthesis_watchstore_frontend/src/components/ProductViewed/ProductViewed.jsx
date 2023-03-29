@@ -18,7 +18,7 @@ function ProductViewed() {
         if (productViewed) {
             const getProductViewed = async () => {
                 const res = await axiosClient.get(`product/viewed?id=${productViewed}`);
-                setProducts(res.reverse());
+                setProducts(res.data.productViewed.reverse());
             };
             getProductViewed();
         }

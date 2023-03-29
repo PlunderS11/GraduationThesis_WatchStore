@@ -30,7 +30,7 @@ const cartSlice = createSlice({
                 if (existsItem.quantity > 1) {
                     existsItem.quantity--;
                 } else {
-                    state.items = state.items.filter(item => item.cartId !== existsItem.cartId);
+                    state.items = state.items.filter(item => item.product._id !== existsItem.product._id);
                 }
             }
             localStorage.setItem('cartItems', JSON.stringify(state.items));

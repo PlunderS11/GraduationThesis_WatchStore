@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import style from './Button.module.scss';
 
@@ -18,7 +19,12 @@ const Button = ({ children, href, to, customClass, ...passProps }) => {
     }
     return (
         <Tag className={cx('button', customClass?.['button'])} {...props}>
-            {children}
+            {passProps.loading && (
+                <div className={cx('loading-icon')}>
+                    <LoadingOutlined style={{ fontSize: '200%' }} />
+                </div>
+            )}
+            <div className={cx('text')}>{children}</div>
         </Tag>
     );
 };

@@ -198,10 +198,11 @@ router.get('/home', async (req, res) => {
 // GET PRODUCT DETAIL
 router.get('/detail/:slug/:amount', async (req, res) => {
     try {
-        const detail = await Product.findOne({ link: req.params.slug }).exec();
-        const related = await Collection.find().populate('products').find({ name: detail.collectionName }).exec();
-        const relatedProducts = related[0].products
-            .filter(item => item.link !== req.params.slug)
+        const detail = await Product.findById(req.params.slug).populate('collectionObj').exec();
+        const related = await Product.find().populate('collectionObj').exec();
+
+        const relatedProducts = related
+            .filter(i => i.collectionObj._id.toString() === detail.collectionObj._id.toString())
             .slice(0, req.params.amount);
         const detailProduct = {
             detail,

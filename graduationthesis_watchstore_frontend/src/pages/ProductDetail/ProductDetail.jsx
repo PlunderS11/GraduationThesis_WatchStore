@@ -31,10 +31,9 @@ const ProductDetail = () => {
     useEffect(() => {
         const getProductDetail = async () => {
             const res = await axiosClient.get(`product/detail/${params.slug}/3`);
-            if (!_.isEmpty(res)) {
-                const prod = res.data.detailProduct.detail;
-                setProduct(prod);
-                setRelatedProducts(res.relatedProducts);
+            if (!_.isEmpty(res.data.detailProduct)) {
+                setProduct(res.data.detailProduct.detail);
+                setRelatedProducts(res.data.detailProduct.relatedProducts);
                 dispatch(changeProgress(80));
             } else {
                 navigate('/');
@@ -69,7 +68,7 @@ const ProductDetail = () => {
     }, [dispatch, params.slug, product]);
 
     const handleAddToCart = () => {
-        dispatch(addToCart({ product, quantity: 2 }));
+        dispatch(addToCart({ product, quantity: 1 }));
         toast.success(t('productDetail.addToCart'));
     };
     return (

@@ -27,20 +27,38 @@ const orderStatus = {
 const OrderSchema = mongoose.Schema(
     {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
-        addressProvince: {
-            type: Object,
-            required: true,
-        },
-        addressDistrict: {
-            type: Object,
-            required: true,
-        },
-        addressWard: {
-            type: Object,
-            required: true,
-        },
+
         promotion: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion', required: false },
         orderDetails: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderDetail', required: true }],
+        recipient: {
+            type: {
+                username: {
+                    type: String,
+                    required: true,
+                },
+                phone: {
+                    type: String,
+                    required: true,
+                },
+                addressProvince: {
+                    type: Object,
+                    required: true,
+                },
+                addressDistrict: {
+                    type: Object,
+                    required: true,
+                },
+                addressWard: {
+                    type: Object,
+                    required: true,
+                },
+                address: {
+                    type: String,
+                    required: true,
+                },
+            },
+            required: true,
+        },
         code: {
             type: String,
             required: true,
@@ -61,14 +79,7 @@ const OrderSchema = mongoose.Schema(
             type: orderStatus,
             required: true,
         },
-        address: {
-            type: String,
-            required: true,
-        },
-        phone: {
-            type: String,
-            required: true,
-        },
+
         originalPrice: {
             type: Number,
             required: true,

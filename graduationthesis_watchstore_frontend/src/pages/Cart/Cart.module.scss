@@ -73,9 +73,9 @@
 }
 
 .menu-item-btn {
-    width: calc(1.875rem + 2px);
-    height: calc(1.875rem + 2px);
-    margin-right: -6px;
+    width: calc(1.875rem + 10px);
+    height: calc(1.875rem + 10px);
+    margin-right: -20px;
     border-color: transparent;
     background: transparent;
     fill: #ccc;
@@ -193,4 +193,50 @@
 
 .empty-body-btn {
     margin-top: 24px;
+}
+
+// Modal
+.modal__body {
+    padding: 30px 20px 10px 20px;
+    color: #606266;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+.modal__box {
+    background: #f2f2f2;
+    padding: 16px;
+    margin: 0 32px;
+    display: flex;
+    border-radius: 4px;
+}
+
+.modal__input {
+    display: inline-block;
+    flex: 1 1 0%;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    height: 40px;
+    width: calc(100% - 108px);
+    color: #242424;
+    font-size: 13px;
+    line-height: 1.54;
+    margin: 5px 12px 5px 0;
+    background-image: url('../../assets/images/coupon_icon.svg');
+    background-repeat: no-repeat;
+    background-position: 12px;
+    padding: 10px 12px 10px 40px;
+    outline: 0;
+    vertical-align: top;
+}
+
+.modal__text {
+    padding: 12px 32px;
+}
+
+.modal__label {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 24px;
+    color: #000;
 }

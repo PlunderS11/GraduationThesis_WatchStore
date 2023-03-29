@@ -19,15 +19,15 @@ router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
         const products = req.body.products;
 
         // check promotion
-        let promotion = {};
+        var promotion = {};
+        var promotionExist = {};
         if (req.body.promotionCode) {
             promotion = await Promotion.findOne({ code: req.body.promotionCode });
+            const allPromotion = await Order.find().populate('user').populate('promotion').exec();
+            promotionExist = allPromotion.find(
+                item => item.user._id.toString() === req.user.id && item.promotion.code === req.body.promotionCode
+            );
         }
-        // check da su dung ma KM chua
-        const allPromotion = await Order.find().populate('user').populate('promotion').exec();
-        const promotionExist = allPromotion.find(
-            item => item.user._id.toString() === req.user.id && item.promotion.code === req.body.promotionCode
-        );
         let discountValue = 0;
         if (promotion.value) {
             if (promotion.isDelete)
@@ -161,11 +161,17 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
 
             let order = new Order({
                 user: { ...orther },
-                addressProvince,
-                addressDistrict,
-                addressWard,
+
                 promotion: promotion.value ? promotion : null,
                 orderDetails,
+                recipient: {
+                    username: req.body.username,
+                    phone: req.body.phone,
+                    addressProvince,
+                    addressDistrict,
+                    addressWard,
+                    address: req.body.address,
+                },
                 code: `DH${new Date().getTime()}`,
                 note: req.body.note ? req.body.note : '',
                 paymentStatus: 'PENDING',
@@ -177,8 +183,6 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                     deliveringDate: new Date(),
                     completeDate: new Date(),
                 },
-                phone: req.body.phone,
-                address: req.body.address,
                 originalPrice: productPrice,
                 shipPrice: distancePrice,
                 discountPrice,
@@ -235,6 +239,7 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
     }
 });
 
+// UPDATE STATUS ORDER
 router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         const order = await Order.findById(req.params.id);
@@ -282,6 +287,27 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
         );
 
         res.status(200).json({ data: { collection: orderUpdate }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: eerror.messagerror, status: 500 });
+    }
+});
+
+// UPDATE INFOR ORDER
+router.put('/info/update/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const orderUpdate = await Order.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    'recipient.username': req.body.username,
+                    'recipient.phone': req.body.phone,
+                },
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: { orderUpdate }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: eerror.messagerror, status: 500 });
