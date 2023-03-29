@@ -2,24 +2,39 @@ import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 import Button from '~/components/Button/Button';
 import InputField from '~/components/InputField/InputField';
-
-import styles from './NewCollection.module.scss';
+import styles from './Collection.module.scss';
 import axiosClient from '~/api/axiosClient';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
 export default function NewCollection() {
+    const params = useParams();
     const navigate = useNavigate();
+    const [collection, setCollection] = useState({});
+
+    const collectionId = params.collectionId;
+
+    useEffect(() => {
+        const getProduct = async () => {
+            const res = await axiosClient.get('collections/detail/' + collectionId);
+            setCollection(res.data.detailCollection);
+        };
+        getProduct();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            name: '',
-            descriptionen: '',
-            descriptionvi: '',
-            isDelete: false,
+            name: collection.name + '',
+            descriptionen: collection.descriptionen + '',
+            descriptionvi: collection.descriptionvi + '',
         },
         validationSchema: Yup.object({
             name: Yup.string().required('Nhập tên danh mục'),
@@ -27,17 +42,15 @@ export default function NewCollection() {
             descriptionvi: Yup.string().required('Nhập mô tả tiếng Việt'),
         }),
         onSubmit: async (values) => {
-            const { name, descriptionen, descriptionvi, isDelete } = values;
-
+            const { name, descriptionen, descriptionvi } = values;
+            // console.log(values);
             try {
-                await axiosClient.post('collections/', {
+                await axiosClient.put('collections/update/' + collectionId, {
                     name: name,
                     descriptionen: descriptionen,
                     descriptionvi: descriptionvi,
-                    isDelete: isDelete,
                 });
-                toast.success('Thêm thành công!');
-
+                toast.success('Cập nhật thành công!');
                 navigate('/collections');
             } catch (error) {
                 toast.error(error);
@@ -47,7 +60,7 @@ export default function NewCollection() {
 
     return (
         <div className={cx('new-product')}>
-            <h1 className={cx('add-product-title')}>Thêm mới danh mục</h1>
+            <h1 className={cx('add-product-title')}>Cập nhật danh mục</h1>
             <form onSubmit={formik.handleSubmit} className={cx('add-product-form')} spellCheck="false">
                 <div className={cx('add-product-item')}>
                     <label>Thông tin danh mục</label>
@@ -100,7 +113,7 @@ export default function NewCollection() {
                 </div>
 
                 <Button type="submit" customClass={styles}>
-                    Thêm
+                    Cập nhật
                 </Button>
             </form>
         </div>

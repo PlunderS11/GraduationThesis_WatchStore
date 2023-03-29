@@ -2,9 +2,9 @@ import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+
 import Button from '~/components/Button/Button';
 import InputField from '~/components/InputField/InputField';
-
 import styles from './NewProduct.module.scss';
 import axiosClient from '~/api/axiosClient';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +13,8 @@ import { useEffect, useState } from 'react';
 const cx = classNames.bind(styles);
 
 export default function NewProduct() {
-    const [collections, setCollections] = useState([]);
-
     const navigate = useNavigate();
+    const [collections, setCollections] = useState([]);
 
     useEffect(() => {
         const getCollections = async () => {
@@ -25,71 +24,126 @@ export default function NewProduct() {
         getCollections();
     }, []);
 
+    //input img
+    //-----------------------------------------------------------
+    const [image, setImage] = useState([]);
+    const [delImg, setDelImg] = useState([]);
+
+    const handleMultiFile = (e) => {
+        setImage(e.target.files);
+        setDelImg(Array.from(e.target.files));
+    };
+
+    const handleDelImg = (i) => {
+        delImg.splice(i, 1);
+        setDelImg([...delImg]);
+        setImage([...delImg]);
+    };
+
+    //-----------------------------------------------------------
+
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
             name: '',
             brand: '',
             type: '',
-            price: '',
+            originalPrice: '',
+            // finalPrice: '',
             sex: '',
-            images: '',
-            collectionName: '',
+            images: Array.prototype.slice.call(image),
+            collectionId: '',
+            descriptionvi: '',
             descriptionen: '',
+            featuresvi: '',
             featuresen: '',
+            note: '',
             sold: 0,
             stock: '',
-            descriptionvi: '',
-            featuresvi: '',
+            isDelete: false,
         },
         validationSchema: Yup.object({
-            type: Yup.string().required('Chọn loại sản phẩm'),
-            sex: Yup.string().required('Chọn gới tính'),
-            collectionName: Yup.string().required('Chọn bộ sưu tập'),
             name: Yup.string().required('Nhập tên sản phẩm'),
             brand: Yup.string().required('Nhập hãng'),
-            price: Yup.string().required('Nhập giá'),
+            type: Yup.string().required('Chọn loại sản phẩm'),
+            originalPrice: Yup.string().required('Nhập giá ban đầu'),
+            // finalPrice: Yup.string().required('Nhập giá cuối'),
+            sex: Yup.string().required('Chọn gới tính'),
+            images: Yup.array().min(1, 'Chọn ảnh sản phẩm'),
+            collectionId: Yup.string().required('Chọn bộ sưu tập'),
+            descriptionvi: Yup.string().required('Nhập mô tả tiếng Việt'),
             descriptionen: Yup.string().required('Nhập mô tả tiếng Anh'),
+            featuresvi: Yup.string().required('Nhập tính năng tiếng Việt'),
             featuresen: Yup.string().required('Nhập tính năng tiếng Anh'),
             stock: Yup.string().required('Nhập tồn kho'),
-            descriptionvi: Yup.string().required('Nhập mô tả tiếng Việt'),
-            featuresvi: Yup.string().required('Nhập tính năng tiếng Việt'),
         }),
         onSubmit: async (values) => {
             const {
                 name,
                 brand,
                 type,
-                price,
+                originalPrice,
+                // finalPrice,
                 sex,
                 images,
-                collectionName,
+                collectionId,
+                descriptionvi,
                 descriptionen,
+                featuresvi,
                 featuresen,
+                note,
                 sold,
                 stock,
-                descriptionvi,
-                featuresvi,
+                isDelete,
             } = values;
-            console.log(values);
-            try {
-                await axiosClient.post('product/', {
-                    name: name,
-                    brand: brand,
-                    type: type,
-                    price: price,
-                    sex: sex,
-                    images: images,
-                    collectionName: collectionName,
-                    descriptionen: descriptionen,
-                    featuresen: featuresen.split(';'),
-                    sold: sold,
-                    stock: stock,
-                    descriptionvi: descriptionvi,
-                    featuresvi: featuresvi.split(';'),
-                });
-                toast.success('Thêm thành công!');
 
-                navigate('/products');
+            // console.log(values);
+
+            const formData = new FormData();
+            for (let i = 0; i < images.length; i++) {
+                formData.append('images', images[i]);
+            }
+            formData.append('name', name);
+            formData.append('brand', brand);
+            formData.append('type', type);
+            formData.append('originalPrice', originalPrice);
+            // formData.append('finalPrice', finalPrice);
+            formData.append('sex', sex);
+            formData.append('collectionId', collectionId);
+            formData.append('descriptionvi', descriptionvi);
+            formData.append('descriptionen', descriptionen);
+            formData.append('featuresvi', featuresvi.split(';'));
+            formData.append('featuresen', featuresen.split(';'));
+            formData.append('note', note);
+            formData.append('sold', sold);
+            formData.append('stock', stock);
+            formData.append('isDelete', isDelete);
+            console.log(formData);
+
+            try {
+                // await axiosClient.post('product/', {
+                //     name: name,
+                //     brand: brand,
+                //     type: type,
+                //     originalPrice: originalPrice,
+                //     finalPrice: finalPrice,
+                //     sex: sex,
+                //     files: files,
+                //     collectionId: collectionId,
+                //     descriptionvi: descriptionvi,
+                //     descriptionen: descriptionen,
+                //     featuresvi: featuresvi.split(';'),
+                //     featuresen: featuresen.split(';'),
+                //     note: note,
+                //     sold: sold,
+                //     stock: stock,
+                //     isDelete: isDelete,
+                // });
+                const res = await axiosClient.post('product/', formData);
+                if (res) {
+                    toast.success('Thêm thành công!');
+                    navigate('/products');
+                }
             } catch (error) {
                 toast.error(error);
             }
@@ -102,7 +156,27 @@ export default function NewProduct() {
             <form onSubmit={formik.handleSubmit} className={cx('add-product-form')} spellCheck="false">
                 <div className={cx('add-product-item')}>
                     <label>Hình ảnh</label>
-                    <input type="file" id="image" />
+                    {/* <input type="file" id="image" /> */}
+                    <input
+                        className={cx('input-image')}
+                        type="file"
+                        id="images"
+                        name="images"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => handleMultiFile(e)}
+                    />
+                    <div className={cx('list-img')}>
+                        {delImg.map((img, i) => (
+                            <div className={cx('img')} key={i}>
+                                <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
+                                <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                    X
+                                </i>
+                            </div>
+                        ))}
+                    </div>
+                    {formik.errors.images && <div className={cx('input-feedback')}>{formik.errors.images}</div>}
                 </div>
                 <div className={cx('add-product-item')}>
                     <label>Loại</label>
@@ -125,9 +199,6 @@ export default function NewProduct() {
                         </option>
                         <option value="bracelet" label="Bracelet">
                             Bracelet
-                        </option>
-                        <option value="box" label="Box">
-                            Box
                         </option>
                     </select>
                     {formik.errors.type && <div className={cx('input-feedback')}>{formik.errors.type}</div>}
@@ -161,9 +232,9 @@ export default function NewProduct() {
                     <label>Danh mục</label>
                     <select
                         className={cx('select-item')}
-                        id="collectionName"
-                        name="collectionName"
-                        value={formik.values.collectionName}
+                        id="collectionId"
+                        name="collectionId"
+                        value={formik.values.collectionId}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     >
@@ -172,14 +243,14 @@ export default function NewProduct() {
                         </option>
                         {collections.map((col, index) => {
                             return (
-                                <option key={index} value={col.name} label={col.name}>
+                                <option key={index} value={col._id} label={col.name}>
                                     {col.name}
                                 </option>
                             );
                         })}
                     </select>
-                    {formik.errors.collectionName && (
-                        <div className={cx('input-feedback')}>{formik.errors.collectionName}</div>
+                    {formik.errors.collectionId && (
+                        <div className={cx('input-feedback')}>{formik.errors.collectionId}</div>
                     )}
                 </div>
 
@@ -219,18 +290,33 @@ export default function NewProduct() {
                 <div className={cx('add-product-item')}>
                     <InputField
                         type="number"
-                        id="price"
-                        name="price"
+                        id="originalPrice"
+                        name="originalPrice"
                         placeholder="."
-                        value={formik.values.price}
+                        value={formik.values.originalPrice}
                         label={'Giá'}
                         require
-                        touched={formik.touched.price}
-                        error={formik.errors.price}
+                        touched={formik.touched.originalPrice}
+                        error={formik.errors.originalPrice}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     />
                 </div>
+                {/* <div className={cx('add-product-item')}>
+                    <InputField
+                        type="number"
+                        id="finalPrice"
+                        name="finalPrice"
+                        placeholder="."
+                        value={formik.values.finalPrice}
+                        label={'Giá cuối'}
+                        require
+                        touched={formik.touched.finalPrice}
+                        error={formik.errors.finalPrice}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                </div> */}
 
                 <div className={cx('add-product-item')}>
                     <InputField
@@ -303,6 +389,21 @@ export default function NewProduct() {
                         require
                         touched={formik.touched.featuresvi}
                         error={formik.errors.featuresvi}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                </div>
+                <div className={cx('add-product-item')}>
+                    <InputField
+                        type="textarea"
+                        id="note"
+                        name="note"
+                        placeholder="."
+                        value={formik.values.note}
+                        label={'Ghi chú'}
+                        require
+                        touched={formik.touched.note}
+                        error={formik.errors.note}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     />

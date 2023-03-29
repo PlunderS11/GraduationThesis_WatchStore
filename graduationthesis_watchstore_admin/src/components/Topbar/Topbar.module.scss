@@ -1,10 +1,12 @@
 .topbar {
     width: 100%;
-    height: 50px;
+    height: 55px;
     background-color: white;
     position: sticky;
     top: 0;
     z-index: 999;
+    border-bottom: 3px solid black;
+    padding-bottom: 10px;
 }
 
 .topbar-wrapper {
@@ -14,10 +16,15 @@
     align-items: center;
     justify-content: space-between;
 }
-
+.logo-img {
+    width: 100px;
+    height: 50px;
+    padding-top: 15px;
+    margin: 0 10px 0 0;
+}
 .logo {
     font-weight: bold;
-    font-size: 30px;
+    font-size: 45px;
     color: #000000;
     cursor: pointer;
 }

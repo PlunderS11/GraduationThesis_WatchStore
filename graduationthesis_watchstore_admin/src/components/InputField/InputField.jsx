@@ -4,14 +4,30 @@ import style from './InputField.module.scss';
 
 const cx = classNames.bind(style);
 
-function InputField({ type, id, name, placeholder, value, label, require, touched, error, onChange, onBlur }) {
+function InputField({
+    type,
+    id,
+    name,
+    placeholder,
+    value,
+    label,
+    require,
+    touched,
+    error,
+    onChange,
+    onBlur,
+    readonly,
+    customClass,
+}) {
     const Tag = type === 'textarea' ? 'textarea' : 'input';
 
     return (
         <>
-            <div className={cx('input-field')}>
+            <div className={cx('input-field', customClass?.['textfeild'])}>
                 <Tag
+                    className={cx(customClass?.['textfeild'])}
                     type={type}
+                    readOnly={readonly}
                     id={id}
                     name={name}
                     placeholder={placeholder}

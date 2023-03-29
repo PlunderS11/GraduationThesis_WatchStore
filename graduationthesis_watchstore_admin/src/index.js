@@ -11,13 +11,13 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 
 root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <GlobalStyles>
-                <App />
-            </GlobalStyles>
-        </Provider>
-    </React.StrictMode>,
+    // <React.StrictMode>
+    <Provider store={store}>
+        <GlobalStyles>
+            <App />
+        </GlobalStyles>
+    </Provider>,
+    // </React.StrictMode>,
 );
 
 reportWebVitals();

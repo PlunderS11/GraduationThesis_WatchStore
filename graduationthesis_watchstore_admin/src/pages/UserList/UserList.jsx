@@ -2,10 +2,10 @@ import { useState } from 'react';
 import classNames from 'classnames/bind';
 
 import styles from './UserList.module.scss';
-import { DataGrid } from '@material-ui/data-grid';
 import { DeleteOutline } from '@material-ui/icons';
 import { userRows } from '../../data/dummyData.js';
 import { Link } from 'react-router-dom';
+import Grid from '~/components/Grid/Grid';
 
 const cx = classNames.bind(styles);
 
@@ -17,11 +17,11 @@ export default function UserList() {
     };
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 100 },
+        { field: '_id', headerName: 'ID', width: 100 },
         {
             field: 'user',
             headerName: 'Tên khách hàng',
-            width: 300,
+            width: 275,
             renderCell: (params) => {
                 return (
                     <div className={cx('user-list-user')}>
@@ -35,7 +35,7 @@ export default function UserList() {
         {
             field: 'status',
             headerName: 'Trạng thái',
-            width: 300,
+            width: 275,
         },
         {
             field: 'transaction',
@@ -61,7 +61,20 @@ export default function UserList() {
 
     return (
         <div className={cx('user-list')}>
-            <DataGrid rows={data} disableSelectionOnClick columns={columns} pageSize={10} checkboxSelection />
+            <div className={cx('grid')}>
+                {/* <DataGridPro
+                    components={{ Toolbar: GridToolbar }}
+                    rows={data}
+                    disableRowSelectionOnClick
+                    disableColumnResize
+                    columns={columns}
+                    // getRowId={(row) => row._id}
+                    pagination
+                    autoPageSize={true}
+                    rowHeight={58}
+                /> */}
+                <Grid headers={columns} datas={userRows} rowHeight={54} />
+            </div>
         </div>
     );
 }
