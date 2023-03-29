@@ -151,7 +151,7 @@ router.get('/link', async (req, res) => {
 // GET ALL PRODUCT
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find().populate('collectionObj');
         res.status(200).json({ data: { products: products }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);
@@ -162,7 +162,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
 //GET COLLECTIONS UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const products_undeleted = await Product.find({ isDelete: false }).exec();
+        const products_undeleted = await Product.find({ isDelete: false }).populate('collectionObj').exec();
 
         res.status(200).json({ data: { products_undeleted: products_undeleted }, message: 'success', status: 200 });
     } catch (error) {
@@ -174,7 +174,7 @@ router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
 //GET COLLECTIONS DELETED
 router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const products_deleted = await Product.find({ isDelete: true }).exec();
+        const products_deleted = await Product.find({ isDelete: true }).populate('collectionObj').exec();
 
         res.status(200).json({ data: { products_deleted: products_deleted }, message: 'success', status: 200 });
     } catch (error) {
@@ -219,7 +219,7 @@ router.get('/detail/:slug/:amount', async (req, res) => {
 // GET PRODUCT BY ID
 router.get('/detail/:id', async (req, res) => {
     try {
-        const product = await Product.findOne({ _id: req.params.id }).exec();
+        const product = await Product.findOne({ _id: req.params.id }).populate('collectionObj').exec();
 
         res.status(200).json({ data: { detailProduct: product }, message: 'success', status: 200 });
     } catch (error) {

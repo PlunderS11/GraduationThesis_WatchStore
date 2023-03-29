@@ -176,6 +176,7 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                     packageDate: new Date(),
                     deliveringDate: new Date(),
                     completeDate: new Date(),
+                    cancelDate: new Date(),
                 },
                 phone: req.body.phone,
                 address: req.body.address,
@@ -268,6 +269,13 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                     completeDate: new Date(),
                 };
                 break;
+            case 'CANCEL':
+                 status = {
+                    ...order.status._doc,
+                    state: 'CANCEL',
+                    cancelDate: new Date(),
+                };
+                break;
             default:
                 break;
         }
@@ -299,6 +307,26 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
             .sort({ dateOrdered: -1 })
             .exec();
         res.status(200).json({ data: { orderList, total: orderList.length }, message: 'success', status: 200 });
+    } catch (error) {
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
+// GET ORDER BY ID
+// ADMIN
+router.get('/admin/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const order = await Order.findOne({ _id: req.params.id})
+            .populate('user')
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
+            .populate('promotion')
+            .exec();
+        res.status(200).json({ data: { order: order }, message: 'success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
