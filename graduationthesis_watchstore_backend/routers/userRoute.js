@@ -73,4 +73,51 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+//GET USERS ROLE USER
+router.get('/users/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const users = await User.find({role: 'user'});
+        res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+});
+
+// DELETE USER
+router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: true,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: ' Delete user success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
+// RESTORE USER
+router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                isDelete: false,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: {}, message: 'Restore user success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
 module.exports = router;

@@ -157,7 +157,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
-//GET COLLECTIONS UNDELETED
+//GET PRODUCT UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
         const products_undeleted = await Product.find({ isDelete: false }).populate('collectionObj').exec();
@@ -169,7 +169,7 @@ router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
-//GET COLLECTIONS DELETED
+//GET PRODUCT DELETED
 router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
         const products_deleted = await Product.find({ isDelete: true }).populate('collectionObj').exec();
