@@ -1,15 +1,12 @@
+import { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
-import styles from './ProductList.module.scss';
-
-// import { DeleteOutline } from '@material-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
-
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Modal, Spin, Tabs } from 'antd';
 
+import styles from './PromotionList.module.scss';
 import Button from '~/components/Button/Button';
 import axiosClient from '~/api/axiosClient';
-import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Grid from '~/components/Grid/Grid';
 
@@ -17,31 +14,32 @@ import * as moment from 'moment';
 
 const cx = classNames.bind(styles);
 
-export default function ProductList() {
+export default function PromotionList() {
     const location = useLocation();
+
     const { confirm } = Modal;
-    const [productsDeleted, setProductsDeleted] = useState([]);
-    const [productsUneleted, setProductsUneleted] = useState([]);
+    const [promotionsDeleted, setPromotionsDeleted] = useState([]);
+    const [promotionsUneleted, setPromotionsUneleted] = useState([]);
     const [loading, setLoading] = useState(false);
     const [key, setKey] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
-        const getProducts_deleted = async () => {
-            const res = await axiosClient.get('product/deleted/');
 
-            setProductsDeleted(res.data.products_deleted);
+        const getPromotions_deleted = async () => {
+            const res = await axiosClient.get('promotion/deleted/');
+            setPromotionsDeleted(res.data.promotions_deleted);
         };
-        getProducts_deleted();
-        const getProducts_undeleted = async () => {
-            const res = await axiosClient.get('product/undeleted/');
-            setProductsUneleted(res.data.products_undeleted);
+        getPromotions_deleted();
+
+        const getPromotions_undeleted = async () => {
+            const res = await axiosClient.get('promotion/undeleted/');
+            setPromotionsUneleted(res.data.promotions_undeleted);
         };
-        getProducts_undeleted();
+        getPromotions_undeleted();
+
         setLoading(false);
     };
-
-    // console.log(productsUneleted);
 
     useEffect(() => {
         setLoading(true);
@@ -55,7 +53,7 @@ export default function ProductList() {
     const handleDelete = async (id) => {
         setLoading(true);
         try {
-            const res = await axiosClient.put('product/delete/' + id);
+            const res = await axiosClient.put('promotion/delete/' + id);
             if (res) {
                 toast.success('Xóa thành công');
                 fecthData();
@@ -68,7 +66,8 @@ export default function ProductList() {
     const handleReStore = async (id) => {
         setLoading(true);
         try {
-            const res = await axiosClient.put('product/restore/' + id);
+            const res = await axiosClient.put('promotion/restore/' + id);
+
             if (res) {
                 toast.success('Khôi phục thành công');
                 fecthData();
@@ -80,9 +79,9 @@ export default function ProductList() {
 
     const showDeleteConfirm = (id) => {
         confirm({
-            title: 'XÓA SẢN PHẨM',
+            title: 'XÓA KHUYẾN MÃI',
             icon: <ExclamationCircleFilled />,
-            content: 'Bạn chắc chắn muốn xóa sản phẩm?',
+            content: 'Bạn chắc chắn muốn xóa khuyến mãi?',
             okText: 'Xóa',
             okType: 'danger',
             cancelText: 'Trở lại',
@@ -95,9 +94,9 @@ export default function ProductList() {
 
     const showRestoreConfirm = (id) => {
         confirm({
-            title: 'KHÔI PHỤC SẢN PHẨM',
+            title: 'KHÔI PHỤC KHUYẾN MÃI',
             icon: <ExclamationCircleFilled />,
-            content: 'Bạn chắc chắn muốn khôi phục sản phẩm?',
+            content: 'Bạn chắc chắn muốn khôi phục khuyển mãi?',
             okText: 'Khôi phục',
             okType: 'primary',
             cancelText: 'Trở lại',
@@ -107,88 +106,40 @@ export default function ProductList() {
             onCancel() {},
         });
     };
-    function NumberWithCommas(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' VNĐ';
-    }
 
     const columns_deleted = [
         {
-            field: 'products',
-            headerClassName: 'super-app-theme--header',
+            field: 'title',
             headerAlign: 'center',
-            headerName: 'Hình ảnh',
-            width: 125,
-            filterable: false,
-
-            renderCell: (params) => {
-                return (
-                    <div className={cx('product-list-item')}>
-                        <img src={params.row.images[0]} className={cx('product-list-img')} alt="img" />
-                    </div>
-                );
-            },
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên khuyến mãi',
+            width: 300,
         },
         {
-            field: 'name',
+            field: 'code',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên sản phẩm',
-            width: 220,
+            headerName: 'Mã khuyến mãi',
+            width: 250,
         },
         {
-            field: 'type',
+            field: 'value',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Loại',
-            width: 80,
-        },
-        {
-            field: 'produts_collectionName',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Danh mục',
-            width: 175,
-            renderCell: (params) => {
-                return (
-                    <>
-                        <div>{params.row.collectionObj.name}</div>
-                    </>
-                );
-            },
-        },
-        {
-            field: 'stock',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Tồn',
-            width: 55,
+            headerName: 'Giá trị khuyến mãi',
+            width: 200,
             type: 'number',
-        },
-        {
-            field: 'produts_price',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Giá',
-            width: 150,
             renderCell: (params) => {
-                return (
-                    <>
-                        <div className={cx('price_cell')}>
-                            <span className={cx('price_cell_value')}>
-                                {NumberWithCommas(Number(params.row.finalPrice))}
-                            </span>
-                        </div>
-                    </>
-                );
+                return <div className={cx('product-list-item')}>{params.row.value}%</div>;
             },
         },
+
         {
-            field: 'createdAt',
-            align: 'center',
+            field: 'startDate',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày tạo',
-            width: 130,
+            headerName: 'Ngày bắt đầu',
+            width: 160,
             type: 'date',
 
             valueFormatter: function (params) {
@@ -196,12 +147,12 @@ export default function ProductList() {
             },
         },
         {
-            field: 'updatedAt',
+            field: 'endDate',
             align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày cập nhật',
-            width: 135,
+            headerName: 'Ngày kết thúc',
+            width: 160,
             type: 'date',
 
             valueFormatter: function (params) {
@@ -210,6 +161,7 @@ export default function ProductList() {
         },
         {
             field: 'action',
+            align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
@@ -218,7 +170,7 @@ export default function ProductList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/product/' + params.row._id}>
+                        <Link to={'/promotion/' + params.row._id}>
                             <button className={cx('product-list-edit')}>Chỉnh sửa</button>
                         </Link>
 
@@ -236,82 +188,38 @@ export default function ProductList() {
 
     const columns_undeleted = [
         {
-            field: 'products',
+            field: 'title',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Hình ảnh',
-            width: 125,
-            filterable: false,
-
-            renderCell: (params) => {
-                return (
-                    <div className={cx('product-list-item')}>
-                        <img src={params.row.images[0]} className={cx('product-list-img')} alt="img" />
-                    </div>
-                );
-            },
+            headerName: 'Tên khuyến mãi',
+            width: 300,
         },
         {
-            field: 'name',
+            field: 'code',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên sản phẩm',
-            width: 220,
+            headerName: 'Mã khuyến mãi',
+            width: 250,
         },
         {
-            field: 'type',
+            field: 'value',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Loại',
-            width: 80,
-        },
-        {
-            field: 'produts_collectionName',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Danh mục',
-            width: 175,
-            renderCell: (params) => {
-                return (
-                    <>
-                        <div>{params.row.collectionObj.name}</div>
-                    </>
-                );
-            },
-        },
-        {
-            field: 'stock',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Tồn',
-            width: 55,
+            headerName: 'Giá trị khuyến mãi',
+            width: 200,
             type: 'number',
-        },
-        {
-            field: 'produts_price',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Giá',
-            width: 150,
             renderCell: (params) => {
-                return (
-                    <>
-                        <div className={cx('price_cell')}>
-                            <span className={cx('price_cell_value')}>
-                                {NumberWithCommas(Number(params.row.finalPrice))}
-                            </span>
-                        </div>
-                    </>
-                );
+                return <div className={cx('product-list-item')}>{params.row.value}%</div>;
             },
         },
+
         {
-            field: 'createdAt',
+            field: 'startDate',
             align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày tạo',
-            width: 130,
+            headerName: 'Ngày bắt đầu',
+            width: 160,
             type: 'date',
 
             valueFormatter: function (params) {
@@ -319,12 +227,12 @@ export default function ProductList() {
             },
         },
         {
-            field: 'updatedAt',
+            field: 'endDate',
             align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày cập nhật',
-            width: 135,
+            headerName: 'Ngày kết thúc',
+            width: 160,
             type: 'date',
 
             valueFormatter: function (params) {
@@ -342,10 +250,9 @@ export default function ProductList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/product/' + params.row._id}>
+                        <Link to={'/promotion/' + params.row._id}>
                             <button className={cx('product-list-edit')}>Chỉnh sửa</button>
                         </Link>
-
                         <Button
                             className={cx('product-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
@@ -361,7 +268,7 @@ export default function ProductList() {
     const items = [
         {
             key: '1',
-            label: `Sản phẩm`,
+            label: `Khuyến mãi`,
             children: ``,
         },
         {
@@ -382,16 +289,16 @@ export default function ProductList() {
     return (
         <div className={cx('product-list')}>
             <Spin spinning={loading}>
-                <label className={cx('label')}>DANH SÁCH DANH MỤC</label>
-                <Link to="/newproduct">
-                    <Button customClass={styles}>Thêm sản phẩm</Button>
+                <label className={cx('label')}>DANH SÁCH KHUYẾN MÃI</label>
+                <Link to="/newpromotion">
+                    <Button customClass={styles}>Thêm khuyến mãi</Button>
                 </Link>
                 <div className={cx('grid')}>
                     <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
                     {key === false ? (
                         <Grid
                             headers={columns_undeleted}
-                            datas={productsUneleted}
+                            datas={promotionsUneleted}
                             rowHeight={63}
                             pagesize={6}
                             hideToolbar={false}
@@ -399,8 +306,8 @@ export default function ProductList() {
                     ) : (
                         <Grid
                             headers={columns_deleted}
-                            datas={productsDeleted}
-                            rowHeight={63}
+                            datas={promotionsDeleted}
+                            rowHeight={64}
                             pagesize={6}
                             hideToolbar={false}
                         />

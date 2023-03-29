@@ -11,7 +11,7 @@ export default function WidgetSm() {
             <span className={cx('widget-sm-title')}>Khách hàng mới</span>
             <ul className={cx('widget-sm-list')}>
                 {userRows.map((user) => (
-                    <li className={cx('widget-sm-list-item')} key={user.id}>
+                    <li className={cx('widget-sm-list-item')} key={user._id}>
                         <img
                             src={user.avatar || 'https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif'}
                             alt=""

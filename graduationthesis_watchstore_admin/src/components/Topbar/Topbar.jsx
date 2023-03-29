@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames/bind';
 
 import styles from './Topbar.module.scss';
+import logo from '~/assets/images/logo-black-removebg-preview.png';
 
 const cx = classNames.bind(styles);
 
@@ -10,6 +11,7 @@ export default function Topbar() {
         <div className={cx('topbar')}>
             <div className={cx('topbar-wrapper')}>
                 <div className={cx('top-left')}>
+                    <img className={cx('logo-img')} src={logo} alt="" />
                     <span className={cx('logo')}>MYNHBAKE WATCH STORE</span>
                 </div>
                 <div className={cx('top-right')}>

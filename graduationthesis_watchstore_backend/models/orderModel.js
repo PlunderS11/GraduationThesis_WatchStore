@@ -22,6 +22,10 @@ const orderStatus = {
         type: Date,
         required: true,
     },
+    cancelDate: {
+        type: Date,
+        required: true,
+    },
 };
 
 const OrderSchema = mongoose.Schema(

@@ -124,4 +124,28 @@ router.get('/detail/:id', async (req, res) => {
     }
 });
 
+//GET PROMOTIONS UNDELETED
+router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const promotions_undeleted = await Promotion.find({ isDelete: false }).exec();
+
+        res.status(200).json({ data: { promotions_undeleted: promotions_undeleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+//GET PROMOTIONS DELETED
+router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const promotions_deleted = await Promotion.find({ isDelete: true }).exec();
+
+        res.status(200).json({ data: { promotions_deleted: promotions_deleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
 module.exports = router;

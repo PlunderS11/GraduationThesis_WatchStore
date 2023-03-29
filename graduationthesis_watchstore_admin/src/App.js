@@ -5,7 +5,8 @@ import jwt_decode from 'jwt-decode';
 import './App.css';
 import MasterLayout from './layouts/MasterLayout ';
 import Topbar from './components/Topbar/Topbar';
-import Sidebar from './components/Sidebar/Sidebar';
+import MenuSideBar from './components/Menu/MenuSideBar';
+// import Sidebar from './components/Sidebar/Sidebar';
 import { setCurrentUser } from '~/features/user/userSlice';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
@@ -15,8 +16,14 @@ import NewUser from '~/pages/NewUser';
 import ProductList from '~/pages/ProductList';
 import Product from '~/pages/Product';
 import NewProduct from '~/pages/NewProduct';
+import Collection from './pages/Collection';
 import CollectionList from './pages/CollectionList';
 import NewCollection from './pages/NewCollection';
+import PromotionList from './pages/PromotionList';
+import NewPromotion from './pages/NewPromotion';
+import Promotion from './pages/Promotion';
+import OrderList from './pages/OrderList';
+import Order from './pages/Order';
 
 function App() {
     const user = useSelector((state) => state.user);
@@ -50,7 +57,8 @@ function App() {
                                     <Topbar />
                                     <div className="container">
                                         <div className="sidebar">
-                                            <Sidebar />
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
                                         </div>
                                         <Home />
                                     </div>
@@ -71,7 +79,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <UserList />
                                 </div>
@@ -85,7 +94,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <User />
                                 </div>
@@ -99,7 +109,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <NewUser />
                                 </div>
@@ -113,7 +124,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <ProductList />
                                 </div>
@@ -127,7 +139,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <Product />
                                 </div>
@@ -141,7 +154,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <NewProduct />
                                 </div>
@@ -155,7 +169,8 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <CollectionList />
                                 </div>
@@ -169,9 +184,100 @@ function App() {
                                 <Topbar />
                                 <div className="container">
                                     <div className="sidebar">
-                                        <Sidebar />
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
                                     </div>
                                     <NewCollection />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/collection/:collectionId"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <Collection />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/promotions"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <PromotionList />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/newpromotion"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <NewPromotion />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/promotion/:promotionId"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <Promotion />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/orders"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <OrderList />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/order/:orderId"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <Order />
                                 </div>
                             </>
                         }
