@@ -6,24 +6,14 @@ import './App.css';
 import MasterLayout from './layouts/MasterLayout ';
 import Topbar from './components/Topbar/Topbar';
 import MenuSideBar from './components/Menu/MenuSideBar';
-// import Sidebar from './components/Sidebar/Sidebar';
 import { setCurrentUser } from '~/features/user/userSlice';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import UserList from '~/pages/UserList';
-// import User from '~/pages/User';
-// import NewUser from '~/pages/NewUser';
 import ProductList from '~/pages/ProductList';
-import Product from '~/pages/Product';
-import NewProduct from '~/pages/NewProduct';
-// import Collection from './pages/Collection';
 import CollectionList from './pages/CollectionList';
-// import NewCollection from './pages/NewCollection';
 import PromotionList from './pages/PromotionList';
-// import NewPromotion from './pages/NewPromotion';
-// import Promotion from './pages/Promotion';
 import OrderList from './pages/OrderList';
-import Order from './pages/Order';
 
 function App() {
     const user = useSelector((state) => state.user);
@@ -88,36 +78,6 @@ function App() {
                         }
                     />
                     <Route
-                    // path="/user/:userId"
-                    // element={
-                    //     <>
-                    //         <Topbar />
-                    //         <div className="container">
-                    //             <div className="sidebar">
-                    //                 {/* <Sidebar /> */}
-                    //                 <MenuSideBar />
-                    //             </div>
-                    //             <User />
-                    //         </div>
-                    //     </>
-                    // }
-                    />
-                    <Route
-                    // path="/newUser"
-                    // element={
-                    //     <>
-                    //         <Topbar />
-                    //         <div className="container">
-                    //             <div className="sidebar">
-                    //                 {/* <Sidebar /> */}
-                    //                 <MenuSideBar />
-                    //             </div>
-                    //             <NewUser />
-                    //         </div>
-                    //     </>
-                    // }
-                    />
-                    <Route
                         path="/products"
                         element={
                             <>
@@ -128,36 +88,6 @@ function App() {
                                         <MenuSideBar />
                                     </div>
                                     <ProductList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/product/:productId"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
-                                    </div>
-                                    <Product />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/newproduct"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
-                                    </div>
-                                    <NewProduct />
                                 </div>
                             </>
                         }
@@ -178,36 +108,6 @@ function App() {
                         }
                     />
                     <Route
-                    // path="/newcollection"
-                    // element={
-                    //     <>
-                    //         <Topbar />
-                    //         <div className="container">
-                    //             <div className="sidebar">
-                    //                 {/* <Sidebar /> */}
-                    //                 <MenuSideBar />
-                    //             </div>
-                    //             <NewCollection />
-                    //         </div>
-                    //     </>
-                    // }
-                    />
-                    <Route
-                    // path="/collection/:collectionId"
-                    // element={
-                    //     <>
-                    //         <Topbar />
-                    //         <div className="container">
-                    //             <div className="sidebar">
-                    //                 {/* <Sidebar /> */}
-                    //                 <MenuSideBar />
-                    //             </div>
-                    //             <Collection />
-                    //         </div>
-                    //     </>
-                    // }
-                    />
-                    <Route
                         path="/promotions"
                         element={
                             <>
@@ -223,36 +123,6 @@ function App() {
                         }
                     />
                     <Route
-                    // path="/newpromotion"
-                    // element={
-                    //     <>
-                    //         <Topbar />
-                    //         <div className="container">
-                    //             <div className="sidebar">
-                    //                 {/* <Sidebar /> */}
-                    //                 <MenuSideBar />
-                    //             </div>
-                    //             <NewPromotion />
-                    //         </div>
-                    //     </>
-                    // }
-                    />
-                    <Route
-                    // path="/promotion/:promotionId"
-                    // element={
-                    //     <>
-                    //         <Topbar />
-                    //         <div className="container">
-                    //             <div className="sidebar">
-                    //                 {/* <Sidebar /> */}
-                    //                 <MenuSideBar />
-                    //             </div>
-                    //             <Promotion />
-                    //         </div>
-                    //     </>
-                    // }
-                    />
-                    <Route
                         path="/orders"
                         element={
                             <>
@@ -263,21 +133,6 @@ function App() {
                                         <MenuSideBar />
                                     </div>
                                     <OrderList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/order/:orderId"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
-                                    </div>
-                                    <Order />
                                 </div>
                             </>
                         }

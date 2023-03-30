@@ -1,16 +1,16 @@
-.product {
+.orderupdate {
     flex: 4;
     padding: 0 20px 20px 20px;
     margin-top: 20px;
 }
 
-.product-title-container {
+.orderupdate-title-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.product-add-button {
+.orderupdate-add-button {
     width: 80px;
     border: none;
     padding: 5px;
@@ -22,24 +22,24 @@
     cursor: pointer;
 }
 
-.product-top {
+.orderupdate-top {
     // display: flex;
     flex: 1;
 }
 
-.product-top-left,
-.product-top-right {
+.orderupdate-top-left,
+.orderupdate-top-right {
     flex: 1;
 }
 
-.product-top-right {
+.orderupdate-top-right {
     padding: 20px;
     margin: 20px;
     -webkit-box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
 }
 
-.product-info-img {
+.orderupdate-info-img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -47,60 +47,60 @@
     margin-right: 20px;
 }
 
-.product-info-top {
+.orderupdate-info-top {
     display: flex;
     align-items: center;
 }
 
-.product-name {
+.orderupdate-name {
     font-weight: 600;
 }
 
-.product-info-bottom {
+.orderupdate-info-bottom {
     margin-top: 10px;
 }
 
-.product-info-item {
+.orderupdate-info-item {
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
 
-.product-info-key {
+.orderupdate-info-key {
     font-weight: 300;
     font-size: 1.5rem;
     margin: 7px;
 }
 
-.product-info-value {
+.orderupdate-info-value {
     font-weight: 300;
     font-size: 1.5rem;
     margin: 7px;
 }
 
-.product-bottom {
+.orderupdate-bottom {
     padding: 20px;
     margin: 20px;
     -webkit-box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
 }
 
-.product-form {
+.orderupdate-form {
     display: flex;
     justify-content: space-between;
 }
 
-.product-form-left {
+.orderupdate-form-left {
     display: flex;
     flex-direction: column;
 }
 
-.product-form-left > label {
+.orderupdate-form-left > label {
     margin-bottom: 10px;
     color: gray;
 }
 
-.product-form-left > input {
+.orderupdate-form-left > input {
     width: 550px;
     margin-bottom: 10px;
     border: none;
@@ -108,11 +108,11 @@
     border-bottom: 1px solid gray;
 }
 
-.product-form-left > select {
+.orderupdate-form-left > select {
     margin-bottom: 10px;
 }
 
-.product-upload-img {
+.orderupdate-upload-img {
     width: 200px;
     height: 200px;
     border-radius: 10px;
@@ -120,7 +120,7 @@
     margin-right: 20px;
 }
 
-.product-form-right {
+.orderupdate-form-right {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -128,12 +128,12 @@
     padding-right: 180px;
 }
 
-.product-upload {
+.orderupdate-upload {
     display: flex;
     align-items: center;
 }
 
-.product-button {
+.orderupdate-button {
     border: none;
     padding: 5px;
     border-radius: 5px;
@@ -142,7 +142,7 @@
     font-weight: 600;
     cursor: pointer;
 }
-.add-product-form {
+.add-orderupdate-form {
     // padding-left: 75px;
     display: flex;
     flex-direction: column;
@@ -155,13 +155,13 @@
     margin: 20px 20px 20px 0;
 }
 
-.add-product-item {
-    width: 1000px;
+.add-orderupdate-item {
+    width: 700px;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
-.add-product-item > label {
+.add-orderupdate-item > label {
     // justify-content: center;
     text-align: center;
     font-weight: 600;
@@ -169,8 +169,8 @@
 }
 
 .button {
-    margin: 10px 10px 10px 0px;
-    width: 1000px;
+    margin: 10px 10px 10px 10px;
+    width: 700px;
 }
 
 .select-item {
@@ -248,70 +248,4 @@
 .textfeild {
     color: #cccccc;
     cursor: not-allowed;
-}
-
-table,
-td,
-th {
-    border: 1px solid #cccccc;
-}
-
-th {
-    height: 50px;
-    font-weight: 600;
-}
-td {
-    height: 40px;
-    padding: 10px;
-}
-
-.table_time {
-    width: 85%;
-    border-collapse: collapse;
-}
-
-.table_orderDetail {
-    width: 85%;
-    border-collapse: collapse;
-}
-
-.th_orderDetail {
-    width: 20%;
-}
-
-.img_orderDetail {
-    height: 100px;
-    width: 100px;
-}
-
-.td_img_orderDetail {
-    padding: 10px;
-    text-align: center;
-    width: 20%;
-}
-
-.td_price_orderDetail {
-    padding: 10px;
-    text-align: right;
-    width: 20%;
-}
-
-.td_name_orderDetail {
-    padding: 10px;
-    width: 20%;
-}
-
-.td_amount_orderDetail {
-    padding: 10px;
-    width: 20%;
-    text-align: center;
-}
-
-.td_title_total_orderDetail {
-    width: 80%;
-    text-align: right;
-}
-.td_price_total_orderDetail {
-    width: 20%;
-    text-align: right;
 }

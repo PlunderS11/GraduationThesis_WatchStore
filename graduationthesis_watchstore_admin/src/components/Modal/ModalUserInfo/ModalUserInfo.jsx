@@ -47,6 +47,9 @@ const ModalUserInfo = (props) => {
                     {/* <h1 className={cx('add-product-title')}>Cập nhật danh mục</h1> */}
                     <form className={cx('add-user-form')} spellCheck="false">
                         <div className={cx('add-user-item')}>
+                            <label>Thông tin khách hàng</label>
+                        </div>
+                        <div className={cx('add-user-item')}>
                             <InputField
                                 customClass={styles}
                                 readonly={true}

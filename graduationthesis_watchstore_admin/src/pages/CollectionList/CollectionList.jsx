@@ -140,7 +140,7 @@ export default function CollectionList() {
                             <button className={cx('product-list-edit')}>Chỉnh sửa</button>
                         </Link> */}
                         <button
-                            className={cx('collection-list-edit')}
+                            className={cx('collection-list-edit-1')}
                             onClick={() => {
                                 setOpen(true);
                                 setId(params.row._id);
@@ -149,12 +149,12 @@ export default function CollectionList() {
                             Chỉnh sửa
                         </button>
 
-                        <Button
+                        <button
                             className={cx('collection-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
                         >
                             Xóa
-                        </Button>
+                        </button>
                     </>
                 );
             },
@@ -206,12 +206,12 @@ export default function CollectionList() {
                             Chỉnh sửa
                         </button>
 
-                        <Button
+                        <button
                             className={cx('collection-list-restore-button')}
                             onClick={() => showRestoreConfirm(params.row._id)}
                         >
                             Khôi phục
-                        </Button>
+                        </button>
                     </>
                 );
             },
@@ -245,6 +245,7 @@ export default function CollectionList() {
             <div className={cx('collection-list')}>
                 <Spin spinning={loading}>
                     <label className={cx('label')}>DANH SÁCH DANH MỤC</label>
+                    <div style={{ height: 10 }}></div>
                     {/* <Link to="/newcollection">
                         <Button customClass={styles}>Thêm danh mục</Button>
                     </Link> */}
@@ -258,7 +259,7 @@ export default function CollectionList() {
                     </Button>
 
                     <div className={cx('grid')}>
-                        <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
+                        <Tabs type="card" defaultActiveKey="1" items={items} onChange={tabItemClick} />
                         {key === false ? (
                             <Grid
                                 headers={columns_undeleted}

@@ -186,12 +186,12 @@ export default function PromotionList() {
                             Chỉnh sửa
                         </button>
 
-                        <Button
+                        <button
                             className={cx('product-list-restore-button')}
                             onClick={() => showRestoreConfirm(params.row._id)}
                         >
                             Khôi phục
-                        </Button>
+                        </button>
                     </>
                 );
             },
@@ -254,6 +254,7 @@ export default function PromotionList() {
 
         {
             field: 'action',
+            align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
@@ -271,12 +272,13 @@ export default function PromotionList() {
                         >
                             Chỉnh sửa
                         </button>
-                        <Button
+
+                        <button
                             className={cx('product-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
                         >
                             Xóa
-                        </Button>
+                        </button>
                     </>
                 );
             },
@@ -309,6 +311,7 @@ export default function PromotionList() {
             <div className={cx('product-list')}>
                 <Spin spinning={loading}>
                     <label className={cx('label')}>DANH SÁCH KHUYẾN MÃI</label>
+                    <div style={{ height: 10 }}></div>
                     {/* <Link to="/newpromotion"> */}
                     <Button
                         customClass={styles}
@@ -320,7 +323,7 @@ export default function PromotionList() {
                     </Button>
                     {/* </Link> */}
                     <div className={cx('grid')}>
-                        <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
+                        <Tabs type="card" defaultActiveKey="1" items={items} onChange={tabItemClick} />
                         {key === false ? (
                             <Grid
                                 headers={columns_undeleted}
