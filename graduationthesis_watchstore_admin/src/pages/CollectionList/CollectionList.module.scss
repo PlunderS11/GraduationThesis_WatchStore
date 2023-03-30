@@ -1,15 +1,15 @@
-.product-list {
+.collection-list {
     flex: 4;
     margin-top: 20px;
     position: relative;
 }
 
-.product-list-item {
+.collection-list-item {
     display: flex;
     align-items: center;
 }
 
-.product-list-img {
+.collection-list-img {
     width: 75px;
     height: 75px;
     border-radius: 50%;
@@ -17,7 +17,7 @@
     margin-right: 10px;
 }
 
-.product-list-edit {
+.collection-list-edit {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -28,7 +28,7 @@
     margin-right: 20px;
 }
 
-.product-list-delete-button {
+.collection-list-delete-button {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -38,7 +38,7 @@
     margin-right: 20px;
 }
 
-.product-list-restore-button {
+.collection-list-restore-button {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -48,7 +48,7 @@
     margin-right: 20px;
 }
 
-.product-list-delete {
+.collection-list-delete {
     color: red;
     cursor: pointer;
 }

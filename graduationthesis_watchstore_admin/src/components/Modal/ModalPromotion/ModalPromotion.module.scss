@@ -1,31 +1,31 @@
-.new-product {
+.new-promotion {
     flex: 4;
     margin-left: 100px;
     margin-top: 20px;
 }
 
-.add-product-form {
+.add-promotion-form {
     margin-top: 10px;
 }
 
-.add-product-item {
+.add-promotion-item {
     width: 500px;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
 
-.add-product-item > label {
+.add-promotion-item > label {
     color: gray;
     font-weight: 600;
     margin-bottom: 10px;
 }
 
-.add-product-item > input {
+.add-promotion-item > input {
     padding: 10px;
 }
 
-.add-product-item > select {
+.add-promotion-item > select {
     padding: 10px;
 }
 

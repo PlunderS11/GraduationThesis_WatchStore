@@ -157,14 +157,17 @@ export default function NewProduct() {
                 <div className={cx('add-product-item')}>
                     <label>Hình ảnh</label>
                     {/* <input type="file" id="image" /> */}
+                    <label className={cx('input-image')} for="images">
+                        Chọn hình ảnh
+                    </label>
                     <input
-                        className={cx('input-image')}
                         type="file"
                         id="images"
                         name="images"
                         accept="image/*"
                         multiple
                         onChange={(e) => handleMultiFile(e)}
+                        hidden
                     />
                     <div className={cx('list-img')}>
                         {delImg.map((img, i) => (

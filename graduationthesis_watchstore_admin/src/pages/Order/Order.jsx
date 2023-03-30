@@ -1,49 +1,32 @@
 import classNames from 'classnames/bind';
-// import { Publish } from '@material-ui/icons';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-// import { toast } from 'react-toastify';
-// import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import styles from './Order.module.scss';
 import axiosClient from '~/api/axiosClient';
 import Button from '~/components/Button/Button';
 import InputField from '~/components/InputField/InputField';
-// import { productData } from '../../data/dummyData.js';
-// import Chart from '~/components/Chart/Chart';
-// import InputField from '~/components/InputField/InputField';
-// import Button from '~/components/Button/Button';
 
 const cx = classNames.bind(styles);
 
 export default function Order() {
-    // const navigate = useNavigate();
     const params = useParams();
     const [order, setOrder] = useState({});
-    const [user, setUser] = useState({});
+    const [recipient, setRecipient] = useState({});
     const [status, setStatus] = useState('');
     const [orderDetails, setOrderDetails] = useState([]);
-    // const [collectionObj, setcollectionObj] = useState({});
-    // const [img, setImg] = useState();
-    // const [collections, setCollections] = useState([]);
+    const [rerender, setRerender] = useState([]);
+
     const orderId = params.orderId;
-
-    // useEffect(() => {
-    //     const getCollections = async () => {
-    //         const res = await axiosClient.get('collections/allCols/');
-
-    //         setCollections(res.data.collections);
-    //     };
-    //     getCollections();
-    // }, []);
 
     useEffect(() => {
         const getProduct = async () => {
             const res = await axiosClient.get('order/admin/' + orderId);
             if (res) {
-                setUser(res.data.order.user);
+                setRecipient(res.data.order.recipient);
                 setStatus(res.data.order.status.state);
                 setOrderDetails(res.data.order.orderDetails);
                 var total_amout = 0;
@@ -56,111 +39,40 @@ export default function Order() {
         };
         getProduct();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    console.log(order);
-    //input img
-    //-----------------------------------------------------------
-    // const [image, setImage] = useState([]);
-    // const [delImg, setDelImg] = useState([]);
-
-    // const handleMultiFile = (e) => {
-    //     setImage(e.target.files);
-    //     setDelImg(Array.from(e.target.files));
-    // };
-
-    // const handleDelImg = (i) => {
-    //     delImg.splice(i, 1);
-    //     setDelImg([...delImg]);
-    //     setImage([...delImg]);
-    // };
-    //-----------------------------------------------------------
+    }, [rerender]);
 
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            username: user.username + '',
-            phone: order.phone + '',
+            username: recipient.username + '',
+            phone: recipient.phone + '',
         },
         validationSchema: Yup.object({
             username: Yup.string().required('Nhập tên Khách hàng'),
             phone: Yup.string().required('Nhập số điện thoại'),
         }),
-        // onSubmit: async (values) => {
-        //     const {
-        //         name,
-        //         brand,
-        //         type,
-        //         originalPrice,
-        //         finalPrice,
-        //         sex,
-        //         images,
-        //         collectionObj,
-        //         descriptionvi,
-        //         descriptionen,
-        //         featuresvi,
-        //         featuresen,
-        //         note,
-        //         sold,
-        //         stock,
-        //         isDelete,
-        //     } = values;
-        //     // console.log(values);
 
-        //     const formData = new FormData();
-        //     if (image.length > 0) {
-        //         for (let i = 0; i < images.length; i++) {
-        //             formData.append('images', images[i]);
-        //         }
-        //     }
+        onSubmit: async (values) => {
+            const { username, phone } = values;
 
-        //     formData.append('name', name);
-        //     formData.append('brand', brand);
-        //     formData.append('type', type);
-        //     formData.append('originalPrice', originalPrice);
-        //     formData.append('finalPrice', finalPrice);
-        //     formData.append('sex', sex);
-        //     formData.append('collectionObj', collectionObj);
-        //     formData.append('descriptionvi', descriptionvi);
-        //     formData.append('descriptionen', descriptionen);
-        //     formData.append('featuresvi', featuresvi.split(';'));
-        //     formData.append('featuresen', featuresen.split(';'));
-        //     formData.append('note', note);
-        //     formData.append('sold', sold);
-        //     formData.append('stock', stock);
-        //     formData.append('isDelete', isDelete);
-
-        //     // console.log(values);
-        //     try {
-        //         // await axiosClient.post('product/', {
-        //         //     name: name,
-        //         //     brand: brand,
-        //         //     type: type,
-        //         //     price: price,
-        //         //     sex: sex,
-        //         //     images: images,
-        //         //     collectionName: collectionName,
-        //         //     descriptionen: descriptionen,
-        //         //     featuresen: featuresen.split(';'),
-        //         //     sold: sold,
-        //         //     stock: stock,
-        //         //     createdAt: createdAt,
-        //         //     updatedAt: updatedAt,
-        //         //     descriptionvi: descriptionvi,
-        //         //     featuresvi: featuresvi.split(';'),
-        //         // });
-        //         const res = await axiosClient.put('product/' + productId, formData);
-        //         if (res) {
-        //             toast.success('Cập nhật thành công!');
-        //             navigate('/products');
-        //         }
-        //     } catch (error) {
-        //         toast.error(error);
-        //     }
-        // },
+            console.log(values);
+            try {
+                const res = await axiosClient.put('order/info/update/' + orderId, {
+                    username: username,
+                    phone: phone,
+                });
+                if (res) {
+                    toast.success('Cập nhật thành công!');
+                    setRerender(!rerender);
+                }
+            } catch (error) {
+                toast.error(error);
+            }
+        },
     });
     const StatusName = (status) => {
         if (status === 'PENDING') {
-            return 'chờ xác nhận';
+            return 'Chờ xác nhận';
         } else if (status === 'PACKAGE') {
             return 'Đã xác nhận và Bắt đầu đóng gói';
         } else if (status === 'DELIVERING') {
@@ -179,14 +91,11 @@ export default function Order() {
     return (
         <div className={cx('product')}>
             <div className={cx('product-bottom')}>
-                {/* <form className={cx('product-form')}> */}
-                {/* <div className={cx('product-form-left')}> */}
-
-                <form className={cx('add-product-form')} spellCheck="false">
+                <form onSubmit={formik.handleSubmit} className={cx('add-product-form')} spellCheck="false">
                     <div className={cx('add-product-item')}>
                         <label>Thông tin khách hàng</label>
                     </div>
-                    {JSON.stringify(user) !== '{}' && (
+                    {JSON.stringify(recipient) !== '{}' && (
                         <div className={cx('add-product-item')}>
                             <InputField
                                 type="text"
@@ -220,7 +129,7 @@ export default function Order() {
                         />
                     </div>
 
-                    {JSON.stringify(order) !== '{}' && (
+                    {JSON.stringify(recipient) !== '{}' && (
                         <div className={cx('add-product-item')}>
                             <InputField
                                 customClass={styles}
@@ -230,13 +139,13 @@ export default function Order() {
                                 name="address"
                                 placeholder="."
                                 value={
-                                    order.address +
+                                    recipient.address +
                                     ', ' +
-                                    order.addressWard.WardName +
+                                    recipient.addressWard.WardName +
                                     ', ' +
-                                    order.addressDistrict.DistrictName +
+                                    recipient.addressDistrict.DistrictName +
                                     ', ' +
-                                    order.addressProvince.ProvinceName
+                                    recipient.addressProvince.ProvinceName
                                 }
                                 label={'Địa chỉ'}
                                 require

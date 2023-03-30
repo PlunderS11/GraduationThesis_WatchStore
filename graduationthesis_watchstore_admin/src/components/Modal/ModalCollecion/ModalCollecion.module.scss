@@ -1,31 +1,31 @@
-.new-product {
+.new-collection {
     flex: 4;
     margin-left: 100px;
     margin-top: 20px;
 }
 
-.add-product-form {
+.add-collection-form {
     margin-top: 10px;
 }
 
-.add-product-item {
+.add-collection-item {
     width: 500px;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
 
-.add-product-item > label {
+.add-collection-item > label {
     color: gray;
     font-weight: 600;
     margin-bottom: 10px;
 }
 
-.add-product-item > input {
+.add-collection-item > input {
     padding: 10px;
 }
 
-.add-product-item > select {
+.add-collection-item > select {
     padding: 10px;
 }
 

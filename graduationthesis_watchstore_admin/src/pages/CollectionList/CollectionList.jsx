@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './CollectionList.module.scss';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Modal, Tabs, Spin } from 'antd';
 
@@ -9,6 +9,8 @@ import axiosClient from '~/api/axiosClient';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Grid from '~/components/Grid/Grid';
+import ModalCollecion from '~/components/Modal/ModalCollecion/ModalCollecion';
+import ModalCollecionNew from '~/components/Modal/ModalCollecionNew/ModalCollecionNew';
 
 const cx = classNames.bind(styles);
 
@@ -19,6 +21,10 @@ export default function CollectionList() {
     const [collectionsUndeleted, setCollectionsUndeleted] = useState([]);
     const [loading, setLoading] = useState(false);
     const [key, setKey] = useState(false);
+
+    const [id, setId] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openNew, setOpenNew] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
@@ -130,12 +136,21 @@ export default function CollectionList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/collection/' + params.row._id}>
+                        {/* <Link to={'/collection/' + params.row._id}>
                             <button className={cx('product-list-edit')}>Chỉnh sửa</button>
-                        </Link>
+                        </Link> */}
+                        <button
+                            className={cx('collection-list-edit')}
+                            onClick={() => {
+                                setOpen(true);
+                                setId(params.row._id);
+                            }}
+                        >
+                            Chỉnh sửa
+                        </button>
 
                         <Button
-                            className={cx('product-list-delete-button')}
+                            className={cx('collection-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
                         >
                             Xóa
@@ -178,12 +193,21 @@ export default function CollectionList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/collection/' + params.row._id}>
+                        {/* <Link to={'/collection/' + params.row._id}>
                             <button className={cx('product-list-edit')}>Chỉnh sửa</button>
-                        </Link>
+                        </Link> */}
+                        <button
+                            className={cx('collection-list-edit')}
+                            onClick={() => {
+                                setOpen(true);
+                                setId(params.row._id);
+                            }}
+                        >
+                            Chỉnh sửa
+                        </button>
 
                         <Button
-                            className={cx('product-list-restore-button')}
+                            className={cx('collection-list-restore-button')}
                             onClick={() => showRestoreConfirm(params.row._id)}
                         >
                             Khôi phục
@@ -217,33 +241,46 @@ export default function CollectionList() {
     };
 
     return (
-        <div className={cx('product-list')}>
-            <Spin spinning={loading}>
-                <label className={cx('label')}>DANH SÁCH DANH MỤC</label>
-                <Link to="/newcollection">
-                    <Button customClass={styles}>Thêm danh mục</Button>
-                </Link>
-                <div className={cx('grid')}>
-                    <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
-                    {key === false ? (
-                        <Grid
-                            headers={columns_undeleted}
-                            datas={collectionsUndeleted}
-                            rowHeight={63}
-                            pagesize={6}
-                            hideToolbar={false}
-                        />
-                    ) : (
-                        <Grid
-                            headers={columns_deleted}
-                            datas={collectionsDeleted}
-                            rowHeight={63}
-                            pagesize={6}
-                            hideToolbar={false}
-                        />
-                    )}
-                </div>
-            </Spin>
-        </div>
+        <>
+            <div className={cx('collection-list')}>
+                <Spin spinning={loading}>
+                    <label className={cx('label')}>DANH SÁCH DANH MỤC</label>
+                    {/* <Link to="/newcollection">
+                        <Button customClass={styles}>Thêm danh mục</Button>
+                    </Link> */}
+                    <Button
+                        customClass={styles}
+                        onClick={() => {
+                            setOpenNew(true);
+                        }}
+                    >
+                        Thêm danh mục
+                    </Button>
+
+                    <div className={cx('grid')}>
+                        <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
+                        {key === false ? (
+                            <Grid
+                                headers={columns_undeleted}
+                                datas={collectionsUndeleted}
+                                rowHeight={63}
+                                pagesize={6}
+                                hideToolbar={false}
+                            />
+                        ) : (
+                            <Grid
+                                headers={columns_deleted}
+                                datas={collectionsDeleted}
+                                rowHeight={63}
+                                pagesize={6}
+                                hideToolbar={false}
+                            />
+                        )}
+                    </div>
+                </Spin>
+            </div>
+            {id !== '' && <ModalCollecion open={open} onClose={() => setOpen(false)} id={id}></ModalCollecion>}
+            <ModalCollecionNew open={openNew} onClose={() => setOpenNew(false)}></ModalCollecionNew>
+        </>
     );
 }

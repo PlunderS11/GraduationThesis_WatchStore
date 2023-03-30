@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Modal, Spin, Tabs } from 'antd';
 
@@ -11,6 +11,8 @@ import { toast } from 'react-toastify';
 import Grid from '~/components/Grid/Grid';
 
 import * as moment from 'moment';
+import ModalPromotion from '~/components/Modal/ModalPromotion/ModalPromotion';
+import ModalPromotionNew from '~/components/Modal/ModalPromotionNew/ModalPromotionNew';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +24,10 @@ export default function PromotionList() {
     const [promotionsUneleted, setPromotionsUneleted] = useState([]);
     const [loading, setLoading] = useState(false);
     const [key, setKey] = useState(false);
+
+    const [id, setId] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openNew, setOpenNew] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
@@ -170,9 +176,15 @@ export default function PromotionList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/promotion/' + params.row._id}>
-                            <button className={cx('product-list-edit')}>Chỉnh sửa</button>
-                        </Link>
+                        <button
+                            className={cx('product-list-edit')}
+                            onClick={() => {
+                                setOpen(true);
+                                setId(params.row._id);
+                            }}
+                        >
+                            Chỉnh sửa
+                        </button>
 
                         <Button
                             className={cx('product-list-restore-button')}
@@ -250,9 +262,15 @@ export default function PromotionList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/promotion/' + params.row._id}>
-                            <button className={cx('product-list-edit')}>Chỉnh sửa</button>
-                        </Link>
+                        <button
+                            className={cx('product-list-edit')}
+                            onClick={() => {
+                                setOpen(true);
+                                setId(params.row._id);
+                            }}
+                        >
+                            Chỉnh sửa
+                        </button>
                         <Button
                             className={cx('product-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
@@ -287,33 +305,44 @@ export default function PromotionList() {
     };
 
     return (
-        <div className={cx('product-list')}>
-            <Spin spinning={loading}>
-                <label className={cx('label')}>DANH SÁCH KHUYẾN MÃI</label>
-                <Link to="/newpromotion">
-                    <Button customClass={styles}>Thêm khuyến mãi</Button>
-                </Link>
-                <div className={cx('grid')}>
-                    <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
-                    {key === false ? (
-                        <Grid
-                            headers={columns_undeleted}
-                            datas={promotionsUneleted}
-                            rowHeight={63}
-                            pagesize={6}
-                            hideToolbar={false}
-                        />
-                    ) : (
-                        <Grid
-                            headers={columns_deleted}
-                            datas={promotionsDeleted}
-                            rowHeight={64}
-                            pagesize={6}
-                            hideToolbar={false}
-                        />
-                    )}
-                </div>
-            </Spin>
-        </div>
+        <>
+            <div className={cx('product-list')}>
+                <Spin spinning={loading}>
+                    <label className={cx('label')}>DANH SÁCH KHUYẾN MÃI</label>
+                    {/* <Link to="/newpromotion"> */}
+                    <Button
+                        customClass={styles}
+                        onClick={() => {
+                            setOpenNew(true);
+                        }}
+                    >
+                        Thêm khuyến mãi
+                    </Button>
+                    {/* </Link> */}
+                    <div className={cx('grid')}>
+                        <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
+                        {key === false ? (
+                            <Grid
+                                headers={columns_undeleted}
+                                datas={promotionsUneleted}
+                                rowHeight={63}
+                                pagesize={6}
+                                hideToolbar={false}
+                            />
+                        ) : (
+                            <Grid
+                                headers={columns_deleted}
+                                datas={promotionsDeleted}
+                                rowHeight={64}
+                                pagesize={6}
+                                hideToolbar={false}
+                            />
+                        )}
+                    </div>
+                </Spin>
+            </div>
+            {id !== '' && <ModalPromotion open={open} onClose={() => setOpen(false)} id={id}></ModalPromotion>}
+            <ModalPromotionNew open={openNew} onClose={() => setOpenNew(false)}></ModalPromotionNew>
+        </>
     );
 }

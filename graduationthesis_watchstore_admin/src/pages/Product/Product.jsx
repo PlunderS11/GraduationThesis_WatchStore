@@ -23,6 +23,7 @@ export default function Product() {
     const [collectionObj, setcollectionObj] = useState({});
     const [img, setImg] = useState();
     const [collections, setCollections] = useState([]);
+    const [rerender, setrerender] = useState([]);
     const productId = params.productId;
 
     useEffect(() => {
@@ -43,7 +44,7 @@ export default function Product() {
         };
         getProduct();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [rerender]);
 
     //input img
     //-----------------------------------------------------------
@@ -163,7 +164,9 @@ export default function Product() {
                 const res = await axiosClient.put('product/' + productId, formData);
                 if (res) {
                     toast.success('Cập nhật thành công!');
-                    navigate('/products');
+                    // navigate('/products');
+                    setDelImg([]);
+                    setrerender(!rerender);
                 }
             } catch (error) {
                 toast.error(error);
@@ -217,14 +220,17 @@ export default function Product() {
                     <div className={cx('add-product-item')}>
                         <label className={cx('lable-update')}>Cập nhật hình ảnh sản phẩm</label>
                         {/* <input type="file" id="image" /> */}
+                        <label className={cx('input-image')} for="images">
+                            Chọn hình ảnh
+                        </label>
                         <input
-                            className={cx('input-image')}
                             type="file"
                             id="images"
                             name="images"
                             accept="image/*"
                             multiple
                             onChange={(e) => handleMultiFile(e)}
+                            hidden
                         />
 
                         <div className={cx('list-img')}>

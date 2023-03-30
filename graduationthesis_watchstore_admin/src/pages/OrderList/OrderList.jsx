@@ -154,18 +154,18 @@ export default function OrderList() {
                         <ul>
                             <li>
                                 <label className={cx('label-cell')}>Họ tên: </label>
-                                <span>{params.row.user.username}</span>
+                                <span>{params.row.recipient.username}</span>
                             </li>
                             <li>
                                 <label className={cx('label-cell')}>SĐT: </label>
-                                <span>{params.row.phone}</span>
+                                <span>{params.row.recipient.phone}</span>
                             </li>
                             <li>
                                 <label className={cx('label-cell')}>Địa chỉ: </label>
                                 <span className={cx('address')}>
-                                    {params.row.address}, <br /> {params.row.addressWard.WardName},
-                                    {params.row.addressDistrict.DistrictName},<br />{' '}
-                                    {params.row.addressProvince.ProvinceName}
+                                    {params.row.recipient.address}, <br /> {params.row.recipient.addressWard.WardName},
+                                    {params.row.recipient.addressDistrict.DistrictName},<br />{' '}
+                                    {params.row.recipient.addressProvince.ProvinceName}
                                 </span>
                             </li>
                         </ul>
