@@ -318,7 +318,7 @@ router.put('/info/update/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: { orderUpdate }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: eerror.messagerror, status: 500 });
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
     }
 });
 
