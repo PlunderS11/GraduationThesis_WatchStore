@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -27,7 +27,6 @@ const ModalPromotionNew = (props) => {
     };
 
     //-------------------------------------------------------------
-    const formRef = useRef();
     const navigate = useNavigate();
 
     const [startAt, setStartAt] = useState();
@@ -92,14 +91,17 @@ const ModalPromotionNew = (props) => {
 
     return (
         <>
-            <Modal onCancel={handleCancel} open={open} title="THÊM MỚI KHUYẾN MÃI" width={740} centered footer={[]}>
+            <Modal
+                destroyOnClose
+                onCancel={handleCancel}
+                open={open}
+                title="THÊM MỚI KHUYẾN MÃI"
+                width={740}
+                centered
+                footer={[]}
+            >
                 <div className={cx('new-promotion')}>
-                    <form
-                        ref={formRef}
-                        onSubmit={formik.handleSubmit}
-                        className={cx('add-promotion-form')}
-                        spellCheck="false"
-                    >
+                    <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
                         <div className={cx('add-promotion-item')}>
                             <label>Ngày bắt đầu</label>
                             <DatePicker

@@ -20,7 +20,7 @@ import NewProduct from '~/pages/NewProduct';
 import CollectionList from './pages/CollectionList';
 // import NewCollection from './pages/NewCollection';
 import PromotionList from './pages/PromotionList';
-import NewPromotion from './pages/NewPromotion';
+// import NewPromotion from './pages/NewPromotion';
 // import Promotion from './pages/Promotion';
 import OrderList from './pages/OrderList';
 import Order from './pages/Order';
@@ -223,19 +223,19 @@ function App() {
                         }
                     />
                     <Route
-                        path="/newpromotion"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
-                                    </div>
-                                    <NewPromotion />
-                                </div>
-                            </>
-                        }
+                    // path="/newpromotion"
+                    // element={
+                    //     <>
+                    //         <Topbar />
+                    //         <div className="container">
+                    //             <div className="sidebar">
+                    //                 {/* <Sidebar /> */}
+                    //                 <MenuSideBar />
+                    //             </div>
+                    //             <NewPromotion />
+                    //         </div>
+                    //     </>
+                    // }
                     />
                     <Route
                     // path="/promotion/:promotionId"
