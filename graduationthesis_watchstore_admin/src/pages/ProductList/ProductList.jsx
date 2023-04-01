@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './ProductList.module.scss';
 
 // import { DeleteOutline } from '@material-ui/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Modal, Spin, Tabs } from 'antd';
@@ -14,6 +14,9 @@ import { toast } from 'react-toastify';
 import Grid from '~/components/Grid/Grid';
 
 import * as moment from 'moment';
+import ModalProductSale from '~/components/Modal/ModalProductSale/ModalProductSale';
+import ModalProduct from '~/components/Modal/ModalProduct/ModalProduct';
+import ModalProductNew from '~/components/Modal/ModalProductNew/ModalProductNew';
 
 const cx = classNames.bind(styles);
 
@@ -24,6 +27,11 @@ export default function ProductList() {
     const [productsUneleted, setProductsUneleted] = useState([]);
     const [loading, setLoading] = useState(false);
     const [key, setKey] = useState(false);
+
+    const [id, setId] = useState('');
+    const [openDetail, setOpenDetail] = useState(false);
+    const [openUpdate, setOpenUpdate] = useState(false);
+    const [openNew, setOpenNew] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
@@ -133,14 +141,14 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên sản phẩm',
-            width: 220,
+            width: 250,
         },
         {
             field: 'type',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Loại',
-            width: 80,
+            width: 100,
         },
         {
             field: 'produts_collectionName',
@@ -161,7 +169,7 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tồn',
-            width: 55,
+            width: 75,
             type: 'number',
         },
         {
@@ -213,21 +221,43 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 130,
             filterable: false,
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/product/' + params.row._id}>
-                            <button className={cx('product-list-edit')}>Chỉnh sửa</button>
-                        </Link>
-
-                        <Button
-                            className={cx('product-list-restore-button')}
-                            onClick={() => showRestoreConfirm(params.row._id)}
-                        >
-                            Khôi phục
-                        </Button>
+                        <ul>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    onClick={() => {
+                                        setOpenDetail(true);
+                                        setId(params.row._id);
+                                    }}
+                                >
+                                    Doanh số
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    onClick={() => {
+                                        setOpenUpdate(true);
+                                        setId(params.row._id);
+                                    }}
+                                >
+                                    Chỉnh sửa
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-restore-button')}
+                                    onClick={() => showRestoreConfirm(params.row._id)}
+                                >
+                                    Khôi phục
+                                </button>
+                            </li>
+                        </ul>
                     </>
                 );
             },
@@ -256,14 +286,14 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên sản phẩm',
-            width: 220,
+            width: 250,
         },
         {
             field: 'type',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Loại',
-            width: 80,
+            width: 100,
         },
         {
             field: 'produts_collectionName',
@@ -284,7 +314,7 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tồn',
-            width: 55,
+            width: 75,
             type: 'number',
         },
         {
@@ -337,21 +367,43 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 130,
             filterable: false,
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/product/' + params.row._id}>
-                            <button className={cx('product-list-edit')}>Chỉnh sửa</button>
-                        </Link>
-
-                        <Button
-                            className={cx('product-list-delete-button')}
-                            onClick={() => showDeleteConfirm(params.row._id)}
-                        >
-                            Xóa
-                        </Button>
+                        <ul>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    onClick={() => {
+                                        setOpenDetail(true);
+                                        setId(params.row._id);
+                                    }}
+                                >
+                                    Doanh số
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    onClick={() => {
+                                        setOpenUpdate(true);
+                                        setId(params.row._id);
+                                    }}
+                                >
+                                    Chỉnh sửa
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-delete-button')}
+                                    onClick={() => showDeleteConfirm(params.row._id)}
+                                >
+                                    Xóa
+                                </button>
+                            </li>
+                        </ul>
                     </>
                 );
             },
@@ -380,33 +432,50 @@ export default function ProductList() {
     };
 
     return (
-        <div className={cx('product-list')}>
-            <Spin spinning={loading}>
-                <label className={cx('label')}>DANH SÁCH DANH MỤC</label>
-                <Link to="/newproduct">
-                    <Button customClass={styles}>Thêm sản phẩm</Button>
-                </Link>
-                <div className={cx('grid')}>
-                    <Tabs defaultActiveKey="1" items={items} onChange={tabItemClick} />
-                    {key === false ? (
-                        <Grid
-                            headers={columns_undeleted}
-                            datas={productsUneleted}
-                            rowHeight={63}
-                            pagesize={6}
-                            hideToolbar={false}
-                        />
-                    ) : (
-                        <Grid
-                            headers={columns_deleted}
-                            datas={productsDeleted}
-                            rowHeight={63}
-                            pagesize={6}
-                            hideToolbar={false}
-                        />
-                    )}
-                </div>
-            </Spin>
-        </div>
+        <>
+            <div className={cx('product-list')}>
+                <Spin spinning={loading}>
+                    <label className={cx('label')}>DANH SÁCH SẢN PHẨM</label>
+                    <div style={{ height: 10 }}></div>
+
+                    <Button
+                        customClass={styles}
+                        onClick={() => {
+                            setOpenNew(true);
+                        }}
+                    >
+                        Thêm sản phẩm
+                    </Button>
+
+                    <div className={cx('grid')}>
+                        <div className={cx('tabs')}>
+                            <Tabs type="card" defaultActiveKey="1" items={items} onChange={tabItemClick} />
+                        </div>
+                        {key === false ? (
+                            <Grid
+                                headers={columns_undeleted}
+                                datas={productsUneleted}
+                                rowHeight={135}
+                                pagesize={10}
+                                hideToolbar={false}
+                            />
+                        ) : (
+                            <Grid
+                                headers={columns_deleted}
+                                datas={productsDeleted}
+                                rowHeight={135}
+                                pagesize={10}
+                                hideToolbar={false}
+                            />
+                        )}
+                    </div>
+                </Spin>
+            </div>
+            {id !== '' && (
+                <ModalProductSale open={openDetail} onClose={() => setOpenDetail(false)} id={id}></ModalProductSale>
+            )}
+            {id !== '' && <ModalProduct open={openUpdate} onClose={() => setOpenUpdate(false)} id={id}></ModalProduct>}
+            <ModalProductNew open={openNew} onClose={() => setOpenNew(false)} id={id}></ModalProductNew>
+        </>
     );
 }

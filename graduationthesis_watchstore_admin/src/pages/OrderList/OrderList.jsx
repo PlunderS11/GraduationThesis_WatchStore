@@ -9,15 +9,23 @@ import styles from './OrderList.module.scss';
 import axiosClient from '~/api/axiosClient';
 import Button from '~/components/Button/Button';
 import Grid from '~/components/Grid/Grid';
-import { Link } from 'react-router-dom';
+import ModalOrderUpdate from '~/components/Modal/ModalOrderUpdate/ModalOrderUpdate';
+import { useLocation } from 'react-router-dom';
+import ModalOrderDetail from '~/components/Modal/ModalOrderDetail/ModalOrderDetail';
+// import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const { RangePicker } = DatePicker;
 
 export default function OrderList() {
+    const location = useLocation();
     const [orders, setOrders] = useState([]);
     const [rerender, setRerender] = useState(false);
+
+    const [id, setId] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openDetail, setOpenDetail] = useState(false);
     useEffect(() => {
         const getProducts = async () => {
             const res = await axiosClient.get('order/admin');
@@ -37,7 +45,7 @@ export default function OrderList() {
             }
         };
         getProducts();
-    }, [rerender]);
+    }, [rerender, location]);
 
     const ButtonStatus = ({ type, children }) => {
         var title = '';
@@ -154,18 +162,18 @@ export default function OrderList() {
                         <ul>
                             <li>
                                 <label className={cx('label-cell')}>Họ tên: </label>
-                                <span>{params.row.user.username}</span>
+                                <span>{params.row.recipient.username}</span>
                             </li>
                             <li>
                                 <label className={cx('label-cell')}>SĐT: </label>
-                                <span>{params.row.phone}</span>
+                                <span>{params.row.recipient.phone}</span>
                             </li>
                             <li>
                                 <label className={cx('label-cell')}>Địa chỉ: </label>
                                 <span className={cx('address')}>
-                                    {params.row.address}, <br /> {params.row.addressWard.WardName},
-                                    {params.row.addressDistrict.DistrictName},<br />{' '}
-                                    {params.row.addressProvince.ProvinceName}
+                                    {params.row.recipient.address}, <br /> {params.row.recipient.addressWard.WardName},
+                                    {params.row.recipient.addressDistrict.DistrictName},<br />{' '}
+                                    {params.row.recipient.addressProvince.ProvinceName}
                                 </span>
                             </li>
                         </ul>
@@ -276,6 +284,7 @@ export default function OrderList() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
+            align: 'center',
             headerAlign: 'center',
             headerName: 'Hành động',
             width: 120,
@@ -284,9 +293,35 @@ export default function OrderList() {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={'/order/' + params.row._id}>
-                            <button className={cx('product-list-edit')}>Chi tiết</button>
-                        </Link>
+                        <ul>
+                            {/* <li>
+                                <Link to={'/order/' + params.row._id}>
+                                    <button className={cx('product-list-edit')}>Chi tiết</button>
+                                </Link>
+                            </li> */}
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    onClick={() => {
+                                        setOpen(true);
+                                        setId(params.row._id);
+                                    }}
+                                >
+                                    Cập nhật
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    onClick={() => {
+                                        setOpenDetail(true);
+                                        setId(params.row._id);
+                                    }}
+                                >
+                                    Chi tiết
+                                </button>
+                            </li>
+                        </ul>
                     </>
                 );
             },
@@ -294,119 +329,125 @@ export default function OrderList() {
     ];
 
     return (
-        <div className={cx('product-list')}>
-            <label className={cx('label')}>DANH SÁCH ĐƠN HÀNG</label>
-            <div className={cx('header')}>
-                <ul>
-                    <li className={cx('li')}>
-                        <label>Chọn ngày: </label>
-                        <RangePicker className={cx('input_antd_date')} />
+        <>
+            <div className={cx('product-list')}>
+                <label className={cx('label')}>DANH SÁCH ĐƠN HÀNG</label>
+                <div className={cx('header')}>
+                    <ul>
+                        <li className={cx('li')}>
+                            <label>Chọn ngày: </label>
+                            <RangePicker className={cx('input_antd_date')} />
 
-                        <label>Mã đơn: </label>
-                        <input className={cx('input')} type="text" placeholder="Nhập mã đơn" />
+                            <label>Mã đơn: </label>
+                            <input className={cx('input')} type="text" placeholder="Nhập mã đơn" />
 
-                        <label>Trạng thái đơn: </label>
-                        <Select
-                            className={cx('input_antd')}
-                            placeholder="Trạng thái đơn"
-                            // onChange={onChange}
-                            // onSearch={onSearch}
+                            <label>Trạng thái đơn: </label>
+                            <Select
+                                className={cx('input_antd')}
+                                placeholder="Trạng thái đơn"
+                                // onChange={onChange}
+                                // onSearch={onSearch}
 
-                            options={[
-                                {
-                                    value: '',
-                                    label: 'Tất cả',
-                                },
-                                {
-                                    value: 'PACKAGE',
-                                    label: 'Đóng gói',
-                                },
-                                {
-                                    value: 'PENDING',
-                                    label: 'Chờ xác nhận',
-                                },
-                                {
-                                    value: 'DELIVERING',
-                                    label: 'Đang vận chuyển',
-                                },
-                                {
-                                    value: 'COMPLETE',
-                                    label: 'Đã giao',
-                                },
-                                {
-                                    value: 'CANCEL',
-                                    label: 'Đã hủy ',
-                                },
-                            ]}
-                        />
-                    </li>
-                    <li className={cx('li')}>
-                        <label>Tỉnh thành: </label>
-                        <Select
-                            className={cx('input_antd')}
-                            showSearch
-                            placeholder="Tỉnh thành"
-                            optionFilterProp="children"
-                            // onChange={onChange}
-                            // onSearch={onSearch}
-                            filterOption={(input, option) =>
-                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                            }
-                            options={[
-                                {
-                                    value: '',
-                                    label: 'Tất cả',
-                                },
-                            ]}
-                        />
+                                options={[
+                                    {
+                                        value: '',
+                                        label: 'Tất cả',
+                                    },
+                                    {
+                                        value: 'PACKAGE',
+                                        label: 'Đóng gói',
+                                    },
+                                    {
+                                        value: 'PENDING',
+                                        label: 'Chờ xác nhận',
+                                    },
+                                    {
+                                        value: 'DELIVERING',
+                                        label: 'Đang vận chuyển',
+                                    },
+                                    {
+                                        value: 'COMPLETE',
+                                        label: 'Đã giao',
+                                    },
+                                    {
+                                        value: 'CANCEL',
+                                        label: 'Đã hủy ',
+                                    },
+                                ]}
+                            />
+                        </li>
+                        <li className={cx('li')}>
+                            <label>Tỉnh thành: </label>
+                            <Select
+                                className={cx('input_antd')}
+                                showSearch
+                                placeholder="Tỉnh thành"
+                                optionFilterProp="children"
+                                // onChange={onChange}
+                                // onSearch={onSearch}
+                                filterOption={(input, option) =>
+                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                options={[
+                                    {
+                                        value: '',
+                                        label: 'Tất cả',
+                                    },
+                                ]}
+                            />
 
-                        <label>Quận huyện: </label>
-                        <Select
-                            className={cx('input_antd')}
-                            showSearch
-                            placeholder="Quận huyện"
-                            optionFilterProp="children"
-                            // onChange={onChange}
-                            // onSearch={onSearch}
-                            filterOption={(input, option) =>
-                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                            }
-                            options={[
-                                {
-                                    value: '',
-                                    label: 'Tất cả',
-                                },
-                            ]}
-                        />
+                            <label>Quận huyện: </label>
+                            <Select
+                                className={cx('input_antd')}
+                                showSearch
+                                placeholder="Quận huyện"
+                                optionFilterProp="children"
+                                // onChange={onChange}
+                                // onSearch={onSearch}
+                                filterOption={(input, option) =>
+                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                options={[
+                                    {
+                                        value: '',
+                                        label: 'Tất cả',
+                                    },
+                                ]}
+                            />
 
-                        <label>Phường xã: </label>
-                        <Select
-                            className={cx('input_antd')}
-                            showSearch
-                            placeholder="Phường xã"
-                            optionFilterProp="children"
-                            // onChange={onChange}
-                            // onSearch={onSearch}
-                            filterOption={(input, option) =>
-                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                            }
-                            options={[
-                                {
-                                    value: '',
-                                    label: 'Tất cả',
-                                },
-                            ]}
-                        />
+                            <label>Phường xã: </label>
+                            <Select
+                                className={cx('input_antd')}
+                                showSearch
+                                placeholder="Phường xã"
+                                optionFilterProp="children"
+                                // onChange={onChange}
+                                // onSearch={onSearch}
+                                filterOption={(input, option) =>
+                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                options={[
+                                    {
+                                        value: '',
+                                        label: 'Tất cả',
+                                    },
+                                ]}
+                            />
 
-                        <Button customClass={styles}>Tiềm kiếm</Button>
-                        <Button customClass={styles}>Xuất excel</Button>
-                    </li>
-                </ul>
+                            <Button customClass={styles}>Tiềm kiếm</Button>
+                            <Button customClass={styles}>Xuất excel</Button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div className={cx('grid')}>
+                    <Grid datas={orders} headers={columns} rowHeight={150} pagesize={10} hideToolbar={true} />
+                </div>
             </div>
-
-            <div className={cx('grid')}>
-                <Grid datas={orders} headers={columns} rowHeight={150} pagesize={10} hideToolbar={true} />
-            </div>
-        </div>
+            {id !== '' && <ModalOrderUpdate open={open} onClose={() => setOpen(false)} id={id}></ModalOrderUpdate>}
+            {id !== '' && (
+                <ModalOrderDetail open={openDetail} onClose={() => setOpenDetail(false)} id={id}></ModalOrderDetail>
+            )}
+        </>
     );
 }

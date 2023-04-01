@@ -26,6 +26,7 @@
     // background-color: #3bb077;
     color: white;
     cursor: pointer;
+
     margin-right: 20px;
 }
 
@@ -36,7 +37,7 @@
     background-color: #e36d62;
     color: white;
     cursor: pointer;
-    margin-right: 20px;
+    // margin-right: 20px;
 }
 
 .product-list-restore-button {
@@ -55,10 +56,11 @@
 }
 
 .button {
-    width: 200px;
+    width: 150px;
+    height: 40px;
     margin: 10px 10px 10px 0;
     position: absolute;
-    top: 0;
+    top: 0px;
     right: 0;
 }
 
