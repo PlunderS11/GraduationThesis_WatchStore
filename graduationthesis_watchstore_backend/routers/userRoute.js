@@ -122,4 +122,34 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+// ADD ACCOUNT STAFF
+// ADMIN
+router.post('/addStaff', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const rank = await Rank.findOne({ nameen: 'Unrank' }).exec();
+        const newUser = new User({
+            username: req.body.username,
+            email: req.body.email,
+            password: CryptoJS.AES.encrypt(req.body.password, process.env.PASS_SECRET).toString(),
+            rank,
+            role: 'staff',
+        });
+
+        const user = await newUser.save();
+        const accessToken = jwt.sign(
+            {
+                id: user._id,
+                role: user.role,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '3d' }
+        );
+
+        res.status(200).json({ data: { token: accessToken }, message: 'success', status: 200 });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ data: {}, message: err, status: 500 });
+    }
+});
+
 module.exports = router;
