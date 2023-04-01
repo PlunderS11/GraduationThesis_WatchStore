@@ -1,29 +1,33 @@
 const mongoose = require('mongoose');
 
-const PromotionSchema = new mongoose.Schema(
+const RankSchema = mongoose.Schema(
     {
-        titlevi: {
+        namevi: {
             type: String,
             required: true,
         },
-        titleen: {
+        nameen: {
             type: String,
             required: true,
         },
-        code: {
+        icon: {
             type: String,
             required: true,
         },
-        value: {
+        descriptionvi: {
+            type: String,
+            required: true,
+        },
+        descriptionen: {
+            type: String,
+            required: true,
+        },
+        minValue: {
             type: Number,
             required: true,
         },
-        startDate: {
-            type: Date,
-            required: true,
-        },
-        endDate: {
-            type: Date,
+        maxValue: {
+            type: Number,
             required: true,
         },
         isDelete: {
@@ -35,4 +39,4 @@ const PromotionSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Promotion', PromotionSchema);
+module.exports = mongoose.model('Rank', RankSchema);

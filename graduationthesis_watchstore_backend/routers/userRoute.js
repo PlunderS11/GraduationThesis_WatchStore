@@ -66,7 +66,9 @@ router.get('/find/:id', verifyTokenAndAdmin, async (req, res) => {
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
     const query = req.query.new;
     try {
-        const users = query ? await User.find().sort({ _id: -1 }).limit(5) : await User.find();
+        const users = await User.find()
+            .sort({ _id: -1 })
+            .limit(query == 'true' ? 10 : 0);
         res.status(200).json({ data: { ...users }, message: 'Success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
@@ -76,7 +78,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
 //GET USERS ROLE USER
 router.get('/users/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const users = await User.find({role: 'user'});
+        const users = await User.find({ role: 'user' });
         res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);

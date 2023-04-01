@@ -20,14 +20,17 @@
 .shrink {
     .header-main {
         background-color: #282828 !important;
+        transition: background-color 0.4s ease;
     }
     .menu-item {
         &::before {
             background-color: $text-light;
+            transition: background-color 0.4s ease;
         }
 
         a {
             color: $text-light;
+            transition: color 0.4s ease;
         }
     }
 }
@@ -140,6 +143,7 @@
 .middle {
     display: block;
     padding: 30px 0;
+    transition: display 0.5s ease;
 
     .inner {
         @include flex(space-between, center);
@@ -189,6 +193,7 @@
     width: 250px;
     height: 100px;
     object-position: center;
+    transition: display 0.5s ease;
 
     img {
         width: 100%;
@@ -204,6 +209,7 @@
 
     .searchBox {
         background-color: $text-light;
+        transition: display 0.5s ease;
     }
 
     .searchInput {
@@ -228,6 +234,7 @@
 
     .cart-icon {
         background-position: 0 -50px;
+        transition: display 0.5s ease;
 
         .cart-amount {
             color: $text-light;

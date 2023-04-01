@@ -30,9 +30,8 @@ router.get('/', async (req, res) => {
 
 //GET ALL COLLECTIONS
 router.get('/allCols/', verifyTokenAndAdmin, async (req, res) => {
-    const query = req.query.new;
     try {
-        const collections = query ? await Collection.find().sort({ _id: -1 }).limit(5) : await Collection.find();
+        const collections = await Collection.find();
 
         res.status(200).json({ data: { collections: collections }, message: 'success', status: 200 });
     } catch (error) {
@@ -162,7 +161,7 @@ router.put('/update/:id', verifyTokenAndAdmin, async (req, res) => {
         res.status(200).json({ data: { collection: updateCollection }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: eerror.messagerror, status: 500 });
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
     }
 });
 

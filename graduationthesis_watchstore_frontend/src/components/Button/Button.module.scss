@@ -1,6 +1,7 @@
 @use '../GlobalStyles/' as *;
 
 .button {
+    position: relative;
     width: 250px;
     height: 50px;
     background: #000000;
@@ -21,4 +22,18 @@
         background: #ffffff;
         border-color: #000000;
     }
+}
+
+.loading .text {
+    color: transparent;
+}
+
+.loading-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    width: 100%;
+    background-color: #000000;
+    transform: translate(-50%, -50%);
 }

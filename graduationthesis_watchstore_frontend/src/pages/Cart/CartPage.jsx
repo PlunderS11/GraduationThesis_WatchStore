@@ -1,86 +1,66 @@
-import classNames from 'classnames/bind';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
+import { Col, Modal, Spin, Table } from 'antd';
+import ImageCustom from '../../components/ImageCustom/ImageCustom';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames/bind';
+import { DeleteOutlined } from '@ant-design/icons';
+import Column from 'antd/es/table/Column';
 
-import { clearCart, fetchEstimate, selectCartItems, selectTotalItems } from '../../features/cart';
-import { NumberWithCommas } from '../../functions';
+import style from './Cart.module.scss';
+
 import Button from '../../components/Button/Button';
-import style from './Checkout.module.scss';
-import { useEffect, useState } from 'react';
-import { Col, Divider, Modal, Row, Spin } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
-import axiosClient from '../../api/axiosClient';
-import { toast } from 'react-toastify';
-
-const payment = [
-    {
-        type: 'CASH',
-        content: 'Tiền mặt',
-        des: 'Thanh toán khi nhận hàng',
-    },
-    {
-        type: 'VNPAY',
-        content: 'Ví VNPAY',
-        des: 'Thanh toán online qua ví VNPAY',
-    },
-];
+import { NumberWithCommas } from '../../functions';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchEstimate, removeItem, selectCartItems, selectTotalItems, updateCartItem } from '../../features/cart';
 
 const cx = classNames.bind(style);
 
-const Checkout = () => {
-    const { t } = useTranslation();
+const CartPage = () => {
+    const user = useSelector(state => state.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [check, setCheck] = useState('CASH');
-    const [note, setNote] = useState('');
-    const [coupon, setCoupon] = useState('');
-    const user = useSelector(state => state.user);
-    const estimate = useSelector(state => state.cart.estimate);
-    const loading = useSelector(state => state.cart.isLoadingCart);
-    const cart = useSelector(selectCartItems);
+    const products = useSelector(selectCartItems);
     const totalItems = useSelector(selectTotalItems);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [coupon, setCoupon] = useState('');
+    const estimate = useSelector(state => state.cart.estimate);
+    const loading = useSelector(state => state.cart.isLoadingCart);
+    const [input, setInput] = useState('');
 
     useEffect(() => {
         dispatch(fetchEstimate());
     }, [dispatch]);
 
-    const handleChonse = type => {
-        setCheck(type);
+    // console.log(estimate);
+    // console.log(loading);
+
+    const handleRemoveCart = async e => {
+        dispatch(
+            removeItem({
+                product: e,
+            })
+        );
+        dispatch(fetchEstimate());
     };
 
-    const handleBuy = async () => {
-        try {
-            const resUser = await axiosClient.get('user/userInfo');
-            const res = await axiosClient.post('order', {
-                province: resUser.data.address.province,
-                district: resUser.data.address.district,
-                ward: resUser.data.address.ward,
-                promotionCode: coupon,
-                note,
-                products: cart.reduce((acc, cur) => {
-                    acc.push({
-                        productId: cur.product._id,
-                        quantity: cur.quantity,
-                    });
-                    return acc;
-                }, []),
-                paymentType: check,
-                phone: resUser.data.phone,
-                address: resUser.data.address.address,
-                username: resUser.data.username,
-            });
-            dispatch(clearCart());
-            console.log(res);
-            // navigate(`/buysuccess/${res.data.id}`);
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
+    const handleIncrease = async id => {
+        dispatch(
+            updateCartItem({
+                product: id,
+                type: 'increase',
+            })
+        );
+        dispatch(fetchEstimate());
     };
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    const handleDecrease = async id => {
+        dispatch(
+            updateCartItem({
+                product: id,
+                type: 'decrease',
+            })
+        );
+        dispatch(fetchEstimate());
     };
 
     // Apply discount code
@@ -89,40 +69,127 @@ const Checkout = () => {
         setIsModalOpen(false);
     };
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
     const handleCancel = () => {
         setIsModalOpen(false);
     };
 
     return (
-        <Spin spinning={loading}>
-            <div className={cx('checkout-page')}>
-                <div className="page-header">
-                    <div className="container">
-                        <div className="page-header-container">
-                            <div className="page-header__title">
-                                <h1>Checkout</h1>
-                            </div>
-                        </div>
+        <div className={cx('cart-page')}>
+            <div className="page-header">
+                <div className="container">
+                    <div className="page-header-container">
+                        <div className="page-header__title"></div>
                     </div>
                 </div>
+            </div>
+            <Spin spinning={loading}>
                 {totalItems > 0 ? (
-                    <div className="container">
-                        <Row>
-                            <Col span={14} style={{ paddingRight: '15px' }}>
-                                <div className={cx('note')}>
-                                    <div className={cx('body')}>
-                                        <div className={cx('body-title')}>Ghi chú</div>
-                                        <div className={cx('body-form')}>
-                                            <TextArea
-                                                onChange={e => setNote(e.target.value)}
-                                                value={note}
-                                                rows={4}
-                                                placeholder="Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v..."
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={cx('infor')}>
+                    <div className="page">
+                        <div className="container">
+                            <div className={cx('product')}>
+                                <Table
+                                    rowKey={item => item.product._id}
+                                    dataSource={products}
+                                    pagination={{ position: [] }}
+                                >
+                                    <Column
+                                        title="Hình ảnh"
+                                        render={(value, record, index) => (
+                                            <div style={{ width: '80px' }}>
+                                                <Link
+                                                    to={`/product/${record.product._id}`}
+                                                    className={cx('product-image')}
+                                                >
+                                                    <ImageCustom src={record.product.images[0]} />
+                                                </Link>
+                                            </div>
+                                        )}
+                                    />
+                                    <Column
+                                        title="Sản phẩm"
+                                        render={(value, record, index) => (
+                                            <div className={cx('product-info')}>
+                                                <Link to={`/product/${record.product._id}`}>{record.product.name}</Link>
+                                            </div>
+                                        )}
+                                    />
+                                    <Column
+                                        title="Đơn giá"
+                                        align="right"
+                                        render={(value, record, index) => (
+                                            <span>{NumberWithCommas(record.product.finalPrice)}&nbsp;₫</span>
+                                        )}
+                                    />
+                                    <Column
+                                        title="Số lượng"
+                                        align="center"
+                                        dataIndex={'quantity'}
+                                        render={(text, record, index) => {
+                                            return (
+                                                <div className={cx('action__btnCount')} style={{ marginLeft: '22%' }}>
+                                                    <div
+                                                        className={cx('btnCount-btnSub')}
+                                                        onClick={() => text > 1 && handleDecrease(record.product)}
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 448 512"
+                                                            width={15}
+                                                            height={15}
+                                                        >
+                                                            <path d="M416 256c0 17.7-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
+                                                        </svg>
+                                                    </div>
+                                                    <input
+                                                        id={String(index)}
+                                                        type="text"
+                                                        className={cx('btnCount-input')}
+                                                        value={text}
+                                                        onChange={e => setInput(e.target.value)}
+                                                    />
+                                                    <div
+                                                        className={cx('btnCount-btnAdd')}
+                                                        onClick={() => handleIncrease(record.product)}
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 448 512"
+                                                            width={15}
+                                                            height={15}
+                                                        >
+                                                            <path d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }}
+                                    />
+                                    <Column
+                                        title="Thành tiền"
+                                        align="right"
+                                        render={(value, record, index) => (
+                                            <div>
+                                                <span style={{ color: '#ff424e' }}>
+                                                    {NumberWithCommas(record.product.finalPrice * record.quantity)}
+                                                    &nbsp;₫
+                                                </span>
+                                                <button
+                                                    className={cx('menu-item-btn')}
+                                                    onClick={() => handleRemoveCart(record.product)}
+                                                >
+                                                    <DeleteOutlined style={{ fontSize: 20 }} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    />
+                                </Table>
+                            </div>
+                            <div className={cx('actions')}>
+                                <div>
                                     <div className={cx('address')}>
                                         <div className={cx('change')}>
                                             <span style={{ fontWeight: 600 }}>Giao tới</span>
@@ -204,101 +271,73 @@ const Checkout = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </Col>
-                            <Col span={10} style={{ paddingLeft: '15px' }}>
-                                <div className={cx('note')}>
-                                    <div className={cx('body')}>
-                                        <div className={cx('body-title')}>Đơn hàng</div>
-                                        <div className={cx('body-form')}>
-                                            <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Sản phẩm</span>
-                                                <span className={cx('form-calculate-title-text')}>Thành tiền</span>
-                                            </div>
-                                            <Divider style={{ margin: '0' }} />
-                                            <div className={cx('body-list')}>
-                                                {cart.map((item, i) => (
-                                                    <div key={i} className={cx('body-item')}>
-                                                        <p className={cx('text')} style={{ padding: '20px 0 0 8px' }}>
-                                                            {item.product.name} x {item.quantity}
-                                                        </p>
-                                                        <p className={cx('text')} style={{ padding: '20px 8px 0 0' }}>
-                                                            {NumberWithCommas(item.product.finalPrice * item.quantity)}
+                                <div>
+                                    <div className={cx('checkout')}>
+                                        <div className={cx('checkout-button')}>
+                                            <Button to="/hebec-shop">Tiếp tục mua sắm</Button>
+                                        </div>
+                                        <div className={cx('checkout-form')}>
+                                            <div className={cx('checkout-form-body')}>
+                                                <div className={cx('checkout-form-calculate')}>
+                                                    <div className={cx('checkout-form-calculate-title')}>
+                                                        <span className={cx('form-calculate-title-text')}>
+                                                            Tạm tính
+                                                        </span>
+                                                        <p>
+                                                            {estimate.totalPrice
+                                                                ? NumberWithCommas(estimate?.totalPrice)
+                                                                : 0}
                                                             &nbsp;₫
                                                         </p>
                                                     </div>
-                                                ))}
+                                                    <div className={cx('checkout-form-calculate-title')}>
+                                                        <span className={cx('form-calculate-title-text')}>
+                                                            Phí vận chuyển
+                                                        </span>
+                                                        <p>
+                                                            {estimate.distancePrice
+                                                                ? NumberWithCommas(estimate?.distancePrice)
+                                                                : 0}
+                                                            &nbsp;₫
+                                                        </p>
+                                                    </div>
+                                                    <div className={cx('checkout-form-calculate-title')}>
+                                                        <span className={cx('form-calculate-title-text')}>
+                                                            Giảm giá
+                                                        </span>
+                                                        <p style={{ color: '#47991f' }}>
+                                                            -
+                                                            {estimate.discountPrice
+                                                                ? NumberWithCommas(estimate?.discountPrice)
+                                                                : 0}
+                                                            &nbsp;₫
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className={cx('checkout-form-total')}>
+                                                    <h2>Tổng cộng</h2>
+                                                    <h2 style={{ color: '#ff424e' }}>
+                                                        {estimate.finalPrice
+                                                            ? NumberWithCommas(estimate.finalPrice)
+                                                            : 0}
+                                                        &nbsp;₫
+                                                    </h2>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                                    <Button to="/checkout" loading={loading}>
+                                                        THANH TOÁN
+                                                    </Button>
+                                                </div>
                                             </div>
-                                            <div className={cx('form-calculate-title')}>
-                                                <Link to={'/cart'} className={cx('link')}>
-                                                    Chỉnh sửa giỏ hàng
-                                                </Link>
-                                            </div>
-                                            <Divider style={{ margin: '0' }} />
-                                            <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Tạm tính</span>
-                                                <p className={cx('text')} style={{ padding: '10px 8px 0 0' }}>
-                                                    {estimate.totalPrice ? NumberWithCommas(estimate?.totalPrice) : 0}
-                                                    &nbsp;₫
-                                                </p>
-                                            </div>
-                                            <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Phí vận chuyển</span>
-                                                <p className={cx('text')} style={{ padding: '10px 8px 0 0' }}>
-                                                    {estimate.distancePrice
-                                                        ? NumberWithCommas(estimate?.distancePrice)
-                                                        : 0}
-                                                    &nbsp;₫
-                                                </p>
-                                            </div>
-                                            <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Giảm giá</span>
-                                                <p
-                                                    className={cx('text')}
-                                                    style={{ padding: '10px 8px 0 0', color: '#47991f' }}
-                                                >
-                                                    -
-                                                    {estimate.discountPrice
-                                                        ? NumberWithCommas(estimate?.discountPrice)
-                                                        : 0}
-                                                    &nbsp;₫
-                                                </p>
-                                            </div>
-                                            <div className={cx('form-total')} style={{ padding: '10px 0 0 8px' }}>
-                                                <h2>Tổng cộng</h2>
-                                                <h2 style={{ color: '#ff424e' }}>
-                                                    {estimate.finalPrice ? NumberWithCommas(estimate.finalPrice) : 0}
-                                                    &nbsp;₫
-                                                </h2>
-                                            </div>
-                                        </div>
-                                        <div className={cx('payment')}>
-                                            <ul>
-                                                {payment.map((item, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className={cx('item', { check: check === item.type })}
-                                                        onClick={() => handleChonse(item.type)}
-                                                    >
-                                                        <div className={cx('item-label')}>
-                                                            <span className={cx('isCheck')}></span>
-                                                            <span>{item.content}</span>
-                                                        </div>
-                                                        <div className={cx('item-des')}>{item.des}</div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Button onclick={handleBuy}>ĐẶT MUA</Button>
                                         </div>
                                     </div>
                                 </div>
-                            </Col>
-                        </Row>
+                            </div>
+                        </div>
                     </div>
                 ) : (
-                    <div className={cx('empty')}>
-                        <div className={cx('container')}>
+                    <div className={cx('page-empty')}>
+                        <div className="container">
                             <div className={cx('empty-body')}>
                                 <div className={cx('empty-body-image')}>
                                     <svg
@@ -397,9 +436,9 @@ const Checkout = () => {
                         </div>
                     </div>
                 )}
-            </div>
-        </Spin>
+            </Spin>
+        </div>
     );
 };
 
-export default Checkout;
+export default CartPage;

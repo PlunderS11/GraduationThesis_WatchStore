@@ -3,14 +3,17 @@ const jwt = require('jsonwebtoken');
 const CryptoJS = require('crypto-js');
 
 const User = require('../models/userModel');
+const Rank = require('../models/rankModel');
 
 //REGISTER
 router.post('/register', async (req, res) => {
     try {
+        const rank = await Rank.findOne({ nameen: 'Unrank' }).exec();
         const newUser = new User({
             username: req.body.username,
             email: req.body.email,
             password: CryptoJS.AES.encrypt(req.body.password, process.env.PASS_SECRET).toString(),
+            rank,
         });
 
         const user = await newUser.save();

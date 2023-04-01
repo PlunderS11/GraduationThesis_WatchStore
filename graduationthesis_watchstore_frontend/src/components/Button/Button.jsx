@@ -7,7 +7,7 @@ import style from './Button.module.scss';
 
 const cx = classNames.bind(style);
 
-const Button = ({ children, href, to, customClass, ...passProps }) => {
+const Button = ({ children, href, to, customClass, loading, onclick, ...passProps }) => {
     let Tag = 'button';
     const props = { ...passProps };
     if (href) {
@@ -18,8 +18,8 @@ const Button = ({ children, href, to, customClass, ...passProps }) => {
         props.to = to;
     }
     return (
-        <Tag className={cx('button', customClass?.['button'])} {...props}>
-            {passProps.loading && (
+        <Tag className={cx('button', customClass?.['button'])} {...props} onClick={onclick}>
+            {loading && (
                 <div className={cx('loading-icon')}>
                     <LoadingOutlined style={{ fontSize: '200%' }} />
                 </div>

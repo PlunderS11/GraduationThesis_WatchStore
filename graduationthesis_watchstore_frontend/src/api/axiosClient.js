@@ -82,7 +82,6 @@ axiosClient.interceptors.response.use(
 
             // generic api error (server related) unexpected
             default: {
-                console.log('check error axios  : ', error);
                 return Promise.reject(error);
             }
         }

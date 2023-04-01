@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { fetchEstimate } from './cartThunk';
 
 const initialState = {
     items: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [],
+    estimate: {},
+    isLoadingCart: false,
 };
 
 const cartSlice = createSlice({
@@ -9,39 +12,72 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         addToCart: (state, action) => {
-            const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
-
-            if (existsItem) {
-                existsItem.quantity += action.payload.quantity;
-            } else {
-                state.items.push(action.payload);
+            try {
+                state.isLoadingCart = true;
+                const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
+                if (existsItem) {
+                    existsItem.quantity += action.payload.quantity;
+                } else {
+                    state.items.push(action.payload);
+                }
+                localStorage.setItem('cartItems', JSON.stringify(state.items));
+            } finally {
+                state.isLoadingCart = false;
             }
-
-            localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
 
         updateCartItem(state, action) {
-            const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
-            const type = action.payload.type;
+            try {
+                const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
+                const type = action.payload.type;
 
-            if (type === 'increase') {
-                existsItem.quantity++;
-            } else if (type === 'decrease') {
-                if (existsItem.quantity > 1) {
-                    existsItem.quantity--;
-                } else {
-                    state.items = state.items.filter(item => item.product._id !== existsItem.product._id);
+                if (type === 'increase') {
+                    existsItem.quantity++;
+                } else if (type === 'decrease') {
+                    if (existsItem.quantity > 1) {
+                        existsItem.quantity--;
+                    } else {
+                        state.items = state.items.filter(item => item.product._id !== existsItem.product._id);
+                    }
                 }
+                localStorage.setItem('cartItems', JSON.stringify(state.items));
+            } finally {
+                state.isLoadingCart = false;
             }
-            localStorage.setItem('cartItems', JSON.stringify(state.items));
         },
         removeItem(state, action) {
-            state.items = state.items.filter(item => item.product._id !== action.payload.product._id);
-            localStorage.setItem('cartItems', JSON.stringify(state.items));
+            try {
+                state.isLoadingCart = true;
+                state.items = state.items.filter(item => item.product._id !== action.payload.product._id);
+                localStorage.setItem('cartItems', JSON.stringify(state.items));
+            } finally {
+                state.isLoadingCart = false;
+            }
         },
+        clearCart(state, action) {
+            try {
+                state.isLoadingCart = true;
+                localStorage.removeItem('cartItems');
+            } finally {
+                state.isLoadingCart = false;
+            }
+        },
+    },
+    extraReducers(builder) {
+        builder
+            .addCase(fetchEstimate.pending, (state, action) => {
+                state.isLoadingCart = true;
+            })
+            .addCase(fetchEstimate.fulfilled, (state, action) => {
+                state.estimate = action.payload;
+                state.isLoadingCart = false;
+            })
+            .addCase(fetchEstimate.rejected, (state, action) => {
+                // state.isLoadingCart = false;
+            });
     },
 });
 
 export default cartSlice.reducer;
 
-export const { addToCart, changeStatus, updateCartItem, removeItem } = cartSlice.actions;
+export const { addToCart, changeStatus, updateCartItem, removeItem, clearCart } = cartSlice.actions;

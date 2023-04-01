@@ -92,8 +92,8 @@ const ProductDetail = () => {
                             <p className={cx('note')}>{product.note}</p>
                             {product.stock > 0 && (
                                 <div className={cx('buy')}>
-                                    <Button onClick={handleAddToCart}>{t('button.addToCart')}</Button>
-                                    <Button onClick={handleAddToCart}>{t('button.buy')}</Button>
+                                    <Button onclick={handleAddToCart}>{t('button.addToCart')}</Button>
+                                    <Button onclick={handleAddToCart}>{t('button.buy')}</Button>
                                 </div>
                             )}
                             <ul className={cx('features')}>

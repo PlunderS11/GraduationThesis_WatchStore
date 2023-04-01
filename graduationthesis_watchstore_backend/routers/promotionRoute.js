@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { verifyTokenAndAdmin } = require('../middleware/verifyToken');
+const { verifyTokenAndAdmin, verifyTokenAndAuthorization } = require('../middleware/verifyToken');
 const Promotion = require('../models/promotionModel');
 
 router.post('/', verifyTokenAndAdmin, async (req, res) => {
@@ -101,11 +101,9 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
 });
 
 //GET ALL PROMOTION
-router.get('/', verifyTokenAndAdmin, async (req, res) => {
-    const query = req.query.new;
+router.get('/', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        const promotions = query ? await Promotion.find().sort({ _id: -1 }).limit(5) : await Promotion.find();
-
+        const promotions = await Promotion.find();
         res.status(200).json({ data: { promotions: promotions }, message: 'success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });

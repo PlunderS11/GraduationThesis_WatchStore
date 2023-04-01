@@ -10,40 +10,16 @@ const User = require('../models/userModel');
 // ESTIMATE
 router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        const province = await address('province');
-        const addressProvince = province.find(item => item.ProvinceID === req.body.provinceId);
-        const district = await address('district', req.body.provinceId);
-        const addressDistrict = district.find(item => item.DistrictID === req.body.districtId);
-        const ward = await address('ward', req.body.districtId);
-        const addressWard = ward.find(item => item.WardCode === req.body.wardId);
         const products = req.body.products;
-
-        // check promotion
-        var promotion = {};
-        var promotionExist = {};
-        if (req.body.promotionCode) {
+        const distancePrice = await estimate(req.body.district.DistrictID, req.body.ward.WardCode);
+        var promotion = null;
+        var discountValue = 0;
+        if (req.body.promotionCode.trim().length > 0) {
             promotion = await Promotion.findOne({ code: req.body.promotionCode });
-            const allPromotion = await Order.find().populate('user').populate('promotion').exec();
-            promotionExist = allPromotion.find(
-                item => item.user._id.toString() === req.user.id && item.promotion.code === req.body.promotionCode
-            );
         }
-        let discountValue = 0;
-        if (promotion.value) {
-            if (promotion.isDelete)
-                return res.status(406).json({ data: {}, message: 'Khuyến mãi không tồn tại', status: 406 });
-            if (new Date().getTime() < promotion.startDate.getTime())
-                return res.status(407).json({ data: {}, message: 'Khuyến mãi chưa bắt đầu', status: 407 });
-            if (new Date().getTime() > promotion.endDate.getTime())
-                return res.status(408).json({ data: {}, message: 'Khuyến mãi đã hết', status: 408 });
-            if (promotionExist)
-                return res.status(409).json({ data: {}, message: 'Khuyến mãi đã được sử dụng', status: 409 });
-            else {
-                discountValue = promotion.value;
-            }
+        if (promotion) {
+            discountValue = promotion.value;
         }
-        const distancePrice = await estimate(req.body.districtId, req.body.wardId);
-
         let productPrice = 0;
         let productDetails = [];
         if (products) {
@@ -67,9 +43,9 @@ router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
             res.status(200).json({
                 data: {
                     user: { ...orther },
-                    addressProvince,
-                    addressDistrict,
-                    addressWard,
+                    addressProvince: req.body.province,
+                    addressDistrict: req.body.district,
+                    addressWard: req.body.ward,
                     productDetails,
                     distancePrice,
                     discountPrice,
@@ -89,39 +65,18 @@ router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
 // POST ORDER
 router.post('/', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        const province = await address('province');
-        const addressProvince = province.find(item => item.ProvinceID === req.body.provinceId);
-        const district = await address('district', req.body.provinceId);
-        const addressDistrict = district.find(item => item.DistrictID === req.body.districtId);
-        const ward = await address('ward', req.body.districtId);
-        const addressWard = ward.find(item => item.WardCode === req.body.wardId);
-        var promotion = {};
-        var promotionExist = {};
-        if (req.body.promotionCode) {
-            promotion = await Promotion.findOne({ code: req.body.promotionCode });
-            const allPromotion = await Order.find().populate('user').populate('promotion').exec();
-            promotionExist = allPromotion.find(
-                item => item.user._id.toString() === req.user.id && item.promotion.code === req.body.promotionCode
-            );
-        }
-        // check da su dung ma KM chua
-        let discountValue = 0;
-        if (promotion.value) {
-            if (promotion.isDelete)
-                return res.status(406).json({ data: {}, message: 'Khuyến mãi không tồn tại', status: 406 });
-            if (new Date().getTime() < promotion.startDate.getTime())
-                return res.status(407).json({ data: {}, message: 'Khuyến mãi chưa bắt đầu', status: 407 });
-            if (new Date().getTime() > promotion.endDate.getTime())
-                return res.status(408).json({ data: {}, message: 'Khuyến mãi đã hết', status: 408 });
-            if (promotionExist)
-                return res.status(409).json({ data: {}, message: 'Khuyến mãi đã được sử dụng', status: 409 });
-            else {
-                discountValue = promotion.value;
-            }
-        }
         const products = req.body.products;
-        const distancePrice = await estimate(req.body.districtId, req.body.wardId);
-        const lead = await leadtime(req.body.districtId, req.body.wardId);
+        const distancePrice = await estimate(req.body.district.DistrictID, req.body.ward.WardCode);
+        const lead = await leadtime(req.body.district.DistrictID, req.body.ward.WardCode);
+
+        var promotion = null;
+        var discountValue = 0;
+        if (req.body.promotionCode.trim().length > 0) {
+            promotion = await Promotion.findOne({ code: req.body.promotionCode });
+        }
+        if (promotion) {
+            discountValue = promotion.value;
+        }
 
         // check ton kho
         let check = true;
@@ -162,14 +117,14 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
             let order = new Order({
                 user: { ...orther },
 
-                promotion: promotion.value ? promotion : null,
+                promotion: promotion,
                 orderDetails,
                 recipient: {
                     username: req.body.username,
                     phone: req.body.phone,
-                    addressProvince,
-                    addressDistrict,
-                    addressWard,
+                    addressProvince: req.body.province,
+                    addressDistrict: req.body.district,
+                    addressWard: req.body.ward,
                     address: req.body.address,
                 },
                 code: `DH${new Date().getTime()}`,
@@ -193,11 +148,11 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
             await order.save();
             res.status(200).json({ data: { order }, message: 'success', status: 200 });
         } else {
-            return res.status(407).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 406 });
+            res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: error, status: 500 });
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
 
@@ -275,7 +230,7 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 };
                 break;
             case 'CANCEL':
-                 status = {
+                status = {
                     ...order.status._doc,
                     state: 'CANCEL',
                     cancelDate: new Date(),
@@ -326,14 +281,33 @@ router.put('/info/update/:id', verifyTokenAndAdmin, async (req, res) => {
 // ADMIN
 router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const orderList = await Order.find()
+        var query = {};
+        if (req.query) {
+            query = {
+                code: req.query.code,
+                'status.state': req.query.status,
+                'recipient.addressProvince.ProvinceID': req.query.ProvinceID ? Number(req.query.ProvinceID) : undefined,
+                'recipient.addressDistrict.DistrictID': req.query.DistrictID ? Number(req.query.DistrictID) : undefined,
+                'recipient.addressWard.WardCode': req.query.WardCode,
+                dateOrdered:
+                    req.query.startDate && req.query.endDate
+                        ? {
+                              $gte: req.query.startDate,
+                              $lte: req.body.endDate,
+                          }
+                        : undefined,
+            };
+        }
+        const orderList = await Order.find({ ...query })
             .populate('user')
             .populate('orderDetails')
             .populate('promotion')
             .sort({ dateOrdered: -1 })
+            .limit(req.query.new == 'true' ? 10 : 0)
             .exec();
         res.status(200).json({ data: { orderList, total: orderList.length }, message: 'success', status: 200 });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
@@ -342,7 +316,7 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
 // ADMIN
 router.get('/admin/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const order = await Order.findOne({ _id: req.params.id})
+        const order = await Order.findOne({ _id: req.params.id })
             .populate('user')
             .populate({
                 path: 'orderDetails',
@@ -361,7 +335,12 @@ router.get('/admin/:id', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL ORDER BY ID USER
 router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        const orderList = await Order.find().populate('user').sort({ dateOrdered: -1 }).exec();
+        const orderList = await Order.find()
+            .populate('user')
+            .populate('orderDetails')
+            .populate('promotion')
+            .sort({ dateOrdered: -1 })
+            .exec();
         const rs = orderList.filter(item => {
             return item.user._id.toString() == req.user.id;
         });
