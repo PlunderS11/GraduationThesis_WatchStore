@@ -280,6 +280,8 @@ router.put('/info/update/:id', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL ORDER
 // ADMIN
 router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
+    const startDate = new Date(req.query.startDate);
+    const endDate = new Date(req.query.endDate);
     try {
         var query = {};
         if (req.query) {
@@ -292,8 +294,8 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
                 dateOrdered:
                     req.query.startDate && req.query.endDate
                         ? {
-                              $gte: req.query.startDate,
-                              $lte: req.body.endDate,
+                            $gte: startDate,
+                            $lte: endDate
                           }
                         : undefined,
             };

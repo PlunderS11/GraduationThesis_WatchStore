@@ -9,7 +9,8 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
     const timestampsEnd = Math.floor(endDate.getTime());
     try {
         const newPromotion = new Promotion({
-            title: req.body.title,
+            titlevi: req.body.titlevi,
+            titleen: req.body.titleen,
             code: req.body.code,
             value: req.body.value,
             startDate: timestampsStart,
