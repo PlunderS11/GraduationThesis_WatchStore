@@ -139,8 +139,8 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
 // GET PRODUCT BY LINK INSTAGRAM
 router.get('/link', async (req, res) => {
     try {
-        const product = await Product.findOne({ link: req.query.link }).exec();
-        res.status(200).json({ data: { product: product }, message: 'success', status: 200 });
+        const products = await Product.find({ _id: { $in: req.query.id.split(',') } }).exec();
+        res.status(200).json({ data: { products: products }, message: 'success', status: 200 });
     } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
@@ -202,7 +202,11 @@ router.get('/detail/:slug/:amount', async (req, res) => {
         const related = await Product.find().populate('collectionObj').exec();
 
         const relatedProducts = related
-            .filter(i => i.collectionObj._id.toString() === detail.collectionObj._id.toString())
+            .filter(
+                i =>
+                    i.collectionObj._id.toString() === detail.collectionObj._id.toString() &&
+                    i._id.toString() !== detail._id.toString()
+            )
             .slice(0, req.params.amount);
         const detailProduct = {
             detail,

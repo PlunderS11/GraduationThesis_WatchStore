@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { fetchUserInfor } from './useThunk';
 
 const initialState = {
     user: {},
     token: localStorage.getItem('mynhbake_token') ? localStorage.getItem('mynhbake_token') : '',
     isLogin: false,
+    isLoadingUser: false,
     error: '',
 };
 
@@ -13,12 +15,8 @@ const userSlice = createSlice({
     reducers: {
         setTokenUser: (state, action) => {
             state.token = action.payload;
-        },
-        setCurrentUser: (state, action) => {
-            state.user = action.payload;
             state.isLogin = true;
         },
-
         logOut: {
             reducer(state, action) {
                 state.user = {};
@@ -33,8 +31,22 @@ const userSlice = createSlice({
             },
         },
     },
+    extraReducers(builder) {
+        builder
+            .addCase(fetchUserInfor.pending, (state, action) => {
+                state.isLoadingUser = true;
+            })
+            .addCase(fetchUserInfor.fulfilled, (state, action) => {
+                state.user = action.payload;
+                state.isLogin = true;
+                state.isLoadingUser = false;
+            })
+            .addCase(fetchUserInfor.rejected, (state, action) => {
+                // state.isLoadingUser = false;
+            });
+    },
 });
 
-export const { setTokenUser, setCurrentUser, logOut } = userSlice.actions;
+export const { setTokenUser, logOut } = userSlice.actions;
 
 export default userSlice.reducer;

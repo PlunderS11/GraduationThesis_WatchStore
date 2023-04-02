@@ -1,0 +1,37 @@
+.buy-success-page {
+    margin-top: 300px;
+}
+
+.body {
+    border: 3px solid #f0f0f0;
+    border-radius: 10px;
+}
+
+.body-header-noti {
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    background-color: #1eb275;
+    padding: 1.5rem;
+}
+
+.header-noti-icon {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+
+.header-noti-text {
+    text-align: center;
+    font-weight: 500;
+    color: #fff;
+    font-size: 28px;
+}
+
+.button {
+    margin: 5px;
+}
+
+.body-header-text {
+    padding: 1.5rem;
+    text-align: center;
+}

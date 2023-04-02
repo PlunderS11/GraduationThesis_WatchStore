@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import style from './AccountInfo.module.scss';
 import { accountOptions } from '../../assets/datas/index';
 import Profile from './Profile/Profile';
-import Order from './Order/Order';
 import Address from './Address/Address';
+import OrderPage from './Order/OrderPage';
 
 const cx = classNames.bind(style);
 
@@ -43,7 +43,7 @@ const AccountInfo = () => {
                         </Col>
                         <Col span={18}>
                             {params.category === 'profile' && <Profile />}
-                            {params.category === 'orders' && <Order />}
+                            {params.category === 'orders' && <OrderPage />}
                             {params.category === 'address' && <Address />}
                         </Col>
                     </Row>

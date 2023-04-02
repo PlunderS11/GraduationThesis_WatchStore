@@ -7,12 +7,29 @@
         "viewDetail": "Xem sản phẩm",
         "order": "Đặt hàng",
         "buy": "Mua hàng",
-        "addToCart": "Thêm vào giỏ hàng"
+        "addToCart": "Thêm vào giỏ hàng",
+        "gotoCart": "Đến giỏ hàng",
+        "goHome": "Về trang chủ",
+        "gotoOrderHistory": "Đến lịch sử đơn hàng"
     },
     "cart": {
         "checkout": "Thanh toán",
         "noItem": "Bạn chưa chọn sản phẩm nào!",
-        "total": "Tổng cộng"
+        "total": "Tổng cộng",
+        "storePromotion": "MynhBake Store khuyến mãi",
+        "chocePromotion": "Chọn hoặc nhập mã khuyến mãi",
+        "promotiocode": "Mã giảm giá",
+        "promotioPrice": "Tiền khuyến mãi được giảm",
+        "promotioNull": "Chưa có mã giảm giá",
+        "toAddress": "Giao tới",
+        "addAddress": "Thêm địa chỉ",
+        "changeAddress": "Thay đổi",
+        "estimate": "Tạm tính",
+        "distancePrice": "Phí vận chuyển",
+        "discountPrice": "Giảm giá",
+        "totalPrice": "Tổng cộng",
+        "note": "Ghi chú",
+        "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v..."
     },
     "footer": {
         "address": "Địa chỉ",
@@ -114,6 +131,8 @@
         "requiredName": "Nhập tên!",
         "requiredPassword": "Nhập mật khẩu!",
         "requiredPhone": "Nhập số điện thoại!",
+        "rank": "Hạng mức",
+        "sex": "Giới tính",
         "success": "Đăng ký thành công."
     },
     "search": {
@@ -153,7 +172,12 @@
         "shippingPrice": "Phí vận chuyển",
         "selectCityOption": "Chọn tỉnh/thành phố",
         "selectDistrictOption": "Chọn quận/huyện",
-        "selectWardOption": "Chọn xã/phường"
+        "selectWardOption": "Chọn xã/phường",
+        "cod": "Tiền mặt",
+        "descriptionCOD": "Thanh toán khi nhận hàng",
+        "online": "Trực tuyến",
+        "descriptionOnl": "Thanh toán online",
+        "buySuccess": "Đặt hàng thành công"
     },
     "aboutUs": {
         "introduce": "Giới thiệu",
@@ -173,5 +197,22 @@
     "accountInfo": {
         "updateInfor": "Cập nhật thông tin",
         "generalInfo": "Thông tin chung"
+    },
+    "table": {
+        "image": "Hình ảnh",
+        "product": "Sản phẩm",
+        "price": "Đơn giá",
+        "quantity": "Số lượng",
+        "total": "Tổng cộng",
+        "codeOrder": "Mã đơn",
+        "status": "Trạng thái"
+    },
+    "antd": {
+        "popconfirm": {
+            "title": "Bạn có chắc chắn muốn xóa mục này?",
+            "description": "Xóa mục này",
+            "okText": "Có",
+            "cancelText": "Không"
+        }
     }
 }

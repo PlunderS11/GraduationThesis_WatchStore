@@ -6,6 +6,7 @@ const Product = require('../models/productModel');
 const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
 const { estimate, leadtime, address } = require('../utils/config');
 const User = require('../models/userModel');
+const Rank = require('../models/rankModel');
 
 // ESTIMATE
 router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
@@ -110,7 +111,7 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 productPrice += product.finalPrice * products[i].quantity;
                 orderDetails.push(orderDetail);
             }
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.user.id).populate('rank');
             const { password, ...orther } = user._doc;
             const discountPrice = (productPrice * discountValue) / 100;
 
@@ -146,7 +147,32 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 leadtime: new Date(lead * 1000).toISOString(),
             });
             await order.save();
-            res.status(200).json({ data: { order }, message: 'success', status: 200 });
+
+            // Check rank
+            const orderList = await Order.find()
+                .populate('user')
+                .populate('orderDetails')
+                .populate('promotion')
+                .sort({ dateOrdered: -1 })
+                .exec();
+            const rank = await Rank.find();
+            const totalPriceOrderUser = orderList.reduce((acc, cur) => {
+                if (cur.user._id.toString() == req.user.id) {
+                    return acc + cur.finalPrice;
+                }
+            }, 0);
+
+            console.log(totalPriceOrderUser);
+            const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
+
+            if (user.rank._id.toString() !== rs._id.toString()) {
+                await User.findByIdAndUpdate(req.user.id, {
+                    $set: { rank: rs },
+                });
+                res.status(201).json({ data: { order, rank: rs }, message: 'success', status: 201 });
+            } else {
+                res.status(200).json({ data: { order }, message: 'success', status: 200 });
+            }
         } else {
             res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
         }
@@ -298,6 +324,7 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
                         : undefined,
             };
         }
+        console.log(query);
         const orderList = await Order.find({ ...query })
             .populate('user')
             .populate('orderDetails')
@@ -337,7 +364,12 @@ router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
     try {
         const orderList = await Order.find()
             .populate('user')
-            .populate('orderDetails')
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
             .populate('promotion')
             .sort({ dateOrdered: -1 })
             .exec();
@@ -345,6 +377,27 @@ router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
             return item.user._id.toString() == req.user.id;
         });
         res.status(200).json({ data: { orders: rs, total: rs.length }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
+// GET ORDER BY ID
+router.get('/customer/:orderId', verifyTokenAndAuthorization, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.orderId)
+            .populate('user')
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
+            .populate('promotion')
+            .sort({ dateOrdered: -1 })
+            .exec();
+        res.status(200).json({ data: { order }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });

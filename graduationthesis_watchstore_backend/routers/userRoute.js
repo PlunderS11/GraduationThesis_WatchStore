@@ -3,10 +3,15 @@ const CryptoJS = require('crypto-js');
 
 const User = require('../models/userModel');
 const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
+const Token = require('../models/token');
+
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 router.get('/userInfo', verifyToken, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id).populate('rank');
         const { password, ...other } = user._doc;
         res.status(200).json({ data: { ...other }, message: 'Success', status: 200 });
     } catch (error) {

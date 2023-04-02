@@ -36,6 +36,7 @@ const UserSchema = new mongoose.Schema(
             required: true,
         },
         rank: { type: mongoose.Schema.Types.ObjectId, ref: 'Rank', require: true },
+        verified: { type: Boolean, default: false },
         isDelete: {
             type: Boolean,
             default: false,

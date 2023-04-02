@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Row, Form, Input, Button, Select } from 'antd';
-import { useForm } from 'antd/es/form/Form';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import axiosClient, { GHN } from '../../../api/axiosClient';
-import { setCurrentUser } from '../../../features/user/userSlice';
 
 import style from './Address.module.scss';
 import classNames from 'classnames/bind';
+import { fetchUserInfor } from '../../../features/user';
 const cx = classNames.bind(style);
 
 const Address = () => {
@@ -25,8 +24,8 @@ const Address = () => {
 
     useEffect(() => {
         const getUserInfor = async () => {
+            dispatch(fetchUserInfor);
             const res = await axiosClient.get('user/userInfo');
-            dispatch(setCurrentUser(res.data));
             if (res.data.address?.address !== undefined) {
                 form.setFieldsValue({
                     username: res.data.address.name,
@@ -144,6 +143,9 @@ const Address = () => {
                                     showSearch
                                     optionFilterProp="children"
                                     allowClear
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                    }
                                     onChange={handleGetAddressDistrict}
                                     options={province.map((item, i) => ({
                                         value: item.ProvinceID,
@@ -161,6 +163,9 @@ const Address = () => {
                                     showSearch
                                     optionFilterProp="children"
                                     allowClear
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                    }
                                     onChange={handleGetAddressWard}
                                     options={district.map(item => ({
                                         value: item.DistrictID,
@@ -178,6 +183,9 @@ const Address = () => {
                                     showSearch
                                     optionFilterProp="children"
                                     allowClear
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                    }
                                     options={ward.map(item => ({
                                         value: item.WardCode,
                                         label: item.WardName,

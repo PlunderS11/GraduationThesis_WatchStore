@@ -65,17 +65,15 @@
 
 .item-detail {
     margin-left: 12px;
-    font-size: 13px;
+    font-size: 16px;
 
     .name {
         display: block;
-        margin-bottom: 5px;
         width: 180px;
     }
 
     .price {
         font-family: 'Gotham Bold';
-        margin-bottom: 5px;
     }
 
     .amount {
@@ -101,13 +99,14 @@
 
 .button {
     margin: 5px;
-    width: 100%;
+    font-size: 10px;
 }
 
 .remove {
-    padding: 10px;
-    cursor: pointer;
     position: absolute;
     top: 0;
     right: 0;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
 }

@@ -12,19 +12,7 @@ import { Col, Divider, Modal, Row, Spin } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import axiosClient from '../../api/axiosClient';
 import { toast } from 'react-toastify';
-
-const payment = [
-    {
-        type: 'CASH',
-        content: 'Tiền mặt',
-        des: 'Thanh toán khi nhận hàng',
-    },
-    {
-        type: 'VNPAY',
-        content: 'Ví VNPAY',
-        des: 'Thanh toán online qua ví VNPAY',
-    },
-];
+import { fetchUserInfor } from '../../features/user';
 
 const cx = classNames.bind(style);
 
@@ -41,6 +29,19 @@ const Checkout = () => {
     const cart = useSelector(selectCartItems);
     const totalItems = useSelector(selectTotalItems);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const payment = [
+        {
+            type: 'CASH',
+            content: t('checkout.cod'),
+            des: t('checkout.descriptionCOD'),
+        },
+        {
+            type: 'VNPAY',
+            content: t('checkout.online'),
+            des: t('checkout.descriptionOnl'),
+        },
+    ];
 
     useEffect(() => {
         dispatch(fetchEstimate());
@@ -72,8 +73,13 @@ const Checkout = () => {
                 username: resUser.data.username,
             });
             dispatch(clearCart());
-            console.log(res);
-            // navigate(`/buysuccess/${res.data.id}`);
+            if (res.status === 201) {
+                toast.success(`Thăng hạng thành viên lên ${res.data.rank.namevi}`);
+                dispatch(fetchUserInfor());
+            } else {
+                toast.success('Đặt hàng thành công');
+            }
+            navigate('/buysuccess');
         } catch (error) {
             toast.error(error.response.data.message);
         }
@@ -111,13 +117,13 @@ const Checkout = () => {
                             <Col span={14} style={{ paddingRight: '15px' }}>
                                 <div className={cx('note')}>
                                     <div className={cx('body')}>
-                                        <div className={cx('body-title')}>Ghi chú</div>
+                                        <div className={cx('body-title')}>{t('cart.note')}</div>
                                         <div className={cx('body-form')}>
                                             <TextArea
                                                 onChange={e => setNote(e.target.value)}
                                                 value={note}
                                                 rows={4}
-                                                placeholder="Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v..."
+                                                placeholder={t('cart.notePlace')}
                                             />
                                         </div>
                                     </div>
@@ -125,12 +131,12 @@ const Checkout = () => {
                                 <div className={cx('infor')}>
                                     <div className={cx('address')}>
                                         <div className={cx('change')}>
-                                            <span style={{ fontWeight: 600 }}>Giao tới</span>
+                                            <span style={{ fontWeight: 600 }}>{t('cart.toAddress')}</span>
                                             <div
                                                 className={cx('change-a')}
                                                 onClick={() => navigate('/account/address', { state: true })}
                                             >
-                                                Thay đổi
+                                                {t('cart.changeAddress')}
                                             </div>
                                         </div>
                                         <div className={cx('add')}>
@@ -144,13 +150,13 @@ const Checkout = () => {
                                                     </div>
                                                 </>
                                             ) : (
-                                                <Link to={'/account/addresses'}>+ Thêm địa chỉ</Link>
+                                                <Link to={'/account/addresses'}>+ {t('cart.addAddress')}</Link>
                                             )}
                                         </div>
                                     </div>
                                     {/* Modal coupon */}
                                     <Modal
-                                        title="Hebec Khuyến mãi"
+                                        title={t('cart.storePromotion')}
                                         className="modal-style"
                                         open={isModalOpen}
                                         onCancel={handleCancel}
@@ -165,30 +171,28 @@ const Checkout = () => {
                                                     value={coupon}
                                                     onChange={e => setCoupon(e.target.value)}
                                                 />
-                                                <Button style={{ width: 100 }} onclick={handleOk}>
-                                                    Áp dụng
-                                                </Button>
+                                                <Button onclick={handleOk}>Áp dụng</Button>
                                             </div>
                                             <div className={cx('modal__text')}>
-                                                <div className={cx('modal__label')}>Mã giảm giá</div>
+                                                <div className={cx('modal__label')}>{t('cart.promotionCode')}</div>
                                                 {estimate?.discountPrice > 0 ? (
                                                     <span>
-                                                        Tiền khuyến mãi được giảm&nbsp;
+                                                        {t('cart.promotioPrice')}&nbsp;
                                                         {NumberWithCommas(estimate?.discountPrice)} &nbsp;₫
                                                     </span>
                                                 ) : (
-                                                    <span>Chưa có mã giảm giá nào!</span>
+                                                    <span>{t('cart.promotioNull')}!</span>
                                                 )}
                                             </div>
                                         </div>
                                     </Modal>
                                     <div className={cx('coupon')}>
-                                        <span>MynhBake Khuyến Mãi</span>
+                                        <span>{t('cart.storePromotion')}</span>
 
                                         <div className={cx('coupon-chonse')} onClick={showModal}>
                                             {estimate?.discountPrice > 0 ? (
                                                 <>
-                                                    Tiền khuyến mãi được giảm&nbsp;
+                                                    {t('cart.promotioPrice')}&nbsp;
                                                     {NumberWithCommas(estimate?.discountPrice)} &nbsp;₫
                                                 </>
                                             ) : (
@@ -198,7 +202,7 @@ const Checkout = () => {
                                                         alt=""
                                                         style={{ marginRight: '4px' }}
                                                     />
-                                                    Chọn hoặc nhập khuyến mãi
+                                                    {t('cart.chocePromotion')}
                                                 </>
                                             )}
                                         </div>
@@ -208,11 +212,15 @@ const Checkout = () => {
                             <Col span={10} style={{ paddingLeft: '15px' }}>
                                 <div className={cx('note')}>
                                     <div className={cx('body')}>
-                                        <div className={cx('body-title')}>Đơn hàng</div>
+                                        <div className={cx('body-title')}>{t('checkout.itemPrice')}</div>
                                         <div className={cx('body-form')}>
                                             <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Sản phẩm</span>
-                                                <span className={cx('form-calculate-title-text')}>Thành tiền</span>
+                                                <span className={cx('form-calculate-title-text')}>
+                                                    {t('table.product')}
+                                                </span>
+                                                <span className={cx('form-calculate-title-text')}>
+                                                    {t('table.total')}
+                                                </span>
                                             </div>
                                             <Divider style={{ margin: '0' }} />
                                             <div className={cx('body-list')}>
@@ -235,14 +243,18 @@ const Checkout = () => {
                                             </div>
                                             <Divider style={{ margin: '0' }} />
                                             <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Tạm tính</span>
+                                                <span className={cx('form-calculate-title-text')}>
+                                                    {t('cart.estimate')}
+                                                </span>
                                                 <p className={cx('text')} style={{ padding: '10px 8px 0 0' }}>
                                                     {estimate.totalPrice ? NumberWithCommas(estimate?.totalPrice) : 0}
                                                     &nbsp;₫
                                                 </p>
                                             </div>
                                             <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Phí vận chuyển</span>
+                                                <span className={cx('form-calculate-title-text')}>
+                                                    {t('cart.distancePrice')}
+                                                </span>
                                                 <p className={cx('text')} style={{ padding: '10px 8px 0 0' }}>
                                                     {estimate.distancePrice
                                                         ? NumberWithCommas(estimate?.distancePrice)
@@ -251,7 +263,10 @@ const Checkout = () => {
                                                 </p>
                                             </div>
                                             <div className={cx('form-calculate-title')}>
-                                                <span className={cx('form-calculate-title-text')}>Giảm giá</span>
+                                                <span className={cx('form-calculate-title-text')}>
+                                                    {' '}
+                                                    {t('cart.discountPrice')}
+                                                </span>
                                                 <p
                                                     className={cx('text')}
                                                     style={{ padding: '10px 8px 0 0', color: '#47991f' }}
@@ -264,7 +279,7 @@ const Checkout = () => {
                                                 </p>
                                             </div>
                                             <div className={cx('form-total')} style={{ padding: '10px 0 0 8px' }}>
-                                                <h2>Tổng cộng</h2>
+                                                <h2>{t('cart.totalPrice')}:&nbsp;</h2>
                                                 <h2 style={{ color: '#ff424e' }}>
                                                     {estimate.finalPrice ? NumberWithCommas(estimate.finalPrice) : 0}
                                                     &nbsp;₫
@@ -289,7 +304,7 @@ const Checkout = () => {
                                             </ul>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Button onclick={handleBuy}>ĐẶT MUA</Button>
+                                            <Button onclick={handleBuy}>{t('button.order')}</Button>
                                         </div>
                                     </div>
                                 </div>
