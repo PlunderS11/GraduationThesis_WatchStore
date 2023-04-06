@@ -1,19 +1,50 @@
 import classNames from 'classnames/bind';
 import styles from './LastestTransactions.module.scss';
-import { lastPersonOder } from '../../data/dummyData.js';
+// import { lastPersonOder } from '../../data/dummyData.js';
+import { useEffect, useState } from 'react';
+import axiosClient from '~/api/axiosClient';
+import * as moment from 'moment';
 
 const cx = classNames.bind(styles);
 
 export default function WidgetLg() {
-    const Button = ({ type }) => {
-        return <button className={cx('widget-lg-button', type)}>{type}</button>;
+    const Button = ({ type, children }) => {
+        var title = '';
+        if (children === 'PENDING') {
+            title = 'Chờ xác nhận';
+        } else if (children === 'PACKAGE') {
+            title = 'Đóng gói';
+        } else if (children === 'DELIVERING') {
+            title = 'Đang vận chuyển';
+        } else if (children === 'COMPLETE') {
+            title = 'Đã giao';
+        } else if (children === 'CANCEL') {
+            title = 'Đã hủy';
+        }
+        return <button className={cx('widget-lg-button', type)}>{title}</button>;
     };
 
-    const orders = lastPersonOder;
-
+    const [orders, setOrders] = useState({});
+    useEffect(() => {
+        try {
+            const getOrders = async () => {
+                const res = await axiosClient.get('order/admin', { params: { new: true } });
+                if (res) {
+                    setOrders(res.data.orderList);
+                }
+            };
+            getOrders();
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
+    // console.log(orders);
+    function NumberWithCommas(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' VNĐ';
+    }
     return (
         <div className={cx('widget-lg')}>
-            <h3 className={cx('widget-lg-title')}>Giao dịch mới nhất</h3>
+            <h3 className={cx('widget-lg-title')}>10 đơn hàng mới nhất</h3>
             <table className={cx('widget-lg-table')}>
                 <tbody>
                     <tr className={cx('widget-lg-tr')}>
@@ -22,23 +53,22 @@ export default function WidgetLg() {
                         <th className={cx('widget-lg-th')}>Giá trị giao dịch</th>
                         <th className={cx('widget-lg-th')}>Trạng thái</th>
                     </tr>
-                    {orders.map((order) => (
-                        <tr className={cx('widget-lg-tr')} key={order.id}>
-                            <td className={cx('widget-lg-user')}>
-                                <img
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWfR3mjXTW23p7u178vl_RQ3LqbrGzotq_YQ&usqp=CAU"
-                                    alt=""
-                                    className={cx('widget-lg-img')}
-                                />
-                                <span className={cx('widget-lg-name')}>{order.username}</span>
-                            </td>
-                            <td className={cx('widget-lg-date')}>{order.createdAt}</td>
-                            <td className={cx('widget-lg-amount')}>{order.amount}đ</td>
-                            <td className={cx('widget-lg-status')}>
-                                <Button type={order.status} />
-                            </td>
-                        </tr>
-                    ))}
+                    {JSON.stringify(orders) !== '{}' &&
+                        orders.map((order, i) => (
+                            <tr className={cx('widget-lg-tr')} key={i}>
+                                <td className={cx('widget-lg-user')}>
+                                    <span className={cx('widget-lg-name')}>{order.recipient.username}</span>
+                                </td>
+                                {/* moment(params.value).format('DD/MM/YYYY') */}
+                                <td className={cx('widget-lg-date')}>
+                                    {moment(order.dateOrdered).format('DD/MM/YYYY')}
+                                </td>
+                                <td className={cx('widget-lg-amount')}>{NumberWithCommas(order.finalPrice)}</td>
+                                <td className={cx('widget-lg-status')}>
+                                    <Button type={order.status.state} children={order.status.state} />
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>

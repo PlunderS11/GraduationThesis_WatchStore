@@ -68,7 +68,6 @@ const ModalCollecionNew = (props) => {
         <>
             <Modal onCancel={handleCancel} open={open} title="THÊM MỚI DANH MỤC" width={740} centered footer={[]}>
                 <div className={cx('new-collection')}>
-                    <h1 className={cx('add-product-title')}>Thêm mới danh mục</h1>
                     <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
                         <div className={cx('add-collection-item')}>
                             <label>Thông tin danh mục</label>

@@ -19,21 +19,22 @@ const items = [
     },
     getItem('Quản lý người dùng', 'sub2', <PermIdentity />, [
         getItem('Khách hàng', ['1', '/users']),
-        getItem('Nhân viên', ['2', '/']),
+        getItem('Thứ hạng khách hàng', ['2', '/ranks']),
+        getItem('Nhân viên', ['3', '/staffs']),
     ]),
     {
         type: 'divider',
     },
     getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
-        getItem('Sản phẩm', ['3', '/products']),
-        getItem('Danh mục', ['4', '/collections']),
+        getItem('Sản phẩm', ['4', '/products']),
+        getItem('Danh mục', ['5', '/collections']),
     ]),
     {
         type: 'divider',
     },
     getItem('Quản lý hóa đơn', 'sub4', <AttachMoney />, [
-        getItem('Hóa đơn', ['5', '/orders']),
-        getItem('Khuyến mãi', ['6', '/promotions']),
+        getItem('Hóa đơn', ['6', '/orders']),
+        getItem('Khuyến mãi', ['7', '/promotions']),
     ]),
 ];
 const MenuSideBar = () => {

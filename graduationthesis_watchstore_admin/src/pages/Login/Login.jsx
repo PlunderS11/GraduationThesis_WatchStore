@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
@@ -11,6 +12,7 @@ import InputField from '~/components/InputField/InputField';
 import axiosClient from '~/api/axiosClient';
 import { setCurrentUser } from '~/features/user/userSlice';
 import style from './Login.module.scss';
+import logo from '~/assets/images/logo-black-removebg-preview.png';
 
 const cx = classNames.bind(style);
 
@@ -50,10 +52,16 @@ const Login = () => {
 
     return (
         <div className={cx('container')}>
-            <h2 className={cx('title')}>ĐĂNG NHẬP ADMIN</h2>
+            <div className={cx('div_logo')}>
+                <img className={cx('logo-img')} src={logo} alt="" />
+                <br />
 
+                <span className={cx('logo')}>WATCH STORE</span>
+            </div>
+            <h2 className={cx('title')}>ĐĂNG NHẬP ADMIN</h2>
             <form onSubmit={formik.handleSubmit} spellCheck="false">
                 <InputField
+                    customClass={style}
                     type="text"
                     id="email"
                     name="email"
@@ -67,6 +75,7 @@ const Login = () => {
                     onBlur={formik.handleBlur}
                 />
                 <InputField
+                    customClass={style}
                     type="password"
                     id="password"
                     name="password"
@@ -79,8 +88,12 @@ const Login = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                 />
+
+                <div className={cx('forgot')}>
+                    {'Quên mật khẩu'}? <a>{'Bấm vào đây'}</a>
+                </div>
                 <Button type="submit" customClass={style}>
-                    Login
+                    Đăng nhập
                 </Button>
             </form>
         </div>

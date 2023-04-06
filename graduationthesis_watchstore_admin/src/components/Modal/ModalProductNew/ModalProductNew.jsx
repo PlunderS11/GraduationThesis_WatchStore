@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import { Spin } from 'antd';
 
 import styles from './ModalProductNew.module.scss';
 import axiosClient from '~/api/axiosClient';
@@ -15,6 +16,7 @@ const cx = classNames.bind(styles);
 
 const ModalProductNew = (props) => {
     const { open, onClose } = props;
+    const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
         setDelImg([]);
@@ -150,6 +152,7 @@ const ModalProductNew = (props) => {
             formData.append('isDelete', isDelete);
             console.log(formData);
 
+            setLoading(true);
             try {
                 const res = await axiosClient.post('product/', formData);
                 if (res) {
@@ -157,8 +160,8 @@ const ModalProductNew = (props) => {
                     handleCancel();
                     navigate('/products');
                 }
-            } catch (error) {
-                toast.error(error);
+            } finally {
+                setLoading(false);
             }
         },
     });
@@ -417,9 +420,11 @@ const ModalProductNew = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <Button type="submit" customClass={styles}>
-                            Thêm
-                        </Button>
+                        <Spin spinning={loading}>
+                            <Button type="submit" customClass={styles}>
+                                Thêm
+                            </Button>
+                        </Spin>
                     </form>
                 </div>
             </Modal>

@@ -115,11 +115,18 @@ export default function PromotionList() {
 
     const columns_deleted = [
         {
-            field: 'title',
+            field: 'titlevi',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên khuyến mãi',
-            width: 300,
+            headerName: 'Tên tiếng Việt',
+            width: 200,
+        },
+        {
+            field: 'titleen',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên tiếng Anh',
+            width: 200,
         },
         {
             field: 'code',
@@ -132,8 +139,8 @@ export default function PromotionList() {
             field: 'value',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Giá trị khuyến mãi',
-            width: 200,
+            headerName: 'Giá trị',
+            width: 100,
             type: 'number',
             renderCell: (params) => {
                 return <div className={cx('product-list-item')}>{params.row.value}%</div>;
@@ -200,11 +207,18 @@ export default function PromotionList() {
 
     const columns_undeleted = [
         {
-            field: 'title',
+            field: 'titlevi',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên khuyến mãi',
-            width: 300,
+            headerName: 'Tên tiếng Việt',
+            width: 200,
+        },
+        {
+            field: 'titleen',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên tiếng Anh',
+            width: 200,
         },
         {
             field: 'code',
@@ -217,8 +231,8 @@ export default function PromotionList() {
             field: 'value',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Giá trị khuyến mãi',
-            width: 200,
+            headerName: 'Giá trị',
+            width: 100,
             type: 'number',
             renderCell: (params) => {
                 return <div className={cx('product-list-item')}>{params.row.value}%</div>;

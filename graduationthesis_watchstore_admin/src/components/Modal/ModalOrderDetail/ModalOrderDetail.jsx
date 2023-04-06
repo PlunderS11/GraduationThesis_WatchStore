@@ -68,7 +68,15 @@ const ModalOrderDetail = (props) => {
 
     return (
         <>
-            <Modal onCancel={handleCancel} open={open} title="CHI TIẾT ĐƠN HÀNG" width={1000} centered footer={[]}>
+            <Modal
+                destroyOnClose
+                onCancel={handleCancel}
+                open={open}
+                title="CHI TIẾT ĐƠN HÀNG"
+                width={1000}
+                centered
+                footer={[]}
+            >
                 <div className={cx('product-bottom')}>
                     <div className={cx('add-product-form')}>
                         {status !== '{}' && (

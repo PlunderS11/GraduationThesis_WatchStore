@@ -55,7 +55,7 @@ axiosClient.interceptors.response.use(
 
             // forbidden (permission related issues)
             case 403: {
-                toast.error("You don't have the permission to access this resource");
+                toast.error('Bạn không có quyền truy cập tài nguyên này!');
                 return Promise.reject(error);
             }
 
@@ -82,7 +82,7 @@ axiosClient.interceptors.response.use(
 
             // generic api error (server related) unexpected
             default: {
-                console.log('check error axios  : ', error);
+                // console.log('check error axios  : ', error);
                 return Promise.reject(error);
             }
         }
@@ -96,6 +96,29 @@ export const Instagram = axios.create({
 Instagram.interceptors.request.use(async (config) => config);
 
 Instagram.interceptors.response.use(
+    (response) => {
+        if (response && response.data) {
+            return response.data;
+        }
+        return response;
+    },
+    (error) => {
+        throw error;
+    },
+);
+
+export const GHN = axios.create({
+    baseURL: 'https://online-gateway.ghn.vn/shiip/public-api/',
+    headers: {
+        'Content-Type': 'application/json',
+        Token: process.env.REACT_APP_TOKEN_GHN,
+        ShopId: process.env.REACT_APP_SHOPID,
+    },
+});
+
+GHN.interceptors.request.use(async (config) => config);
+
+GHN.interceptors.response.use(
     (response) => {
         if (response && response.data) {
             return response.data;
