@@ -65,6 +65,17 @@ router.get('/find/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+// GET USER
+// router.get('/findall/:id', verifyTokenAndAdmin, async (req, res) => {
+//     try {
+//         const user = await User.findById(req.params.id);
+//         // const { password, ...other } = user._doc;
+//         res.status(200).json({ data: { user }, message: 'Success', status: 200 });
+//     } catch (error) {
+//         res.status(500).json({ data: {}, message: error.message, status: 500 });
+//     }
+// });
+
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
     const query = req.query.new;
     try {
@@ -180,6 +191,24 @@ router.put('/update/:id', verifyTokenAndAdmin, async (req, res) => {
         );
 
         res.status(200).json({ data: { updateStaff: updateStaff }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
+    }
+});
+
+// UPDATE
+router.put('/resetpassword/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const resetPassword = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: { password: CryptoJS.AES.encrypt('12345678', process.env.PASS_SECRET).toString()},
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: { resetPassword: resetPassword }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
