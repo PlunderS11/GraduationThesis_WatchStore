@@ -58,7 +58,7 @@ const Header = () => {
                                     </Link>
                                 </div>
                             ) : (
-                                <UserOption username={userLogin.user.username} />
+                                <UserOption user={userLogin.user} />
                             )}
                             <div className={cx('right-item', 'flag')}>
                                 {i18n.language === 'en' ? (
@@ -84,7 +84,7 @@ const Header = () => {
                             <Link to={'/'} className={cx('logo')}>
                                 <img src={images.logoBlack} alt="Dyoss Logo" />
                             </Link>
-                            <Cart customClass={style} />
+                            <Cart customClass={style} open={shrink} />
                         </div>
                     </div>
                 </div>

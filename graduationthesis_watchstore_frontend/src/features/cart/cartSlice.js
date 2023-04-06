@@ -30,15 +30,22 @@ const cartSlice = createSlice({
             try {
                 const existsItem = state.items.find(item => item.product._id === action.payload.product._id);
                 const type = action.payload.type;
-
-                if (type === 'increase') {
-                    existsItem.quantity++;
-                } else if (type === 'decrease') {
-                    if (existsItem.quantity > 1) {
-                        existsItem.quantity--;
-                    } else {
-                        state.items = state.items.filter(item => item.product._id !== existsItem.product._id);
-                    }
+                switch (type) {
+                    case 'increase':
+                        existsItem.quantity++;
+                        break;
+                    case 'decrease':
+                        if (existsItem.quantity > 1) {
+                            existsItem.quantity--;
+                        } else {
+                            state.items = state.items.filter(item => item.product._id !== existsItem.product._id);
+                        }
+                        break;
+                    case 'quantity':
+                        existsItem.quantity += action.payload.quantity;
+                        break;
+                    default:
+                        break;
                 }
                 localStorage.setItem('cartItems', JSON.stringify(state.items));
             } finally {

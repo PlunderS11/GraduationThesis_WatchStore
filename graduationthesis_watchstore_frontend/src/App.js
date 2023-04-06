@@ -6,8 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 import ScrollToTop from './layouts/components/ScrollToTop/ScrollToTop';
 import MasterLayout from './layouts/Masterlayout/MasterLayout';
 import { publicRouter, restrictRoutes } from './routes';
-import { setCurrentUser } from './features/user/userSlice';
-import axiosClient from './api/axiosClient';
+import { fetchUserInfor } from './features/user';
 
 function App() {
     const dispatch = useDispatch();
@@ -21,12 +20,8 @@ function App() {
             //Check token expired
             const jwtPayload = jwt_decode(accessToken);
 
-            const getUserInfor = async () => {
-                const res = await axiosClient.get('user/userInfo');
-                dispatch(setCurrentUser(res.data));
-            };
             if (!(jwtPayload.exp * 1000 < new Date().getTime())) {
-                getUserInfor();
+                dispatch(fetchUserInfor());
             } else {
                 //Hết hạn
             }

@@ -39,7 +39,8 @@ const ProductCategory = () => {
             dispatch(changeProgress(100));
         };
         getProducts();
-    }, [params.type, dispatch, t]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.type, t]);
     return (
         <div className={cx('product-categories')}>
             <div className={cx('container')}>

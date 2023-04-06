@@ -148,6 +148,142 @@
     }
 }
 
+.products-in-image {
+    margin-top: 50px;
+
+    .title {
+        font-size: 16px;
+        font-family: 'Gotham Light';
+        text-transform: uppercase;
+        text-align: center;
+        margin: 0 0 12px;
+    }
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.product {
+    position: relative;
+    width: calc(50% - 16px) !important;
+    margin: 8px;
+    aspect-ratio: 1 / 1;
+    text-align: center;
+    padding: 10px !important;
+    border: 1px solid #bfbfbf !important;
+    border-radius: 5px !important;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px;
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        background-color: transparent;
+        opacity: 0;
+        transform: translateY(100px);
+        transition: transform 0.5s ease, opacity 0.5s ease;
+        z-index: 1;
+    }
+    &:hover {
+        &::before {
+            background-color: rgba($color: #000000, $alpha: 0.4);
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .product-content {
+            .name,
+            .price {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .buttons {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.product-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    .name {
+        color: $text-light;
+        font-size: 17px;
+        font-weight: 500;
+        margin-top: 6px;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(100px);
+        transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .price {
+        color: $text-light;
+        font-size: 17px;
+        font-weight: 500;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(100px);
+        transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+}
+.buttons {
+    position: absolute;
+    font-size: 20px;
+    color: $text-light;
+    width: 100%;
+    bottom: 30%;
+    left: 0;
+    display: flex;
+    justify-content: space-around;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    z-index: 1;
+
+    .view-detail {
+        color: #fff;
+    }
+
+    div,
+    a {
+        cursor: pointer;
+        padding: 6px;
+
+        &:hover {
+            color: #1585cf;
+        }
+    }
+}
+
+.product-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+}
+
+.loader {
+    margin-top: 50px;
+    text-align: center;
+}
+
 .close-btn {
     position: absolute;
     top: 12px;

@@ -8,11 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 import i18n from '../../i18n';
+import { Card, Image } from 'antd';
 
 import { addToCart, changeStatus } from '../../features/cart';
 import { galleryFetchImageInstagram, galleryFetchProducts } from '../../features/gallery';
 import * as func from '../../functions';
 import style from './Gallery.module.scss';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(style);
 
@@ -36,7 +38,7 @@ const Gallery = () => {
     );
 
     const allProduct = useSelector(state => state.gallery.products);
-    const products = useSelector(state => state.gallery.products.filter(item => slugArray.includes(item.link)));
+    const products = useSelector(state => state.gallery.products.filter(item => slugArray.includes(item._id)));
 
     useEffect(() => {
         if (isImagesFetch === 'idle') {
@@ -50,10 +52,9 @@ const Gallery = () => {
             const slugFromCaption = func.GetProductSlugsFromCaption(listImages[currentIndex].caption) || [];
             const slugs = slugFromCaption.map(item => item.replace('/product/', ''));
             setSlugArray(slugs);
-            const notExistsSlug = slugs.filter(item => !allProduct.map(i => i.link).includes(item));
+            const notExistsSlug = slugs.filter(item => !allProduct.map(i => i._id).includes(item));
             if (!isFetched && notExistsSlug.length > 0) {
                 const notExistsSlugString = notExistsSlug.join(',');
-                console.log(notExistsSlugString);
                 dispatch(
                     galleryFetchProducts({
                         id: listImages[currentIndex].id,
@@ -112,14 +113,8 @@ const Gallery = () => {
     };
 
     const handleAddToCart = item => {
-        if (item.type !== 'box') {
-            dispatch(addToCart(item.id, item.name, item.price, item.link, JSON.parse(item.images)[0], {}));
-            setShowDetail(false);
-        } else {
-            document.body.style.overflow = 'unset';
-            popup.current.blur();
-            navigate(`/product/${item.link}`);
-        }
+        dispatch(addToCart({ product: item, quantity: 1 }));
+        toast.success(t('productDetail.addToCart'));
     };
 
     return (
@@ -174,11 +169,47 @@ const Gallery = () => {
                             {products.length > 0 && (
                                 <div className={cx('products-in-image')}>
                                     <h2 className={cx('title')}>{t('gallery.headingProducts')}</h2>
-                                    <ul className={cx('products')}>
+                                    <Card>
                                         {products.map(item => (
-                                            <li className={cx('product')} key={item.id}>
+                                            <Card.Grid className={cx('product')} key={item._id}>
                                                 <div className={cx('product-image')}>
-                                                    <img src={JSON.parse(item.images)[0]} alt={item.name} />
+                                                    {/* <img src={item.images[0]} alt={item.name} /> */}
+                                                    <Image
+                                                        width={'100%'}
+                                                        height={'100%'}
+                                                        preview={false}
+                                                        src={item.images[0]}
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            objectFit: 'contain',
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className={cx('buttons')}>
+                                                    <Link to={`/product/${item._id}`} className={cx('view-detail')}>
+                                                        <FontAwesomeIcon icon={faEye} />
+                                                    </Link>
+                                                    <div
+                                                        className={cx('add-to-cart')}
+                                                        onClick={() => handleAddToCart(item)}
+                                                    >
+                                                        <FontAwesomeIcon icon={faCartPlus} />
+                                                    </div>
+                                                </div>
+                                                <div className={cx('product-content')}>
+                                                    <h3 className={cx('name')}>{item.name}</h3>
+                                                    <p className={cx('price')}>
+                                                        {func.NumberWithCommas(item.finalPrice)}đ
+                                                    </p>
+                                                </div>
+                                            </Card.Grid>
+                                        ))}
+                                    </Card>
+                                    {/* <ul className={cx('products')}>
+                                        {products.map(item => (
+                                            <li className={cx('product')} key={item._id}>
+                                                <div className={cx('product-image')}>
+                                                    <img src={item.images[0]} alt={item.name} />
                                                     <div className={cx('buttons')}>
                                                         <Link
                                                             to={`/product/${item.link}`}
@@ -196,11 +227,13 @@ const Gallery = () => {
                                                 </div>
                                                 <div className={cx('product-content')}>
                                                     <h3 className={cx('name')}>{item.name}</h3>
-                                                    <p className={cx('price')}>{func.NumberWithCommas(item.price)}đ</p>
+                                                    <p className={cx('price')}>
+                                                        {func.NumberWithCommas(item.finalPrice)}đ
+                                                    </p>
                                                 </div>
                                             </li>
                                         ))}
-                                    </ul>
+                                    </ul> */}
                                 </div>
                             )}
                             {fetchStatus?.status === 'loading' && (

@@ -146,6 +146,12 @@
     cursor: pointer;
 }
 
+.checkout-button {
+    * ~ * {
+        margin: 5px;
+    }
+}
+
 .checkout-form {
     display: flex;
     margin-top: 8px;

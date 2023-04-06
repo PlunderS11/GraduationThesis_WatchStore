@@ -25,10 +25,9 @@ const gallerySlice = createSlice({
             .addCase(galleryFetchProducts.fulfilled, (state, action) => {
                 const { id } = action.meta.arg;
                 const idStatus = state.fetchStatus.find(item => item.id === id);
-                console.log(idStatus);
                 if (idStatus) {
                     idStatus.status = 'succeeded';
-                    state.products.push(...action.payload);
+                    state.products.push(...action.payload.products);
                 }
             })
             .addCase(galleryFetchProducts.rejected, (state, action) => {

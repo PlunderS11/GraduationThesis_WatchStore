@@ -1,11 +1,13 @@
 import AboutUs from '../pages/AboutUs/AboutUs';
 import AccountInfo from '../pages/AccountInfo/AccountInfo';
 import Blogs from '../pages/Blogs/Blogs';
+import BuySuccessPage from '../pages/BuySucces/BuySuccessPage';
 import CartPage from '../pages/Cart/CartPage';
 import Checkout from '../pages/Checkout/Checkout';
 import Gallery from '../pages/Gallery/Gallery';
 import Home from '../pages/Home/Home';
 import Login from '../pages/Login/Login';
+import OrderHistoryPage from '../pages/OrderHistory/OrderHistoryPage';
 import ProductCategory from '../pages/ProductCategory/ProductCategory';
 import ProductDetail from '../pages/ProductDetail/ProductDetail';
 import Register from '../pages/Register/Register';
@@ -22,6 +24,8 @@ const publicRouter = [
     { path: '/product-category/:type', component: ProductCategory },
     { path: '/search', component: SearchResult },
     { path: '/account/:category', component: AccountInfo },
+    { path: '/buysuccess', component: BuySuccessPage },
+    { path: '/account/order-history/:id', component: OrderHistoryPage },
 ];
 
 const restrictRoutes = [

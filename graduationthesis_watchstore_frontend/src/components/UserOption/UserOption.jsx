@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(style);
 
-function UserOption({ username }) {
+function UserOption({ user }) {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -54,7 +54,10 @@ function UserOption({ username }) {
             >
                 <div className={cx('user-options')}>
                     <FontAwesomeIcon icon={faUser} className={cx('icon')} />
-                    <p className={cx('name')}>{username}</p>
+                    <p className={cx('name')}>{user.username}</p>
+                    <div className={cx('icon')}>
+                        <img src={user.rank.icon} alt="" />
+                    </div>
                 </div>
             </Dropdown>
         </div>

@@ -10,8 +10,8 @@ import { useFormik } from 'formik';
 import axiosClient from '../../api/axiosClient';
 import InputField from '../../components/InputField/InputField';
 import Button from '../../components/Button/Button';
-import { setCurrentUser } from '../../features/user/userSlice';
 import style from './Register.module.scss';
+import { setTokenUser } from '../../features/user/userSlice';
 
 const cx = classNames.bind(style);
 
@@ -49,7 +49,7 @@ const Register = () => {
                 });
                 toast.success(t('register.success'));
                 localStorage.setItem('mynhbake_token', res.data.token);
-                dispatch(setCurrentUser(res.data.token));
+                dispatch(setTokenUser(res.data.token));
                 navigate('/');
             } catch (error) {
                 const errorCode = error.response.data.code.toString();

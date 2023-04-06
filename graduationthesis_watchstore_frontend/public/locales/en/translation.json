@@ -7,12 +7,27 @@
         "viewDetail": "Shop the look",
         "order": "Order",
         "buy": "buy now",
-        "addToCart": "add to cart"
+        "addToCart": "add to cart",
+        "gotoCart": "Go to Cart",
+        "goHome": "Go to the homepage",
+        "gotoOrderHistory": "Go to the order history"
     },
     "cart": {
         "checkout": "Checkout",
         "noItem": "You have not selected any products!",
-        "total": "Total"
+        "total": "Total",
+        "storePromotion": "MynhBake Store promotional",
+        "promotiocode": "Promotion Code",
+        "promotioPrice": "Promotional money is reduced",
+        "promotioNull": "No discount code",
+        "toAddress": "Delivered to",
+        "addAddress": "Add address",
+        "chocePromotion": "Choce or enter code",
+        "changeAddress": "Change",
+        "estimate": "Temporary price",
+        "distancePrice": "Transport fee",
+        "discountPrice": "Discount money",
+        "totalPrice": "Total price"
     },
     "footer": {
         "address": "Address",
@@ -114,6 +129,8 @@
         "requiredName": "Name required!",
         "requiredPassword": "Password required!",
         "requiredPhone": "Phone required!",
+        "rank": "Rank",
+        "sex": "Sex",
         "success": "Create new account successfully."
     },
     "search": {
@@ -153,7 +170,12 @@
         "shippingPrice": "Shipping price",
         "selectCityOption": "Select province/city",
         "selectDistrictOption": "Select district",
-        "selectWardOption": "Select ward"
+        "selectWardOption": "Select ward",
+        "cod": "Cash",
+        "descriptionCOD": "Payment on delivery",
+        "online": "Online",
+        "descriptionOnl": "Payment online",
+        "buySuccess": "Order Success"
     },
     "aboutUs": {
         "introduce": "Introduce",
@@ -173,5 +195,22 @@
     "accountInfo": {
         "updateInfor": "Update Information",
         "generalInfo": "General Information"
+    },
+    "table": {
+        "image": "Image",
+        "product": "Product",
+        "price": "Price",
+        "quantity": "Quantity",
+        "total": "Total",
+        "codeOrder": "Code",
+        "status": "Status"
+    },
+    "antd": {
+        "popconfirm": {
+            "title": "Are you sure to delete this task?",
+            "description": "Delete the task",
+            "okText": "Yes",
+            "cancelText": "No"
+        }
     }
 }
