@@ -4,7 +4,7 @@ import { Button, Popover } from 'antd';
 
 import styles from './Topbar.module.scss';
 import logo from '~/assets/images/logo-white-removebg-preview.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '~/features/user/userSlice';
@@ -17,13 +17,13 @@ const cx = classNames.bind(styles);
 export default function Topbar() {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [userInfo, setUserInfo] = useState({});
     const [openInfo, setOpenInfo] = useState(false);
     const [openChangePass, setOpenChangePass] = useState(false);
 
     console.log(userInfo);
-    console.log(user);
 
     const fecthData = async () => {
         if (user.user.id !== undefined) {
@@ -45,7 +45,7 @@ export default function Topbar() {
 
     const handleLogout = () => {
         dispatch(logOut({ id: '', role: '' }));
-        console.log(user);
+        navigate('/login');
     };
 
     const content = (
@@ -76,7 +76,7 @@ export default function Topbar() {
                     </Link>
                 </div>
                 <div className={cx('top-right')}>
-                    <Popover placement="topRight" content={content} trigger="hover">
+                    <Popover placement="bottomRight" content={content} trigger="hover">
                         <div className={cx('user-avt')}>
                             <UserOutlined className={cx('top-avatar')} />
                         </div>
