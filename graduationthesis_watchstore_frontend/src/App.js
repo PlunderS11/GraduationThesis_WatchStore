@@ -12,7 +12,6 @@ function App() {
     const dispatch = useDispatch();
     const token = useSelector(state => state.user.token);
     const [lastSessionLoaded, setLastSessionLoaded] = useState(false);
-
     //Check access token exists in local storage
     const accessToken = localStorage.getItem('mynhbake_token');
     useEffect(() => {
@@ -28,7 +27,7 @@ function App() {
         }
         setLastSessionLoaded(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
+    }, [token, accessToken]);
     return (
         <>
             {lastSessionLoaded && (

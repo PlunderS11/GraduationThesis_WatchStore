@@ -30,11 +30,9 @@ const CartPage = () => {
     const [input, setInput] = useState('');
 
     useEffect(() => {
-        totalItems > 0 && dispatch(fetchEstimate());
+        user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // console.log(estimate);
-    // console.log(loading);
 
     const handleRemoveCart = async e => {
         dispatch(
@@ -445,7 +443,7 @@ const CartPage = () => {
                                             fill="#29376d"
                                         ></path>
                                     </svg>
-                                    Giỏ hàng trống
+                                    {t('cart.emptyCart')}
                                 </div>
                                 <div className={cx('empty-body-btn')}>
                                     <Button to="/">Về trang chủ</Button>

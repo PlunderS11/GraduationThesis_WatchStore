@@ -29,6 +29,7 @@ const Checkout = () => {
     const cart = useSelector(selectCartItems);
     const totalItems = useSelector(selectTotalItems);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoadingBuy, setIsLoadingBuy] = useState(false);
 
     const payment = [
         {
@@ -44,8 +45,9 @@ const Checkout = () => {
     ];
 
     useEffect(() => {
-        dispatch(fetchEstimate());
-    }, [dispatch]);
+        user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleChonse = type => {
         setCheck(type);
@@ -53,6 +55,7 @@ const Checkout = () => {
 
     const handleBuy = async () => {
         try {
+            setIsLoadingBuy(true);
             const resUser = await axiosClient.get('user/userInfo');
             const res = await axiosClient.post('order', {
                 province: resUser.data.address.province,
@@ -79,9 +82,11 @@ const Checkout = () => {
             } else {
                 toast.success('Đặt hàng thành công');
             }
-            navigate('/buysuccess');
         } catch (error) {
             toast.error(error.response.data.message);
+        } finally {
+            setIsLoadingBuy(false);
+            navigate('/buysuccess');
         }
     };
 
@@ -304,7 +309,9 @@ const Checkout = () => {
                                             </ul>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Button onclick={handleBuy}>{t('button.order')}</Button>
+                                            <Button loading={isLoadingBuy} onclick={handleBuy}>
+                                                {t('button.order')}
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import _, { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import classNames from 'classnames/bind';
 
@@ -25,6 +25,7 @@ const ProductDetail = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const user = useSelector(state => state.user);
     const [product, setProduct] = useState({});
     const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -71,6 +72,14 @@ const ProductDetail = () => {
         dispatch(addToCart({ product, quantity: 1 }));
         toast.success(t('productDetail.addToCart'));
     };
+
+    const handleBuyNow = () => {
+        if (user.isLogin) {
+            dispatch(addToCart({ product, quantity: 1 }));
+            toast.success(t('productDetail.addToCart'));
+            navigate('/checkout');
+        } else toast.info(t('productDetail.buynowFail'));
+    };
     return (
         <div className={cx('product-detail-page')}>
             {!isEmpty(product) && (
@@ -95,7 +104,7 @@ const ProductDetail = () => {
                                     <Button customClass={style} onclick={handleAddToCart}>
                                         {t('button.addToCart')}
                                     </Button>
-                                    <Button customClass={style} onclick={handleAddToCart}>
+                                    <Button customClass={style} onclick={handleBuyNow}>
                                         {t('button.buy')}
                                     </Button>
                                 </div>

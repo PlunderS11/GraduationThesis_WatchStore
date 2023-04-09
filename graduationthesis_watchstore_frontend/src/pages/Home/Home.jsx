@@ -1,4 +1,4 @@
-import SwiperCore, { Autoplay } from 'swiper';
+import { Autoplay } from 'swiper';
 import { useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import classNames from 'classnames/bind';
@@ -15,7 +15,6 @@ import { fetchProducts } from '../../features/products';
 import ProductSlider from '../../components/ProductSlider/ProductSlider';
 import ProductViewed from '../../components/ProductViewed/ProductViewed';
 import style from './Home.module.scss';
-SwiperCore.use([Autoplay]);
 
 const cx = classNames.bind(style);
 
@@ -47,7 +46,7 @@ const Home = () => {
                     grabCursor={true}
                     spaceBetween={0}
                     slidesPerView={1}
-                    autoplay={{ delay: 3000 }}
+                    autoplay={{ delay: 5000 }}
                 >
                     {Object.values(imagesSlide).map((item, i) => (
                         <SwiperSlide key={i}>

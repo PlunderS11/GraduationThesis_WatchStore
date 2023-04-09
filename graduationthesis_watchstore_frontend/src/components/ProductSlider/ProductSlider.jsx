@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import ProductCard from '../ProductCard/ProductCard';
 import style from './ProductSlider.module.scss';
+import { Image } from 'antd';
 
 const cx = classNames.bind(style);
 
@@ -73,7 +74,7 @@ function ProductSlider({ listData, navigation = false, autoplay = false, image =
                     <SwiperSlide key={index} className={cx('slide')} tag="li">
                         {image ? (
                             <div className={cx('image-card')}>
-                                <img src={item} alt={`Product ${index}`} />
+                                <Image src={item} />
                             </div>
                         ) : (
                             <ProductCard product={item} customClass={style} />

@@ -59,12 +59,6 @@ axiosClient.interceptors.response.use(
                 return Promise.reject(error);
             }
 
-            // bad request
-            case 400: {
-                toast.error(error.response.data.message);
-                return Promise.reject(error);
-            }
-
             // not found
             case 404: {
                 return Promise.reject(error);
