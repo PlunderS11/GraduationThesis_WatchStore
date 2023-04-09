@@ -9,7 +9,7 @@ export const galleryFetchProducts = createAsyncThunk('gallery/galleryFetchProduc
 
 export const galleryFetchImageInstagram = createAsyncThunk('gallery/galleryFetchImageInstagram', async () => {
     const res = await Instagram.get(
-        `me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username&access_token=IGQVJXNkV4bU1UZA3Q3NjljeF95eExfY2ZAiVGRjZAVB6UnhhR3ZArS1FuZAmIwSEpMcjkwTHNpblJZAemJvSnZANTXQ4SThXMTlHZAjAyLTZAOd080SjFuZA3EtbE9KU01jajdMZAFduN1A3YWpldzNwcDVfS2JESgZDZD`
+        `me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username&access_token=${process.env.REACT_APP_INSTAGRAM_TOKEN}`
     );
     return res.data;
 });

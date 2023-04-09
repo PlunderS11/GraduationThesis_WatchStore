@@ -106,6 +106,7 @@ const CartPage = () => {
                                 <Table
                                     rowKey={item => item.product._id}
                                     dataSource={products}
+                                    bordered
                                     pagination={{ position: [] }}
                                 >
                                     <Column

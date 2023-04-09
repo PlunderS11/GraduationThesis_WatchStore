@@ -8,11 +8,24 @@ const Product = require('../models/productModel');
 // GET PRODUCT BY CATEGORY
 router.get('/', async (req, res) => {
     try {
-        const prod = await Collection.find({ isDelete: false }).exec();
+        const prod = await Collection.find({
+            name: req.query.collectionName ? req.query.collectionName : undefined,
+            isDelete: false,
+        }).exec();
         var prodCategory = [];
         var query = {
             type: req.query.type ? req.query.type : undefined,
             sex: req.query.sex ? req.query.sex : undefined,
+            name: req.query.name ? req.query.name : undefined,
+            brand: req.query.brand ? req.query.brand : undefined,
+            stock: req.query.stock ? { $gte: 0 } : undefined,
+            price:
+                req.query.minValue && req.query.maxValue
+                    ? {
+                          $gte: req.query.minValue,
+                          $lte: req.body.maxValue,
+                      }
+                    : undefined,
         };
         for (let i = 0; i < prod.length; i++) {
             let element = prod[i];

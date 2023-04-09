@@ -212,7 +212,7 @@ const Checkout = () => {
                             <Col span={10} style={{ paddingLeft: '15px' }}>
                                 <div className={cx('note')}>
                                     <div className={cx('body')}>
-                                        <div className={cx('body-title')}>{t('checkout.itemPrice')}</div>
+                                        <div className={cx('body-title')}>{t('checkout.itemsPrice')}</div>
                                         <div className={cx('body-form')}>
                                             <div className={cx('form-calculate-title')}>
                                                 <span className={cx('form-calculate-title-text')}>

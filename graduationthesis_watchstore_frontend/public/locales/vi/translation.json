@@ -29,7 +29,14 @@
         "discountPrice": "Giảm giá",
         "totalPrice": "Tổng cộng",
         "note": "Ghi chú",
-        "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v..."
+        "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v...",
+        "status": {
+            "pending": "Đang xử lý...",
+            "completed": "Đã hoàn thành",
+            "canceled": "Đã hủy",
+            "package": "Đóng gói",
+            "delivering": "Đang gửi hàng"
+        }
     },
     "footer": {
         "address": "Địa chỉ",

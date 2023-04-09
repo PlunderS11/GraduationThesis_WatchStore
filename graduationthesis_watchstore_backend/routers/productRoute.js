@@ -242,6 +242,17 @@ router.get('/viewed', async (req, res) => {
     }
 });
 
+// GET PRODUCT SEARCH
+router.get('/search', async (req, res) => {
+    try {
+        const products = await Product.find({ $text: { $search: req.query.search } }).exec();
+        res.status(200).json({ data: { products, total: products.length }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
 // DELETE PRODUCt
 router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     try {

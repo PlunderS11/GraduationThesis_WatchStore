@@ -27,7 +27,16 @@
         "estimate": "Temporary price",
         "distancePrice": "Transport fee",
         "discountPrice": "Discount money",
-        "totalPrice": "Total price"
+        "totalPrice": "Total price",
+        "note": "Note",
+        "notePlace": "Please note about add or time to receive order, v.v...",
+        "status": {
+            "pending": "Pending",
+            "completed": "Completed",
+            "canceled": "Canceled",
+            "package": "Package",
+            "delivering": "Delivering"
+        }
     },
     "footer": {
         "address": "Address",
