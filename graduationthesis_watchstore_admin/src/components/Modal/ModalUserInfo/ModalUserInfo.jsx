@@ -71,7 +71,7 @@ const ModalUserInfo = (props) => {
                                 name="sex"
                                 placeholder="."
                                 value={String(user.sex === 'm' ? 'Nam' : 'Nữ')}
-                                label={'Tên khách hàng'}
+                                label={'Giới tính'}
                                 require
                             />
                         </div>

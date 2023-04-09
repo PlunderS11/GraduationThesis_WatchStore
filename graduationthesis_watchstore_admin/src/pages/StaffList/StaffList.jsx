@@ -5,16 +5,17 @@ import { Modal, Spin, Tabs } from 'antd';
 import { toast } from 'react-toastify';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
-import styles from './UserList.module.scss';
+import styles from './StaffList.module.scss';
 import { useLocation } from 'react-router-dom';
 import Grid from '~/components/Grid/Grid';
 import axiosClient from '~/api/axiosClient';
 import Button from '~/components/Button/Button';
-import ModalUserInfo from '~/components/Modal/ModalUserInfo/ModalUserInfo';
+import ModalStaffInfo from '~/components/Modal/ModalStaffInfo/ModalStaffInfo';
+import ModalStaffNew from '~/components/Modal/ModalStaffNew/ModalStaffNew';
 
 const cx = classNames.bind(styles);
 
-export default function UserList() {
+export default function StaffList() {
     const location = useLocation();
     const { confirm } = Modal;
     const [users_undeleted, setUsers_undeleted] = useState([]);
@@ -24,11 +25,12 @@ export default function UserList() {
 
     const [id, setId] = useState('');
     const [open, setOpen] = useState(false);
+    const [openNew, setOpenNew] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
         const getUsers = async () => {
-            const res = await axiosClient.get('user/users/');
+            const res = await axiosClient.get('user/staffs/');
             if (res) {
                 var users_undeleted = [];
                 var users_deleted = [];
@@ -122,12 +124,24 @@ export default function UserList() {
         }
     };
 
+    const handleResetpassword = async (id) => {
+        setLoading(true);
+
+        try {
+            const res = await axiosClient.put('user/resetpassword/' + id);
+            if (res) {
+                toast.success('Đặt lại mật khẩu thành công');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
     const columns_undeleted = [
         {
             field: 'username',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên khách hàng',
+            headerName: 'Tên nhân viên',
             width: 325,
         },
         {
@@ -171,10 +185,11 @@ export default function UserList() {
         },
         {
             field: 'action',
+            align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 195,
             filterable: false,
             renderCell: (params) => {
                 return (
@@ -183,22 +198,31 @@ export default function UserList() {
                         {/* <button className={cx('product-list-edit')}>Chi tiết</button> */}
                         {/* </Link> */}
 
-                        <button
-                            className={cx('user-list-edit')}
-                            onClick={() => {
-                                setOpen(true);
-                                setId(params.row._id);
-                            }}
-                        >
-                            Chi tiết
-                        </button>
-
-                        <Button
-                            className={cx('user-list-delete-button')}
-                            onClick={() => showDeleteConfirm(params.row._id)}
-                        >
-                            Hạn chế
-                        </Button>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <button
+                                className={cx('user-list-edit')}
+                                onClick={() => {
+                                    setOpen(true);
+                                    setId(params.row._id);
+                                }}
+                            >
+                                Chi tiết
+                            </button>
+                            <button
+                                className={cx('user-list-edit')}
+                                onClick={() => {
+                                    handleResetpassword(params.row._id);
+                                }}
+                            >
+                                Đặt lại mật khẩu
+                            </button>
+                            <Button
+                                className={cx('user-list-delete-button')}
+                                onClick={() => showDeleteConfirm(params.row._id)}
+                            >
+                                Hạn chế
+                            </Button>
+                        </div>
                     </>
                 );
             },
@@ -210,7 +234,7 @@ export default function UserList() {
             field: 'username',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên khách hàng',
+            headerName: 'Tên nhân viên',
             width: 325,
         },
         {
@@ -254,10 +278,11 @@ export default function UserList() {
         },
         {
             field: 'action',
+            align: 'center',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 195,
             filterable: false,
             renderCell: (params) => {
                 return (
@@ -265,21 +290,31 @@ export default function UserList() {
                         {/* <Link to={'/product/' + params.row._id}> */}
                         {/* <button className={cx('product-list-edit')}>Chi tiết</button> */}
                         {/* </Link> */}
-                        <button
-                            className={cx('user-list-edit')}
-                            onClick={() => {
-                                setOpen(true);
-                                setId(params.row._id);
-                            }}
-                        >
-                            Chi tiết
-                        </button>
-                        <Button
-                            className={cx('user-list-restore-button')}
-                            onClick={() => showRestoreConfirm(params.row._id)}
-                        >
-                            Khôi phục
-                        </Button>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <button
+                                className={cx('user-list-edit')}
+                                onClick={() => {
+                                    setOpen(true);
+                                    setId(params.row._id);
+                                }}
+                            >
+                                Chi tiết
+                            </button>
+                            <button
+                                className={cx('user-list-edit')}
+                                onClick={() => {
+                                    handleResetpassword(params.row._id);
+                                }}
+                            >
+                                Đặt lại mật khẩu
+                            </button>
+                            <Button
+                                className={cx('user-list-restore-button')}
+                                onClick={() => showRestoreConfirm(params.row._id)}
+                            >
+                                Khôi phục
+                            </Button>
+                        </div>
                     </>
                 );
             },
@@ -289,7 +324,7 @@ export default function UserList() {
     const items = [
         {
             key: '1',
-            label: `Khách hàng`,
+            label: `Nhân viên`,
             children: ``,
         },
         {
@@ -311,31 +346,40 @@ export default function UserList() {
         <>
             <div className={cx('user-list')}>
                 <Spin spinning={loading}>
-                    <label className={cx('label')}>DANH SÁCH KHÁCH HÀNG</label>
+                    <label className={cx('label')}>DANH SÁCH NHÂN VIÊN</label>
                     <div style={{ height: 10 }}></div>
+                    <Button
+                        customClass={styles}
+                        onClick={() => {
+                            setOpenNew(true);
+                        }}
+                    >
+                        Thêm nhân viên
+                    </Button>
                     <div className={cx('grid')}>
                         <Tabs type="card" defaultActiveKey="1" items={items} onChange={tabItemClick} />
                         {key === false ? (
                             <Grid
                                 headers={columns_undeleted}
                                 datas={users_undeleted}
-                                rowHeight={63}
-                                pagesize={6}
+                                rowHeight={135}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         ) : (
                             <Grid
                                 headers={columns_deleted}
                                 datas={users_deleted}
-                                rowHeight={63}
-                                pagesize={6}
+                                rowHeight={135}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         )}
                     </div>
                 </Spin>
             </div>
-            {id !== '' && <ModalUserInfo open={open} onClose={() => setOpen(false)} id={id}></ModalUserInfo>}
+            {id !== '' && <ModalStaffInfo open={open} onClose={() => setOpen(false)} id={id}></ModalStaffInfo>}
+            <ModalStaffNew open={openNew} onClose={() => setOpenNew(false)} id={id}></ModalStaffNew>
         </>
     );
 }

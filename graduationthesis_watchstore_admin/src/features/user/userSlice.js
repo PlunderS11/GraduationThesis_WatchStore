@@ -13,8 +13,8 @@ const userSlice = createSlice({
     reducers: {
         setCurrentUser: {
             reducer(state, action) {
-                const { name, role } = action.payload;
-                state.user.name = name;
+                const { id, role } = action.payload;
+                state.user.id = id;
                 state.user.role = role;
                 state.isLogin = true;
             },
@@ -22,7 +22,7 @@ const userSlice = createSlice({
                 const jwtPayload = jwt_decode(token);
                 return {
                     payload: {
-                        name: jwtPayload.name,
+                        id: jwtPayload.id,
                         role: jwtPayload.role,
                     },
                 };
@@ -34,11 +34,11 @@ const userSlice = createSlice({
                 state.isLogin = false;
                 state.error = '';
             },
-            prepare() {
-                localStorage.removeItem('accessToken');
+            prepare(temp) {
+                localStorage.removeItem('mynhbake_token');
 
                 return {
-                    payload: {},
+                    payload: { id: temp.id, role: temp.role },
                 };
             },
         },

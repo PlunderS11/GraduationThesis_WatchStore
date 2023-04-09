@@ -14,6 +14,8 @@ import ProductList from '~/pages/ProductList';
 import CollectionList from './pages/CollectionList';
 import PromotionList from './pages/PromotionList';
 import OrderList from './pages/OrderList';
+import UserRankList from './pages/UserRankList/UserRankList';
+import StaffList from './pages/StaffList/StaffList';
 
 function App() {
     const user = useSelector((state) => state.user);
@@ -54,13 +56,15 @@ function App() {
                                     </div>
                                 </>
                             ) : (
-                                <Navigate to="login" replace />
+                                <Navigate to="/login" replace />
                             )
                         }
                     />
                     <Route
                         path="/login"
                         element={user.user.role === 'admin' ? <Navigate to="/" replace /> : <Login />}
+
+                        // element={<Login />}
                     />
                     <Route
                         path="/users"
@@ -133,6 +137,36 @@ function App() {
                                         <MenuSideBar />
                                     </div>
                                     <OrderList />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/ranks"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <UserRankList />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/staffs"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <StaffList />
                                 </div>
                             </>
                         }

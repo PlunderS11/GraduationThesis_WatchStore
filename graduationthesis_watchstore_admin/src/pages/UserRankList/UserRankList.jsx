@@ -1,51 +1,46 @@
-import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
-import * as moment from 'moment';
-import { Modal, Spin, Tabs } from 'antd';
-import { toast } from 'react-toastify';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-
-import styles from './UserList.module.scss';
 import { useLocation } from 'react-router-dom';
-import Grid from '~/components/Grid/Grid';
-import axiosClient from '~/api/axiosClient';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { Modal, Tabs, Spin } from 'antd';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+
+import styles from './UserRankList.module.scss';
 import Button from '~/components/Button/Button';
-import ModalUserInfo from '~/components/Modal/ModalUserInfo/ModalUserInfo';
+import axiosClient from '~/api/axiosClient';
+import Grid from '~/components/Grid/Grid';
+import ModalUserRank from '~/components/Modal/ModalUserRank/ModalUserRank';
+import ModalUserRankNew from '~/components/Modal/ModalUserRankNew/ModalUserRankNew';
 
 const cx = classNames.bind(styles);
 
-export default function UserList() {
-    const location = useLocation();
+export default function UserRankList() {
     const { confirm } = Modal;
-    const [users_undeleted, setUsers_undeleted] = useState([]);
-    const [users_deleted, setUsers_deleted] = useState([]);
+    const location = useLocation();
+    const [ranksDeleted, setRanksDeleted] = useState([]);
+    const [ranksUndeleted, setRanksUndeleted] = useState([]);
     const [loading, setLoading] = useState(false);
     const [key, setKey] = useState(false);
 
     const [id, setId] = useState('');
     const [open, setOpen] = useState(false);
+    const [openNew, setOpenNew] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
-        const getUsers = async () => {
-            const res = await axiosClient.get('user/users/');
-            if (res) {
-                var users_undeleted = [];
-                var users_deleted = [];
-                for (let i = 0; i < res.data.users.length; i++) {
-                    if (res.data.users[i].isDelete === false) {
-                        users_undeleted.push(res.data.users[i]);
-                    } else if (res.data.users[i].isDelete === true) {
-                        users_deleted.push(res.data.users[i]);
-                    }
-                }
-                setUsers_undeleted(users_undeleted);
-                setUsers_deleted(users_deleted);
-            }
+        const getProducts_undeleted = async () => {
+            const res = await axiosClient.get('rank/undeleted/');
+            setRanksUndeleted(res.data.ranks_undeleted);
         };
-        getUsers();
+        getProducts_undeleted();
+        const getProducts_deleted = async () => {
+            const res = await axiosClient.get('rank/deleted/');
+            setRanksDeleted(res.data.ranks_deleted);
+        };
+        getProducts_deleted();
         setLoading(false);
     };
+
     useEffect(() => {
         setLoading(true);
         try {
@@ -55,13 +50,10 @@ export default function UserList() {
         }
     }, [location]);
 
-    // console.log(users_undeleted);
-    // console.log(users_deleted);
-
     const handleDelete = async (id) => {
         setLoading(true);
         try {
-            const res = await axiosClient.put('user/delete/' + id);
+            const res = await axiosClient.put('rank/delete/' + id);
             if (res) {
                 toast.success('Xóa thành công');
                 fecthData();
@@ -70,11 +62,11 @@ export default function UserList() {
             setLoading(false);
         }
     };
-
-    const handleReStore = async (id) => {
+    const handleRestore = async (id) => {
         setLoading(true);
+
         try {
-            const res = await axiosClient.put('user/restore/' + id);
+            const res = await axiosClient.put('rank/restore/' + id);
             if (res) {
                 toast.success('Khôi phục thành công');
                 fecthData();
@@ -83,13 +75,12 @@ export default function UserList() {
             setLoading(false);
         }
     };
-
     const showDeleteConfirm = (id) => {
         confirm({
-            title: 'HẠN CHẾ KHÁCH HÀNG',
+            title: 'XÓA THỨ HẠNG',
             icon: <ExclamationCircleFilled />,
-            content: 'Bạn chắc chắn muốn hạn chế khách hàng?',
-            okText: 'Hạn chế',
+            content: 'Bạn chắc chắn muốn xóa thứ hạng?',
+            okText: 'Xóa',
             okType: 'danger',
             cancelText: 'Trở lại',
             onOk() {
@@ -98,75 +89,73 @@ export default function UserList() {
             onCancel() {},
         });
     };
-
     const showRestoreConfirm = (id) => {
         confirm({
-            title: 'KHÔI PHỤC KHÁCH HÀNG',
+            title: 'KHÔI PHỤC THỨ HẠNG',
             icon: <ExclamationCircleFilled />,
-            content: 'Bạn chắc chắn muốn khôi phục khách hàng?',
+            content: 'Bạn chắc chắn muốn khôi phục thứ hạn?',
             okText: 'Khôi phục',
             okType: 'primary',
             cancelText: 'Trở lại',
             onOk() {
-                handleReStore(id);
+                handleRestore(id);
             },
             onCancel() {},
         });
     };
 
-    const Sex = (value) => {
-        if (value === 'm') {
-            return 'Nam';
-        } else if (value === 'w') {
-            return 'Nữ';
-        }
-    };
-
     const columns_undeleted = [
         {
-            field: 'username',
-            headerAlign: 'center',
+            field: 'ranks',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên khách hàng',
-            width: 325,
-        },
-        {
-            field: 'email',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Email',
-            width: 320,
-        },
-        {
-            field: 'phone',
-            align: 'right',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Số điện thoại',
-            width: 200,
-        },
-        {
-            field: 'sex',
             align: 'center',
             headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Giới tính',
-            width: 100,
-            valueFormatter: function (params) {
-                return Sex(params.value);
+            headerName: 'Hình ảnh',
+            width: 125,
+            filterable: false,
+
+            renderCell: (params) => {
+                return (
+                    <div className={cx('collection-list-item')}>
+                        <img src={params.row.icon} className={cx('collection-list-img')} alt="img" />
+                    </div>
+                );
             },
         },
         {
-            field: 'createdAt',
-            align: 'center',
+            field: 'namevi',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày tạo',
-            width: 130,
-            type: 'date',
-
-            valueFormatter: function (params) {
-                return moment(params.value).format('DD/MM/YYYY');
+            headerName: 'Tên tiếng Việt',
+            width: 250,
+        },
+        {
+            field: 'nameen',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên tiếng Anh',
+            width: 250,
+        },
+        {
+            field: 'minValue',
+            align: 'right',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Chi tiêu tối thiểu',
+            width: 224,
+            renderCell: (params) => {
+                return <>{NumberWithCommas(Number(params.row.minValue))}</>;
+            },
+        },
+        {
+            field: 'maxValue',
+            align: 'right',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Chi tiêu tối đa',
+            width: 224,
+            renderCell: (params) => {
+                return <>{NumberWithCommas(Number(params.row.maxValue))}</>;
             },
         },
         {
@@ -179,26 +168,22 @@ export default function UserList() {
             renderCell: (params) => {
                 return (
                     <>
-                        {/* <Link to={'/product/' + params.row._id}> */}
-                        {/* <button className={cx('product-list-edit')}>Chi tiết</button> */}
-                        {/* </Link> */}
-
                         <button
-                            className={cx('user-list-edit')}
+                            className={cx('collection-list-edit-1')}
                             onClick={() => {
                                 setOpen(true);
                                 setId(params.row._id);
                             }}
                         >
-                            Chi tiết
+                            Chỉnh sửa
                         </button>
 
-                        <Button
-                            className={cx('user-list-delete-button')}
+                        <button
+                            className={cx('collection-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
                         >
-                            Hạn chế
-                        </Button>
+                            Xóa
+                        </button>
                     </>
                 );
             },
@@ -207,49 +192,56 @@ export default function UserList() {
 
     const columns_deleted = [
         {
-            field: 'username',
-            headerAlign: 'center',
+            field: 'ranks',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Tên khách hàng',
-            width: 325,
-        },
-        {
-            field: 'email',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Email',
-            width: 320,
-        },
-        {
-            field: 'phone',
-            align: 'right',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Số điện thoại',
-            width: 200,
-        },
-        {
-            field: 'sex',
             align: 'center',
             headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Giới tính',
-            width: 100,
-            valueFormatter: function (params) {
-                return Sex(params.value);
+            headerName: 'Hình ảnh',
+            width: 125,
+            filterable: false,
+
+            renderCell: (params) => {
+                return (
+                    <div className={cx('collection-list-item')}>
+                        <img src={params.row.icon} className={cx('collection-list-img')} alt="img" />
+                    </div>
+                );
             },
         },
         {
-            field: 'createdAt',
-            align: 'center',
+            field: 'namevi',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày tạo',
-            width: 130,
-            type: 'date',
-
-            valueFormatter: function (params) {
-                return moment(params.value).format('DD/MM/YYYY');
+            headerName: 'Tên tiếng Việt',
+            width: 250,
+        },
+        {
+            field: 'nameen',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên tiếng Anh',
+            width: 250,
+        },
+        {
+            field: 'rank_min',
+            align: 'right',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Chi tiêu tối thiểu',
+            width: 224,
+            renderCell: (params) => {
+                return <>{NumberWithCommas(Number(params.row.minValue))}</>;
+            },
+        },
+        {
+            field: 'maxValue',
+            align: 'right',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Chi tiêu tối đa',
+            width: 224,
+            renderCell: (params) => {
+                return <>{NumberWithCommas(Number(params.row.maxValue))}</>;
             },
         },
         {
@@ -262,24 +254,22 @@ export default function UserList() {
             renderCell: (params) => {
                 return (
                     <>
-                        {/* <Link to={'/product/' + params.row._id}> */}
-                        {/* <button className={cx('product-list-edit')}>Chi tiết</button> */}
-                        {/* </Link> */}
                         <button
-                            className={cx('user-list-edit')}
+                            className={cx('collection-list-edit-1')}
                             onClick={() => {
                                 setOpen(true);
                                 setId(params.row._id);
                             }}
                         >
-                            Chi tiết
+                            Chỉnh sửa
                         </button>
-                        <Button
-                            className={cx('user-list-restore-button')}
+
+                        <button
+                            className={cx('collection-list-restore-button')}
                             onClick={() => showRestoreConfirm(params.row._id)}
                         >
                             Khôi phục
-                        </Button>
+                        </button>
                     </>
                 );
             },
@@ -289,36 +279,49 @@ export default function UserList() {
     const items = [
         {
             key: '1',
-            label: `Khách hàng`,
+            label: `Thứ hạng`,
             children: ``,
         },
         {
             key: '2',
-            label: `Đã hạn chế`,
+            label: `Đã xóa`,
             children: ``,
         },
     ];
 
     const tabItemClick = (key) => {
+        // console.log('tab click', key);
         if (key === '1') {
             setKey(false);
         } else if (key === '2') {
             setKey(true);
         }
     };
+    function NumberWithCommas(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' VNĐ';
+    }
 
     return (
         <>
-            <div className={cx('user-list')}>
+            <div className={cx('collection-list')}>
                 <Spin spinning={loading}>
-                    <label className={cx('label')}>DANH SÁCH KHÁCH HÀNG</label>
+                    <label className={cx('label')}>DANH SÁCH THỨ HẠNG</label>
                     <div style={{ height: 10 }}></div>
+                    <Button
+                        customClass={styles}
+                        onClick={() => {
+                            setOpenNew(true);
+                        }}
+                    >
+                        Thêm thứ hạng
+                    </Button>
+
                     <div className={cx('grid')}>
                         <Tabs type="card" defaultActiveKey="1" items={items} onChange={tabItemClick} />
                         {key === false ? (
                             <Grid
                                 headers={columns_undeleted}
-                                datas={users_undeleted}
+                                datas={ranksUndeleted}
                                 rowHeight={63}
                                 pagesize={6}
                                 hideToolbar={false}
@@ -326,7 +329,7 @@ export default function UserList() {
                         ) : (
                             <Grid
                                 headers={columns_deleted}
-                                datas={users_deleted}
+                                datas={ranksDeleted}
                                 rowHeight={63}
                                 pagesize={6}
                                 hideToolbar={false}
@@ -335,7 +338,8 @@ export default function UserList() {
                     </div>
                 </Spin>
             </div>
-            {id !== '' && <ModalUserInfo open={open} onClose={() => setOpen(false)} id={id}></ModalUserInfo>}
+            {id !== '' && <ModalUserRank open={open} onClose={() => setOpen(false)} id={id}></ModalUserRank>}
+            <ModalUserRankNew open={openNew} onClose={() => setOpenNew(false)}></ModalUserRankNew>
         </>
     );
 }

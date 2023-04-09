@@ -115,4 +115,34 @@ router.post('/login', async (req, res) => {
     }
 });
 
+//CHANGE PASSWORD
+router.put('/changepassword/:id', async (req, res) => {
+    try {
+        const user = await User.findOne({_id: req.params.id});
+
+        const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SECRET);
+        
+        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+        
+        const inputPassword = req.body.password;
+        
+        if (originalPassword != inputPassword) {
+            res.status(500).json({ data: {}, message: 'Wrong Password', status: 500 });
+        } else {
+            const changePassword = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: { password: CryptoJS.AES.encrypt(req.body.newPassword, process.env.PASS_SECRET).toString()},
+                },
+                { new: true }
+                );
+                
+                res.status(200).json({ data: { changePassword: changePassword }, message: 'success', status: 200 });
+            }
+        
+    } catch (err) {
+        res.status(500).json({ data: {}, message: err, status: 500 });
+    }
+});
+
 module.exports = router;

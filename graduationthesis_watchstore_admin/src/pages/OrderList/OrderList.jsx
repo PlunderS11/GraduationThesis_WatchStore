@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import * as moment from 'moment';
-import { DatePicker, Select } from 'antd';
+import { DatePicker, Form, Select } from 'antd';
 import { toast } from 'react-toastify';
 
 import styles from './OrderList.module.scss';
@@ -12,6 +12,7 @@ import Grid from '~/components/Grid/Grid';
 import ModalOrderUpdate from '~/components/Modal/ModalOrderUpdate/ModalOrderUpdate';
 import { useLocation } from 'react-router-dom';
 import ModalOrderDetail from '~/components/Modal/ModalOrderDetail/ModalOrderDetail';
+import { GHN } from '~/api/axiosClient';
 // import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
@@ -26,6 +27,24 @@ export default function OrderList() {
     const [id, setId] = useState('');
     const [open, setOpen] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
+
+    //------------------------------------------------------------
+    const [province, setProvince] = useState([]);
+    const [district, setDistrict] = useState([]);
+    const [ward, setWard] = useState([]);
+
+    const [query, setQuery] = useState({
+        code: undefined,
+        status: undefined,
+        ProvinceID: undefined,
+        DistrictID: undefined,
+        WardCode: undefined,
+        startDate: undefined,
+        endDate: undefined,
+    });
+
+    console.log(query);
+
     useEffect(() => {
         const getProducts = async () => {
             const res = await axiosClient.get('order/admin');
@@ -45,7 +64,52 @@ export default function OrderList() {
             }
         };
         getProducts();
+        const handleGetAddressProvince = async () => {
+            const resP = await GHN.post('master-data/province');
+            setProvince([{ ProvinceID: 0, NameExtension: ['', 'Tất cả'] }, ...resP.data]);
+        };
+        handleGetAddressProvince();
     }, [rerender, location]);
+
+    // value: item.WardCode,
+    // label: item.WardName,
+    // value: item.ProvinceID,
+    // label: item.NameExtension[1],
+    //--------------------------------------------------------------------------------
+
+    const handleGetAddressDistrict = async (value) => {
+        var res;
+        if (value !== 0) {
+            res = await GHN.post('master-data/district', {
+                province_id: value,
+            });
+            setDistrict([{ DistrictID: 0, DistrictName: 'Tất cả' }, ...res.data]);
+            setWard([]);
+            form.setFieldValue('district', '');
+            form.setFieldValue('ward', '');
+        } else if (value === 0) {
+            setDistrict([{ DistrictID: 0, DistrictName: 'Tất cả' }]);
+            setWard([]);
+            form.setFieldValue('district', '');
+            form.setFieldValue('ward', '');
+        }
+    };
+
+    const handleGetAddressWard = async (value) => {
+        var res;
+        if (value !== 0) {
+            res = await GHN.post('master-data/ward', {
+                district_id: value,
+            });
+            setWard([{ WardCode: 0, WardName: 'Tất cả' }, ...res.data]);
+            form.setFieldValue('ward', '');
+        } else if (value === 0) {
+            setWard([{ WardCode: 0, WardName: 'Tất cả' }]);
+            form.setFieldValue('ward', '');
+        }
+    };
+
+    //--------------------------------------------------------------------------------
 
     const ButtonStatus = ({ type, children }) => {
         var title = '';
@@ -80,6 +144,7 @@ export default function OrderList() {
             });
             if (res) {
                 setRerender(!rerender);
+                setId('');
                 toast.success('Cập nhật trạng thái đơn hàng thành công!');
             }
         } catch (error) {
@@ -294,11 +359,6 @@ export default function OrderList() {
                 return (
                     <>
                         <ul>
-                            {/* <li>
-                                <Link to={'/order/' + params.row._id}>
-                                    <button className={cx('product-list-edit')}>Chi tiết</button>
-                                </Link>
-                            </li> */}
                             <li>
                                 <button
                                     className={cx('product-list-edit')}
@@ -328,6 +388,38 @@ export default function OrderList() {
         },
     ];
 
+    const [form] = Form.useForm();
+
+    const handleDate = (value) => {
+        if (value !== null) {
+            if (value[0] !== null) {
+                const d = new Date(value[0]);
+                query.startDate = d.toISOString();
+                setQuery({ ...query });
+            }
+            if (value[1] !== null) {
+                const d = new Date(value[1]);
+                query.endDate = d.toISOString();
+                setQuery({ ...query });
+            }
+        } else {
+            query.startDate = undefined;
+            query.endDate = undefined;
+            setQuery({ ...query });
+        }
+    };
+
+    const handleSearch = async () => {
+        try {
+            const res = await axiosClient.get('order/admin', { params: query });
+            if (res) {
+                setOrders(res.data.orderList);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <>
             <div className={cx('product-list')}>
@@ -335,22 +427,32 @@ export default function OrderList() {
                 <div className={cx('header')}>
                     <ul>
                         <li className={cx('li')}>
-                            <label>Chọn ngày: </label>
-                            <RangePicker className={cx('input_antd_date')} />
+                            <label className={cx('label_form')}>Chọn ngày: </label>
+                            <RangePicker className={cx('input_antd_date')} allowClear onChange={handleDate} />
 
-                            <label>Mã đơn: </label>
-                            <input className={cx('input')} type="text" placeholder="Nhập mã đơn" />
+                            <label className={cx('label_form')}>Mã đơn: </label>
+                            <input
+                                className={cx('input')}
+                                type="text"
+                                placeholder="Nhập mã đơn"
+                                onChange={(e) => {
+                                    e.target.value === '' ? (query.code = undefined) : (query.code = e.target.value);
+                                    setQuery({ ...query });
+                                }}
+                            />
 
-                            <label>Trạng thái đơn: </label>
+                            <label className={cx('label_form')}>Trạng thái đơn: </label>
                             <Select
+                                allowClear
                                 className={cx('input_antd')}
                                 placeholder="Trạng thái đơn"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-
+                                onChange={(e) => {
+                                    e === 0 ? (query.status = undefined) : (query.status = e);
+                                    setQuery({ ...query });
+                                }}
                                 options={[
                                     {
-                                        value: '',
+                                        value: 0,
                                         label: 'Tất cả',
                                     },
                                     {
@@ -377,65 +479,93 @@ export default function OrderList() {
                             />
                         </li>
                         <li className={cx('li')}>
-                            <label>Tỉnh thành: </label>
-                            <Select
-                                className={cx('input_antd')}
-                                showSearch
-                                placeholder="Tỉnh thành"
-                                optionFilterProp="children"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                options={[
-                                    {
-                                        value: '',
-                                        label: 'Tất cả',
-                                    },
-                                ]}
-                            />
+                            <Form form={form} layout="inline">
+                                <Form.Item
+                                    style={{ fontSize: '20px', width: '306px', fontWeight: 'bold' }}
+                                    label="Tỉnh / Thành phố"
+                                    name="province"
+                                >
+                                    <Select
+                                        allowClear
+                                        className={cx('input_antd')}
+                                        showSearch
+                                        placeholder="Tỉnh thành"
+                                        optionFilterProp="children"
+                                        onChange={(e) => {
+                                            handleGetAddressDistrict(e);
 
-                            <label>Quận huyện: </label>
-                            <Select
-                                className={cx('input_antd')}
-                                showSearch
-                                placeholder="Quận huyện"
-                                optionFilterProp="children"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                options={[
-                                    {
-                                        value: '',
-                                        label: 'Tất cả',
-                                    },
-                                ]}
-                            />
+                                            e === 0 ? (query.ProvinceID = undefined) : (query.ProvinceID = e);
+                                            setQuery({ ...query });
+                                        }}
+                                        // onSearch={onSearch}
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        options={province.map((item, i) => ({
+                                            value: item.ProvinceID,
+                                            label: item.NameExtension[1],
+                                        }))}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    style={{ fontSize: '20px', width: '306px', fontWeight: 'bold' }}
+                                    label="Quận / Huyện"
+                                    name="district"
+                                >
+                                    <Select
+                                        allowClear
+                                        className={cx('input_antd')}
+                                        showSearch
+                                        placeholder="Quận huyện"
+                                        optionFilterProp="children"
+                                        // onChange={onChange}
+                                        // onSearch={onSearch}
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        onChange={(e) => {
+                                            handleGetAddressWard(e);
+                                            e === 0 ? (query.DistrictID = undefined) : (query.DistrictID = e);
 
-                            <label>Phường xã: </label>
-                            <Select
-                                className={cx('input_antd')}
-                                showSearch
-                                placeholder="Phường xã"
-                                optionFilterProp="children"
-                                // onChange={onChange}
-                                // onSearch={onSearch}
-                                filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                options={[
-                                    {
-                                        value: '',
-                                        label: 'Tất cả',
-                                    },
-                                ]}
-                            />
-
-                            <Button customClass={styles}>Tiềm kiếm</Button>
-                            <Button customClass={styles}>Xuất excel</Button>
+                                            setQuery({ ...query });
+                                        }}
+                                        options={district.map((item) => ({
+                                            value: item.DistrictID,
+                                            label: item.DistrictName,
+                                        }))}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    style={{ fontSize: '20px', width: '306px', fontWeight: 'bold' }}
+                                    label="Phường / Xã"
+                                    name="ward"
+                                >
+                                    <Select
+                                        className={cx('input_antd')}
+                                        showSearch
+                                        placeholder="Phường xã"
+                                        optionFilterProp="children"
+                                        onChange={(e) => {
+                                            e === 0 ? (query.WardCode = undefined) : (query.WardCode = e);
+                                            setQuery({ ...query });
+                                        }}
+                                        // onSearch={onSearch}
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        options={ward.map((item) => ({
+                                            value: item.WardCode,
+                                            label: item.WardName,
+                                        }))}
+                                    />
+                                </Form.Item>
+                            </Form>
+                            <div className={cx('div_btn')}>
+                                <Button customClass={styles} onClick={handleSearch}>
+                                    Tiềm kiếm
+                                </Button>
+                                <Button customClass={styles}>Xuất excel</Button>
+                            </div>
                         </li>
                     </ul>
                 </div>

@@ -91,7 +91,8 @@ const ModalPromotion = (props) => {
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            title: promotion.title + '',
+            titlevi: promotion.titlevi + '',
+            titleen: promotion.titleen + '',
             code: promotion.code + '',
             value: promotion.value,
             startDate: startAt,
@@ -99,7 +100,8 @@ const ModalPromotion = (props) => {
             isDelete: promotion.isDelete,
         },
         validationSchema: Yup.object({
-            title: Yup.string().required('Nhập tên khuyến mãi'),
+            titlevi: Yup.string().required('Nhập tên khuyến mãi tiếng Việt'),
+            titleen: Yup.string().required('Nhập tên khuyến mãi tiếng Anh'),
             code: Yup.string().required('Nhập mã khuyến mãi'),
             value: Yup.number()
                 .min(1, 'Giá trị khuyến mãi phải lớn hơn hoặc bằng 1')
@@ -109,11 +111,12 @@ const ModalPromotion = (props) => {
             endDate: Yup.string().required('Chọn ngày kết thúc'),
         }),
         onSubmit: async (values) => {
-            const { title, code, value, startDate, endDate, isDelete } = values;
+            const { titlevi, titleen, code, value, startDate, endDate, isDelete } = values;
             // console.log(values);
             try {
                 const res = await axiosClient.put('promotion/' + id, {
-                    title: title,
+                    titlevi: titlevi,
+                    titleen: titleen,
                     code: code,
                     value: value,
                     startDate: startDate,
@@ -172,14 +175,29 @@ const ModalPromotion = (props) => {
                         <div className={cx('add-promotion-item')}>
                             <InputField
                                 type="text"
-                                id="title"
-                                name="title"
+                                id="titlevi"
+                                name="titlevi"
                                 placeholder="."
-                                value={formik.values.title}
-                                label={'Tên khuyến mãi'}
+                                value={formik.values.titlevi}
+                                label={'Tên khuyến mãi tiếng Việt'}
                                 require
-                                touched={formik.touched.title}
-                                error={formik.errors.title}
+                                touched={formik.touched.titlevi}
+                                error={formik.errors.titlevi}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                            />
+                        </div>
+                        <div className={cx('add-promotion-item')}>
+                            <InputField
+                                type="text"
+                                id="titleen"
+                                name="titleen"
+                                placeholder="."
+                                value={formik.values.titleen}
+                                label={'Tên khuyến mãi tiếng Anh'}
+                                require
+                                touched={formik.touched.titleen}
+                                error={formik.errors.titleen}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />

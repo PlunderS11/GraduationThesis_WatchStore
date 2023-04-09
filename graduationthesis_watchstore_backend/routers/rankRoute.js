@@ -67,21 +67,55 @@ router.post('/', verifyTokenAndAdmin, upload.single('icon'), async (req, res) =>
 });
 
 // UPDATE
-router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
-    try {
-        const rank = await Rank.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: req.body,
-            },
-            { new: true, omitUndefined: true }
-        );
-
-        res.status(200).json({ data: { rank }, message: 'success', status: 200 });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ data: {}, message: error.message, status: 500 });
+router.put('/:id',upload.single('icon'), verifyTokenAndAdmin, async (req, res) => {
+    const image = req.file
+    if (image!==undefined) {
+        var icon = '';
+        const image = req.file.mimetype;
+        const fileType = image.split('/')[1];
+        var filePath = `${uuid() + Date.now().toString()}.${fileType}`;
+        const uploadS3 = {
+            Bucket: 'mynh-bake-store',
+            Key: filePath,
+            Body: req.file.buffer,
+        };
+        try {
+            await s3.upload(uploadS3).promise();
+            icon = `${CLOUD_FRONT_URL}${filePath}`;
+        } catch (error) {
+            return res.status(500).json({ data: {}, message: 'Lỗi S3', status: 500 });
+        }
+        try {
+            const rank = await Rank.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {...req.body, icon: icon},
+                },
+                { new: true, omitUndefined: true }
+            );
+    
+            res.status(200).json({ data: { rank }, message: 'success', status: 200 });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ data: {}, message: error.message, status: 500 });
+        }
+    } else {
+        try {
+            const rank = await Rank.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: req.body,
+                },
+                { new: true, omitUndefined: true }
+            );
+    
+            res.status(200).json({ data: { rank }, message: 'success', status: 200 });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ data: {}, message: error.message, status: 500 });
+        }
     }
+    
 });
 
 // DELETE

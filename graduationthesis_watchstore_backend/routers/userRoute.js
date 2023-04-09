@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const CryptoJS = require('crypto-js');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/userModel');
+const Rank = require('../models/rankModel');
 const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
 const Token = require('../models/token');
 
@@ -68,6 +70,17 @@ router.get('/find/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+// GET USER
+// router.get('/findall/:id', verifyTokenAndAdmin, async (req, res) => {
+//     try {
+//         const user = await User.findById(req.params.id);
+//         // const { password, ...other } = user._doc;
+//         res.status(200).json({ data: { user }, message: 'Success', status: 200 });
+//     } catch (error) {
+//         res.status(500).json({ data: {}, message: error.message, status: 500 });
+//     }
+// });
+
 router.get('/', verifyTokenAndAdmin, async (req, res) => {
     const query = req.query.new;
     try {
@@ -84,6 +97,17 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
 router.get('/users/', verifyTokenAndAdmin, async (req, res) => {
     try {
         const users = await User.find({ role: 'user' });
+        res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+});
+
+//GET USERS ROLE STAFF
+router.get('/staffs/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const users = await User.find({ role: 'staff' });
         res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);
@@ -135,9 +159,12 @@ router.post('/addStaff', verifyTokenAndAdmin, async (req, res) => {
         const newUser = new User({
             username: req.body.username,
             email: req.body.email,
+            phone: req.body.phone,
+            sex: req.body.sex,
             password: CryptoJS.AES.encrypt(req.body.password, process.env.PASS_SECRET).toString(),
             rank,
             role: 'staff',
+            isDelete: false,
         });
 
         const user = await newUser.save();
@@ -154,6 +181,42 @@ router.post('/addStaff', verifyTokenAndAdmin, async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({ data: {}, message: err, status: 500 });
+    }
+});
+
+// UPDATE
+router.put('/update/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const updateStaff = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body,
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: { updateStaff: updateStaff }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
+    }
+});
+
+// UPDATE
+router.put('/resetpassword/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const resetPassword = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: { password: CryptoJS.AES.encrypt('12345678', process.env.PASS_SECRET).toString()},
+            },
+            { new: true }
+        );
+
+        res.status(200).json({ data: { resetPassword: resetPassword }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
     }
 });
 

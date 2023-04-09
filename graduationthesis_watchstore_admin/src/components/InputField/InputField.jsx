@@ -34,6 +34,7 @@ function InputField({
                     value={value}
                     onChange={onChange}
                     onBlur={onBlur}
+                    autoComplete="on"
                 />
                 <label htmlFor={id}>
                     {label}
