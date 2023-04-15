@@ -278,4 +278,9 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+router.post('/test', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
+    console.log(req.body,req.files);
+   
+});
+
 module.exports = router;

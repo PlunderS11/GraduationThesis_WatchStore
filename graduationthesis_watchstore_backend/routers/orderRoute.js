@@ -7,6 +7,7 @@ const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middlew
 const { estimate, leadtime, address } = require('../utils/config');
 const User = require('../models/userModel');
 const Rank = require('../models/rankModel');
+const { ObjectId } = require('bson');
 
 // ESTIMATE
 router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
@@ -405,5 +406,52 @@ router.get('/customer/:orderId', verifyTokenAndAuthorization, async (req, res) =
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
+
+// GET MONTHLY INCOME
+router.get("/income", verifyTokenAndAdmin, async (req, res) => {
+    const productId = req.query.pid;
+    const date = new Date();
+    const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
+    const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
+  
+    try {
+      const income = await Order.aggregate([
+        {
+            $lookup: {
+              from: "orderdetails",
+              localField: "orderDetails",
+              foreignField: "_id",
+              as: "ordersData"
+            }
+        },
+        {
+            $unwind: "$ordersData"
+        },
+        {
+            $match: {
+              createdAt: { $gte: previousMonth },
+              "ordersData.product":  ObjectId(productId)
+            },
+        },
+        {
+            $project: {
+              month: { $month: "$createdAt" },
+              sales: "$ordersData.quantity",
+            },
+          },
+          {
+            $group: {
+              _id: "$month",
+              total: { $sum: "$sales" },
+            },
+          },
+    ])
+    
+      
+      res.status(200).json({ data: { income: income }, message: 'success', status: 200 });
+    } catch (err) {
+        res.status(500).json({ data: {}, message: err.message, status: 500 });
+    }
+  });
 
 module.exports = router;
