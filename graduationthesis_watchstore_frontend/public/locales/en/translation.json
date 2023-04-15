@@ -15,6 +15,7 @@
     "cart": {
         "checkout": "Checkout",
         "noItem": "You have not selected any products!",
+        "emptyCart": "Empty Cart",
         "total": "Total",
         "storePromotion": "MynhBake Store promotional",
         "promotiocode": "Promotion Code",
@@ -27,7 +28,16 @@
         "estimate": "Temporary price",
         "distancePrice": "Transport fee",
         "discountPrice": "Discount money",
-        "totalPrice": "Total price"
+        "totalPrice": "Total price",
+        "note": "Note",
+        "notePlace": "Please note about add or time to receive order, v.v...",
+        "status": {
+            "pending": "Pending",
+            "completed": "Completed",
+            "canceled": "Canceled",
+            "package": "Package",
+            "delivering": "Delivering"
+        }
     },
     "footer": {
         "address": "Address",
@@ -73,10 +83,14 @@
         "clickHere": "Click here",
         "dontHaveAccount": "You don't have account?",
         "error": {
+            "210": "Unconfirmed",
             "404": "Email not exists.",
             "500": "Email or password is wrong."
         },
-        "forgot": "Forgot password",
+        "forgot": {
+            "forgotPassword": "Forgot Password",
+            "success": "Change password success."
+        },
         "login": "Login",
         "orLogin": "Or login with",
         "password": "Password",
@@ -102,6 +116,7 @@
         "outOfStock": "Out of stock"
     },
     "productDetail": {
+        "buynowFail": "Please login to user this feature",
         "addToCart": "Add to cart successfully.",
         "chooseOption": "Please choose product options.",
         "titleOptionWatch": "Choose a clock",
@@ -113,7 +128,8 @@
         "confirmPassword": "Confirm password",
         "confirmPasswordError": "Confirm password not match!",
         "error": {
-            "400": "Email or phone exists."
+            "400": "Email or phone exists.",
+            "500": "OTP is wrong"
         },
         "haveAccount": "You already have an account.",
         "invalidEmail": "Invalid email!",
@@ -131,7 +147,12 @@
         "requiredPhone": "Phone required!",
         "rank": "Rank",
         "sex": "Sex",
-        "success": "Create new account successfully."
+        "success": "Create new account successfully.",
+        "modal": {
+            "title": "Verify OTP register",
+            "input": "Please input OTP",
+            "newpass": "Please input new passwprd"
+        }
     },
     "search": {
         "noResult": "No search results for",
@@ -175,6 +196,7 @@
         "descriptionCOD": "Payment on delivery",
         "online": "Online",
         "descriptionOnl": "Payment online",
+        "paymentDescription": "Payment total: ",
         "buySuccess": "Order Success"
     },
     "aboutUs": {

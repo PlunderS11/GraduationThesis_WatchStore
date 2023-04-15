@@ -15,6 +15,7 @@
     "cart": {
         "checkout": "Thanh toán",
         "noItem": "Bạn chưa chọn sản phẩm nào!",
+        "emptyCart": "Giỏ hàng trống",
         "total": "Tổng cộng",
         "storePromotion": "MynhBake Store khuyến mãi",
         "chocePromotion": "Chọn hoặc nhập mã khuyến mãi",
@@ -29,7 +30,14 @@
         "discountPrice": "Giảm giá",
         "totalPrice": "Tổng cộng",
         "note": "Ghi chú",
-        "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v..."
+        "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v...",
+        "status": {
+            "pending": "Đang xử lý...",
+            "completed": "Đã hoàn thành",
+            "canceled": "Đã hủy",
+            "package": "Đóng gói",
+            "delivering": "Đang gửi hàng"
+        }
     },
     "footer": {
         "address": "Địa chỉ",
@@ -75,10 +83,14 @@
         "clickHere": "Bấm vào đây",
         "dontHaveAccount": "Bạn chưa có tài khoản?",
         "error": {
+            "210": "Chưa xác thực",
             "404": "Email không tồn tại",
             "500": "Tài khoản hoặc mật khẩu không đúng."
         },
-        "forgot": "Quên mật khẩu",
+        "forgot": {
+            "forgotPassword": "Quên mật khẩu",
+            "success": "Đổi mật khẩu thành công."
+        },
         "login": "Đăng nhập",
         "orLogin": "Hoặc đăng nhập bằng",
         "password": "Mật khẩu",
@@ -104,6 +116,7 @@
         "outOfStock": "Hết hàng"
     },
     "productDetail": {
+        "buynowFail": "Vui lòng đăng nhập để sử dụng tính năng này",
         "addToCart": "Đã thêm sản phẩm vào giỏ hàng.",
         "chooseOption": "Vui lòng chọn các sản phẩm tuỳ chọn.",
         "titleOptionWatch": "Chọn đồng hồ",
@@ -115,7 +128,8 @@
         "confirmPassword": "Xác nhận mật khẩu",
         "confirmPasswordError": "Xác nhận mật khẩu không đúng!",
         "error": {
-            "404": "Email đã tồn tại."
+            "404": "Email đã tồn tại.",
+            "500": "OTP không đúng"
         },
         "haveAccount": "Bạn đã có tài khoản.",
         "invalidEmail": "Email không hợp lệ!",
@@ -133,7 +147,12 @@
         "requiredPhone": "Nhập số điện thoại!",
         "rank": "Hạng mức",
         "sex": "Giới tính",
-        "success": "Đăng ký thành công."
+        "success": "Đăng ký thành công.",
+        "modal": {
+            "title": "Xác thực OTP đăng ký",
+            "input": "Vui lòng nhập mã OTP",
+            "newpass": "Vui lòng nhập mật khẩu mới"
+        }
     },
     "search": {
         "noResult": "Không tìm thấy kết quả nào cho",
@@ -177,6 +196,7 @@
         "descriptionCOD": "Thanh toán khi nhận hàng",
         "online": "Trực tuyến",
         "descriptionOnl": "Thanh toán online",
+        "paymentDescription": "Thanh toán tổng cộng: ",
         "buySuccess": "Đặt hàng thành công"
     },
     "aboutUs": {

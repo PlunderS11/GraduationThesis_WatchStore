@@ -1,10 +1,13 @@
 const nodemailer = require('nodemailer');
+const CryptoJS = require('crypto-js');
 const dotenv = require('dotenv');
+const OTP = require('../models/otpModel');
 
 dotenv.config();
 
-module.exports = async (email, subject, text) => {
+module.exports = async (_id, email, subject, forgotPassword = undefined) => {
     try {
+        const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
         const transporter = nodemailer.createTransport({
             host: process.env.HOST,
             service: process.env.SERVICE,
@@ -15,11 +18,18 @@ module.exports = async (email, subject, text) => {
                 pass: process.env.PASS,
             },
         });
+
+        await new OTP({
+            userId: _id,
+            OTP: CryptoJS.AES.encrypt(otp, process.env.PASS_SECRET).toString(),
+        }).save();
         await transporter.sendMail({
             from: process.env.USER,
             to: email,
             subject: subject,
-            text: text,
+            html: forgotPassword
+                ? `<p>Enter <b>${otp}</b> in the app to verify forgot your passpword.</p>`
+                : `<p>Enter <b>${otp}</b> in the app to verify your account.</p>`,
         });
         console.log('email sent successfully');
     } catch (error) {

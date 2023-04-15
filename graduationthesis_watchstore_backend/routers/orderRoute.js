@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const KEY = process.env.STRIPE_KEY;
+const stripe = require('stripe')(KEY);
 const Order = require('../models/orderModel');
 const OrderDetail = require('../models/orderDetailModel');
 const Promotion = require('../models/promotionModel');
@@ -183,6 +185,134 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
     }
 });
 
+// POST ORDER ONLINE
+router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
+    try {
+        stripe.charges.create(
+            {
+                source: req.body.stripe.tokenId,
+                amount: req.body.stripe.amount,
+                currency: 'VND',
+            },
+            async (stripeErr, stripeRes) => {
+                if (stripeErr) {
+                    res.status(500).json({ data: {}, message: 'striper' + stripeErr, status: 500 });
+                } else {
+                    const products = req.body.products;
+                    const distancePrice = await estimate(req.body.district.DistrictID, req.body.ward.WardCode);
+                    const lead = await leadtime(req.body.district.DistrictID, req.body.ward.WardCode);
+
+                    var promotion = null;
+                    var discountValue = 0;
+                    if (req.body.promotionCode.trim().length > 0) {
+                        promotion = await Promotion.findOne({ code: req.body.promotionCode });
+                    }
+                    if (promotion) {
+                        discountValue = promotion.value;
+                    }
+                    // check ton kho
+                    let check = true;
+                    for (let i = 0; i < products.length; i++) {
+                        const product = await Product.findById(products[i].productId);
+                        if (products[i].quantity > product.stock) {
+                            check = false;
+                            break;
+                        }
+                    }
+                    let orderDetails = [];
+                    let productPrice = 0;
+                    if (check) {
+                        for (let i = 0; i < products.length; i++) {
+                            const product = await Product.findById(products[i].productId);
+
+                            const orderDetail = new OrderDetail({
+                                product,
+                                quantity: products[i].quantity,
+                                originalPrice: product.originalPrice,
+                                finalPrice: product.finalPrice,
+                            });
+                            await orderDetail.save();
+                            await Product.findByIdAndUpdate(products[i].productId, {
+                                $set: {
+                                    sold: product.sold + products[i].quantity,
+                                    stock: product.stock - products[i].quantity,
+                                },
+                            });
+                            productPrice += product.finalPrice * products[i].quantity;
+                            orderDetails.push(orderDetail);
+                        }
+                        const user = await User.findById(req.user.id).populate('rank');
+                        const { password, ...orther } = user._doc;
+                        const discountPrice = (productPrice * discountValue) / 100;
+
+                        let order = new Order({
+                            user: { ...orther },
+
+                            promotion: promotion,
+                            orderDetails,
+                            recipient: {
+                                username: req.body.username,
+                                phone: req.body.phone,
+                                addressProvince: req.body.province,
+                                addressDistrict: req.body.district,
+                                addressWard: req.body.ward,
+                                address: req.body.address,
+                            },
+                            code: `DH${new Date().getTime()}`,
+                            note: req.body.note ? req.body.note : '',
+                            paymentStatus: 'COMPLETE',
+                            paymentType: req.body.paymentType,
+                            status: {
+                                state: 'PENDING',
+                                pendingDate: new Date(),
+                                packageDate: new Date(),
+                                deliveringDate: new Date(),
+                                completeDate: new Date(),
+                                cancelDate: new Date(),
+                            },
+                            originalPrice: productPrice,
+                            shipPrice: distancePrice,
+                            discountPrice,
+                            finalPrice: productPrice - discountPrice + distancePrice,
+                            leadtime: new Date(lead * 1000).toISOString(),
+                        });
+                        await order.save();
+
+                        // Check rank
+                        const orderList = await Order.find()
+                            .populate('user')
+                            .populate('orderDetails')
+                            .populate('promotion')
+                            .sort({ dateOrdered: -1 })
+                            .exec();
+                        const rank = await Rank.find();
+                        const totalPriceOrderUser = orderList.reduce((acc, cur) => {
+                            if (cur.user._id.toString() == req.user.id) {
+                                return acc + cur.finalPrice;
+                            }
+                        }, 0);
+                        const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
+
+                        if (user.rank._id.toString() !== rs._id.toString()) {
+                            await User.findByIdAndUpdate(req.user.id, {
+                                $set: { rank: rs },
+                            });
+                            res.status(201).json({ data: { order, rank: rs }, message: 'success', status: 201 });
+                        } else {
+                            res.status(200).json({ data: { order }, message: 'success', status: 200 });
+                        }
+                    } else {
+                        res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
+                    }
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
 // CANCEL ORDER
 router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
     try {
@@ -321,8 +451,8 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
                 dateOrdered:
                     req.query.startDate && req.query.endDate
                         ? {
-                            $gte: startDate,
-                            $lte: endDate
+                              $gte: startDate,
+                              $lte: endDate,
                           }
                         : undefined,
             };

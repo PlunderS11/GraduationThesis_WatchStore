@@ -37,54 +37,15 @@ axiosClient.interceptors.response.use(
         return response && response.data ? response.data : response;
     },
     function (error) {
-        const status = error.response?.status || 500;
-        // we can handle global errors here
-        switch (status) {
-            // authentication (token related issues)
-            case 401: {
-                if (
-                    window.location.pathname !== '/' &&
-                    window.location.pathname !== '/login' &&
-                    window.location.pathname !== '/register'
-                ) {
-                    toast.error('Unauthorized the user. Please login .....');
-                }
-
-                return error.response.data;
-            }
-
-            // forbidden (permission related issues)
-            case 403: {
-                toast.error("You don't have the permission to access this resource");
-                return Promise.reject(error);
-            }
-
-            // bad request
-            case 400: {
-                toast.error(error.response.data.message);
-                return Promise.reject(error);
-            }
-
-            // not found
-            case 404: {
-                return Promise.reject(error);
-            }
-
-            // conflict
-            case 409: {
-                return Promise.reject(error);
-            }
-
-            // unprocessable
-            case 422: {
-                return Promise.reject(error);
-            }
-
-            // generic api error (server related) unexpected
-            default: {
-                return Promise.reject(error);
-            }
+        let status = error.response ? error.response.status : false;
+        let msg = '';
+        if (status) {
+            msg = error.response.data.message;
+        } else {
+            msg = error.message;
         }
+        toast.error(msg);
+        return Promise.reject(error);
     }
 );
 
@@ -102,7 +63,16 @@ Instagram.interceptors.response.use(
         return response;
     },
     error => {
-        throw error;
+        let status = error.response ? error.response.status : false;
+        let msg = '';
+        if (status) {
+            msg = error.response.data.message;
+        } else {
+            msg = error.message;
+        }
+        toast.error(msg);
+
+        return Promise.reject(error);
     }
 );
 
@@ -125,7 +95,16 @@ GHN.interceptors.response.use(
         return response;
     },
     error => {
-        throw error;
+        let status = error.response ? error.response.status : false;
+        let msg = '';
+        if (status) {
+            msg = error.response.data.message;
+        } else {
+            msg = error.message;
+        }
+        toast.error(msg);
+
+        return Promise.reject(error);
     }
 );
 

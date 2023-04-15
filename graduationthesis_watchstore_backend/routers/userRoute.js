@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const Rank = require('../models/rankModel');
 const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
-const Token = require('../models/token');
+const OTP = require('../models/otpModel');
 
 const dotenv = require('dotenv');
 
@@ -208,7 +208,7 @@ router.put('/resetpassword/:id', verifyTokenAndAdmin, async (req, res) => {
         const resetPassword = await User.findByIdAndUpdate(
             req.params.id,
             {
-                $set: { password: CryptoJS.AES.encrypt('12345678', process.env.PASS_SECRET).toString()},
+                $set: { password: CryptoJS.AES.encrypt('12345678', process.env.PASS_SECRET).toString() },
             },
             { new: true }
         );

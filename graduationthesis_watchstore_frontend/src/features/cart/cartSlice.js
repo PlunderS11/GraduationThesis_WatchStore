@@ -63,6 +63,8 @@ const cartSlice = createSlice({
         },
         clearCart(state, action) {
             try {
+                state.items = [];
+                state.estimate = {};
                 state.isLoadingCart = true;
                 localStorage.removeItem('cartItems');
             } finally {

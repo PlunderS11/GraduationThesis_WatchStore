@@ -15,7 +15,6 @@ const cx = classNames.bind(style);
 function UserOption({ user }) {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-
     const items = [
         {
             key: '1',
@@ -23,7 +22,7 @@ function UserOption({ user }) {
         },
         {
             key: '2',
-            label: <Link to={'/account/order'}>{t('header.userOption.orderInfo')}</Link>,
+            label: <Link to={'/account/orders'}>{t('header.userOption.orderInfo')}</Link>,
         },
         {
             key: '3',
@@ -54,9 +53,9 @@ function UserOption({ user }) {
             >
                 <div className={cx('user-options')}>
                     <FontAwesomeIcon icon={faUser} className={cx('icon')} />
-                    <p className={cx('name')}>{user.username}</p>
+                    <p className={cx('name')}>{user?.username}</p>
                     <div className={cx('icon')}>
-                        <img src={user.rank.icon} alt="" />
+                        <img src={user.rank?.icon} alt="" />
                     </div>
                 </div>
             </Dropdown>

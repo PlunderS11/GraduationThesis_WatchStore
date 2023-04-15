@@ -4,6 +4,7 @@ import Blogs from '../pages/Blogs/Blogs';
 import BuySuccessPage from '../pages/BuySucces/BuySuccessPage';
 import CartPage from '../pages/Cart/CartPage';
 import Checkout from '../pages/Checkout/Checkout';
+import Forgotpassword from '../pages/ForgotPassword/ForgotPassword';
 import Gallery from '../pages/Gallery/Gallery';
 import Home from '../pages/Home/Home';
 import Login from '../pages/Login/Login';
@@ -30,6 +31,7 @@ const publicRouter = [
 
 const restrictRoutes = [
     { path: '/login', component: Login },
+    { path: '/forgot-password', component: Forgotpassword },
     { path: '/register', component: Register },
 ];
 

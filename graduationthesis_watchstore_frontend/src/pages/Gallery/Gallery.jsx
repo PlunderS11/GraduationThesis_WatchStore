@@ -5,12 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 import i18n from '../../i18n';
 import { Card, Image } from 'antd';
 
-import { addToCart, changeStatus } from '../../features/cart';
+import { addToCart } from '../../features/cart';
 import { galleryFetchImageInstagram, galleryFetchProducts } from '../../features/gallery';
 import * as func from '../../functions';
 import style from './Gallery.module.scss';
@@ -21,7 +21,6 @@ const cx = classNames.bind(style);
 const Gallery = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const navigate = useNavigate();
     const popup = useRef();
 
     const [showDetail, setShowDetail] = useState(false);
