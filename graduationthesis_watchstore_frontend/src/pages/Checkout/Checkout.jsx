@@ -1,20 +1,22 @@
 import classNames from 'classnames/bind';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import StripeCheckout from 'react-stripe-checkout';
+import { toast } from 'react-toastify';
+import { Col, Divider, Modal, Row, Spin } from 'antd';
 
 import { clearCart, fetchEstimate, selectCartItems, selectTotalItems } from '../../features/cart';
 import { NumberWithCommas } from '../../functions';
 import Button from '../../components/Button/Button';
-import style from './Checkout.module.scss';
-import { useEffect, useState } from 'react';
-import { Col, Divider, Modal, Row, Spin } from 'antd';
+import styles from './Checkout.module.scss';
 import TextArea from 'antd/es/input/TextArea';
 import axiosClient from '../../api/axiosClient';
-import { toast } from 'react-toastify';
 import { fetchUserInfor } from '../../features/user';
+import { images } from '../../assets/images';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(styles);
 
 const Checkout = () => {
     const { t } = useTranslation();
@@ -30,6 +32,7 @@ const Checkout = () => {
     const totalItems = useSelector(selectTotalItems);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingBuy, setIsLoadingBuy] = useState(false);
+    const [stripeToken, setStripeToken] = useState(null);
 
     const payment = [
         {
@@ -38,7 +41,7 @@ const Checkout = () => {
             des: t('checkout.descriptionCOD'),
         },
         {
-            type: 'VNPAY',
+            type: 'ONLINE',
             content: t('checkout.online'),
             des: t('checkout.descriptionOnl'),
         },
@@ -51,6 +54,10 @@ const Checkout = () => {
 
     const handleChonse = type => {
         setCheck(type);
+    };
+
+    const onToken = token => {
+        setStripeToken(token);
     };
 
     const handleBuy = async () => {
@@ -89,6 +96,52 @@ const Checkout = () => {
             navigate('/buysuccess');
         }
     };
+
+    const handleBuyOnline = async () => {
+        try {
+            setIsLoadingBuy(true);
+            const resUser = await axiosClient.get('user/userInfo');
+            const res = await axiosClient.post('order/stripePayment', {
+                stripe: {
+                    tokenId: stripeToken.id,
+                    amount: estimate.finalPrice,
+                },
+                province: resUser.data.address.province,
+                district: resUser.data.address.district,
+                ward: resUser.data.address.ward,
+                promotionCode: coupon,
+                note,
+                products: cart.reduce((acc, cur) => {
+                    acc.push({
+                        productId: cur.product._id,
+                        quantity: cur.quantity,
+                    });
+                    return acc;
+                }, []),
+                paymentType: check,
+                phone: resUser.data.phone,
+                address: resUser.data.address.address,
+                username: resUser.data.username,
+            });
+            dispatch(clearCart());
+            if (res.status === 201) {
+                toast.success(`Thăng hạng thành viên lên ${res.data.rank.namevi}`);
+                dispatch(fetchUserInfor());
+            } else {
+                toast.success('Đặt hàng thành công');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response.data.message);
+        } finally {
+            setIsLoadingBuy(false);
+            navigate('/buysuccess');
+        }
+    };
+
+    useEffect(() => {
+        stripeToken && handleBuyOnline();
+    }, [stripeToken]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -193,7 +246,6 @@ const Checkout = () => {
                                     </Modal>
                                     <div className={cx('coupon')}>
                                         <span>{t('cart.storePromotion')}</span>
-
                                         <div className={cx('coupon-chonse')} onClick={showModal}>
                                             {estimate?.discountPrice > 0 ? (
                                                 <>
@@ -309,9 +361,28 @@ const Checkout = () => {
                                             </ul>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Button loading={isLoadingBuy} onclick={handleBuy}>
-                                                {t('button.order')}
-                                            </Button>
+                                            {check === 'CASH' ? (
+                                                <Button loading={isLoadingBuy} onclick={handleBuy}>
+                                                    {t('button.order')}
+                                                </Button>
+                                            ) : (
+                                                <StripeCheckout
+                                                    name="MynhBakeStore"
+                                                    image={images.logoBlack}
+                                                    currency="VND"
+                                                    ComponentClass="div"
+                                                    allowRememberMe
+                                                    panelLabel={t('button.order')}
+                                                    description={`${t('checkout.paymentDescription')}${NumberWithCommas(
+                                                        estimate.finalPrice
+                                                    )}`}
+                                                    amount={estimate.finalPrice}
+                                                    token={onToken}
+                                                    stripeKey={process.env.REACT_APP_STRIPE}
+                                                >
+                                                    <Button loading={isLoadingBuy}>{t('button.order')}</Button>
+                                                </StripeCheckout>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

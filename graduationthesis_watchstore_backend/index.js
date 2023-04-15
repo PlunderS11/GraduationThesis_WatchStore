@@ -10,6 +10,7 @@ const collectionRoute = require('./routers/collectionRoute');
 const orderRoute = require('./routers/orderRoute');
 const promotionRoute = require('./routers/promotionRoute');
 const rankRoute = require('./routers/rankRoute');
+const postRoute = require('./routers/postRoute');
 
 connectDB();
 
@@ -25,5 +26,6 @@ app.use('/api/collections', collectionRoute);
 app.use('/api/order', orderRoute);
 app.use('/api/promotion', promotionRoute);
 app.use('/api/rank', rankRoute);
+app.use('/api/post', postRoute);
 
 app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));

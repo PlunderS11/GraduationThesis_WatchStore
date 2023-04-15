@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 export const fetchEstimate = createAsyncThunk('cart/fetchEstimate', async (data, thunkApi) => {
     try {
+        // eslint-disable-next-line no-unused-vars
         const { rejectWithValue, getState } = thunkApi;
         const products = getState().cart.items;
 

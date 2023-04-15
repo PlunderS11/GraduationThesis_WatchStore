@@ -196,6 +196,7 @@
         "descriptionCOD": "Thanh toán khi nhận hàng",
         "online": "Trực tuyến",
         "descriptionOnl": "Thanh toán online",
+        "paymentDescription": "Thanh toán tổng cộng: ",
         "buySuccess": "Đặt hàng thành công"
     },
     "aboutUs": {

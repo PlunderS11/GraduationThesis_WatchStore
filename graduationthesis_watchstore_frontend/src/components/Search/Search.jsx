@@ -1,19 +1,15 @@
 import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-// import { setKeywordValue } from '~/features/search/searchSlice';
 import style from './Search.module.scss';
 
 const cx = classNames.bind(style);
 
 function Search({ customClass }) {
-    const location = useLocation();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const [keyword, setKeyword] = useState('');
 

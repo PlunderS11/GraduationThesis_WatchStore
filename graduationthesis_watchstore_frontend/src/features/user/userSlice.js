@@ -35,6 +35,7 @@ const userSlice = createSlice({
         builder
             .addCase(fetchUserInfor.pending, (state, action) => {
                 state.isLoadingUser = true;
+                state.isLogin = true;
             })
             .addCase(fetchUserInfor.fulfilled, (state, action) => {
                 state.user = action.payload;
@@ -42,7 +43,8 @@ const userSlice = createSlice({
                 state.isLoadingUser = false;
             })
             .addCase(fetchUserInfor.rejected, (state, action) => {
-                // state.isLoadingUser = false;
+                state.isLoadingUser = false;
+                state.isLogin = false;
             });
     },
 });

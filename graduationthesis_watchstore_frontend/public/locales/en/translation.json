@@ -196,6 +196,7 @@
         "descriptionCOD": "Payment on delivery",
         "online": "Online",
         "descriptionOnl": "Payment online",
+        "paymentDescription": "Payment total: ",
         "buySuccess": "Order Success"
     },
     "aboutUs": {
