@@ -13,6 +13,7 @@ import { NumberWithCommas } from '../../functions';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchEstimate, removeItem, selectCartItems, selectTotalItems, updateCartItem } from '../../features/cart';
 import { useTranslation } from 'react-i18next';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -91,6 +92,10 @@ const CartPage = () => {
         <div className={cx('cart-page')}>
             <div className="page-header">
                 <div className="container">
+                    <MyBreadcrumb />
+                    <div className={cx('title')}>
+                        <h1>{t('breadcrumbs.cart')}</h1>
+                    </div>
                     <div className="page-header-container">
                         <div className="page-header__title"></div>
                     </div>

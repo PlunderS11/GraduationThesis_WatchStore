@@ -29,7 +29,7 @@ const Profile = () => {
                 phone: user.user?.phone,
                 gender: user.user?.sex === 'm' ? t('header.man') : t('header.woman'),
                 email: user.user?.email,
-                rank: user.user?.rank[`name${i18n.language}`],
+                rank: user.user?.rank?.[`name${i18n.language}`],
             });
         }
     }, [user, t, form]);

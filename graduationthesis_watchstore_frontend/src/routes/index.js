@@ -1,5 +1,6 @@
 import AboutUs from '../pages/AboutUs/AboutUs';
 import AccountInfo from '../pages/AccountInfo/AccountInfo';
+import BlogDetail from '../pages/BlogDetail/BlogDetail';
 import Blogs from '../pages/Blogs/Blogs';
 import BuySuccessPage from '../pages/BuySucces/BuySuccessPage';
 import CartPage from '../pages/Cart/CartPage';
@@ -15,24 +16,22 @@ import Register from '../pages/Register/Register';
 import SearchResult from '../pages/SearchResult/SearchResult';
 
 const publicRouter = [
-    { path: '/', component: Home },
-    { path: '/about-us', component: AboutUs },
-    { path: '/blogs', component: Blogs },
-    { path: '/cart', component: CartPage },
-    { path: '/checkout', component: Checkout },
-    { path: '/gallery', component: Gallery },
-    { path: '/product/:slug', component: ProductDetail },
-    { path: '/product-category/:type', component: ProductCategory },
-    { path: '/search', component: SearchResult },
-    { path: '/account/:category', component: AccountInfo },
-    { path: '/buysuccess', component: BuySuccessPage },
-    { path: '/account/order-history/:id', component: OrderHistoryPage },
+    { path: '/', component: Home, breadcrumb: 'home' },
+    { path: '/about-us', component: AboutUs, breadcrumb: 'home/aboutUs' },
+    { path: '/blogs', component: Blogs, breadcrumb: 'home/blogs' },
+    { path: '/blog/:id', component: BlogDetail, breadcrumb: 'home/blogs' },
+    { path: '/cart', component: CartPage, breadcrumb: 'home/cart' },
+    { path: '/checkout', component: Checkout, breadcrumb: 'home/checkout' },
+    { path: '/gallery', component: Gallery, breadcrumb: 'home/gallery' },
+    { path: '/product/:slug', component: ProductDetail, breadcrumb: 'home' },
+    { path: '/product-category/:type', component: ProductCategory, breadcrumb: 'home' },
+    { path: '/search', component: SearchResult, breadcrumb: 'home/search' },
+    { path: '/account/:category', component: AccountInfo, breadcrumb: 'home/account' },
+    { path: '/buysuccess', component: BuySuccessPage, breadcrumb: 'home/buysuccess' },
+    { path: '/account/order-history/:id', component: OrderHistoryPage, breadcrumb: 'home/history' },
+    { path: '/login', component: Login, breadcrumb: 'home/login' },
+    { path: '/forgot-password', component: Forgotpassword, breadcrumb: 'home/fprgotPassword' },
+    { path: '/register', component: Register, breadcrumb: 'home/register' },
 ];
 
-const restrictRoutes = [
-    { path: '/login', component: Login },
-    { path: '/forgot-password', component: Forgotpassword },
-    { path: '/register', component: Register },
-];
-
-export { publicRouter, restrictRoutes };
+export { publicRouter };

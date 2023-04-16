@@ -15,6 +15,7 @@ import Button from '../../components/Button/Button';
 import { setTokenUser } from '../../features/user/userSlice';
 import style from './Login.module.scss';
 import { Input, Modal, Spin } from 'antd';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -84,85 +85,89 @@ const Login = () => {
     return (
         <main className={cx('login-page')}>
             <Spin spinning={loading}>
-                <div className={cx('container')}>
-                    <Modal
-                        title={t('register.modal.title')}
-                        open={visibleModalRegister}
-                        onOk={handleVerifyOTP}
-                        onCancel={() => setVisibleModalRegister(false)}
-                    >
-                        <Input
-                            placeholder={t('register.modal.input')}
-                            allowClear
-                            onChange={e => setOtp(e.target.value)}
-                        />
-                    </Modal>
-                    <h2 className={cx('title')}>{t('login.login')}</h2>
-                    <form className={cx('login-form')} onSubmit={formik.handleSubmit} spellCheck="false">
-                        <InputField
-                            type="text"
-                            id="email"
-                            name="email"
-                            placeholder="."
-                            value={formik.values.user}
-                            label={t('login.user')}
-                            require
-                            touched={formik.touched.user}
-                            error={formik.errors.user}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                        />
-                        <InputField
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="."
-                            value={formik.values.password}
-                            label={t('login.password')}
-                            require
-                            touched={formik.touched.password}
-                            error={formik.errors.password}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                        />
-                        <div className={cx('options')}>
-                            <div className={cx('remember')}>
-                                <label htmlFor="remember">
-                                    <input
-                                        type="checkbox"
-                                        id="remember"
-                                        name="remember"
-                                        checked={formik.values.remember}
-                                        onChange={formik.handleChange}
-                                    />
-                                    <span className={cx('checkmark')}></span>
-                                    {t('login.remember')}
-                                </label>
+                <div className="container">
+                    <MyBreadcrumb />
+                    <div className={cx('container')}>
+                        <Modal
+                            title={t('register.modal.title')}
+                            open={visibleModalRegister}
+                            onOk={handleVerifyOTP}
+                            onCancel={() => setVisibleModalRegister(false)}
+                        >
+                            <Input
+                                placeholder={t('register.modal.input')}
+                                allowClear
+                                onChange={e => setOtp(e.target.value)}
+                            />
+                        </Modal>
+                        <h2 className={cx('title')}>{t('login.login')}</h2>
+                        <form className={cx('login-form')} onSubmit={formik.handleSubmit} spellCheck="false">
+                            <InputField
+                                type="text"
+                                id="email"
+                                name="email"
+                                placeholder="."
+                                value={formik.values.user}
+                                label={t('login.user')}
+                                require
+                                touched={formik.touched.user}
+                                error={formik.errors.user}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                            />
+                            <InputField
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="."
+                                value={formik.values.password}
+                                label={t('login.password')}
+                                require
+                                touched={formik.touched.password}
+                                error={formik.errors.password}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                            />
+                            <div className={cx('options')}>
+                                <div className={cx('remember')}>
+                                    <label htmlFor="remember">
+                                        <input
+                                            type="checkbox"
+                                            id="remember"
+                                            name="remember"
+                                            checked={formik.values.remember}
+                                            onChange={formik.handleChange}
+                                        />
+                                        <span className={cx('checkmark')}></span>
+                                        {t('login.remember')}
+                                    </label>
+                                </div>
+                                <div className={cx('forgot')}>
+                                    {t('login.forgot.forgotPassword')}?{' '}
+                                    <Link to={'/forgot-password'}>{t('login.clickHere')}</Link>
+                                </div>
                             </div>
-                            <div className={cx('forgot')}>
-                                {t('login.forgot.forgotPassword')}?{' '}
-                                <Link to={'/forgot-password'}>{t('login.clickHere')}</Link>
-                            </div>
+                            <Button type="submit" customClass={style}>
+                                {t('login.login')}
+                            </Button>
+                        </form>
+                        <div className={cx('login-with')}>
+                            <span>{t('login.orLogin')}</span>
                         </div>
-                        <Button type="submit" customClass={style}>
-                            {t('login.login')}
-                        </Button>
-                    </form>
-                    <div className={cx('login-with')}>
-                        <span>{t('login.orLogin')}</span>
-                    </div>
-                    <div className={cx('login-with-buttons')}>
-                        <Button customClass={style}>
-                            <FontAwesomeIcon icon={faFacebookF} className={cx('icon')} />
-                            <span className={cx('text')}>Facebook</span>
-                        </Button>
-                        <Button customClass={style}>
-                            <FontAwesomeIcon icon={faGoogle} className={cx('icon')} />
-                            <span className={cx('text')}>Google</span>
-                        </Button>
-                    </div>
-                    <div className={cx('register')}>
-                        <span>{t('login.dontHaveAccount')}</span> <Link to={'/register'}>{t('register.register')}</Link>
+                        <div className={cx('login-with-buttons')}>
+                            <Button customClass={style}>
+                                <FontAwesomeIcon icon={faFacebookF} className={cx('icon')} />
+                                <span className={cx('text')}>Facebook</span>
+                            </Button>
+                            <Button customClass={style}>
+                                <FontAwesomeIcon icon={faGoogle} className={cx('icon')} />
+                                <span className={cx('text')}>Google</span>
+                            </Button>
+                        </div>
+                        <div className={cx('register')}>
+                            <span>{t('login.dontHaveAccount')}</span>{' '}
+                            <Link to={'/register'}>{t('register.register')}</Link>
+                        </div>
                     </div>
                 </div>
             </Spin>

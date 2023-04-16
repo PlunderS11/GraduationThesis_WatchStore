@@ -9,6 +9,7 @@ import { accountOptions } from '../../assets/datas/index';
 import Profile from './Profile/Profile';
 import Address from './Address/Address';
 import OrderPage from './Order/OrderPage';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -21,6 +22,7 @@ const AccountInfo = () => {
         <div className={cx('accountInfo-page')}>
             <div className="content">
                 <div className="container">
+                    <MyBreadcrumb urlParams={t(`breadcrumbs.${params.category}`)} detail />
                     <Row>
                         <Col span={6}>
                             <div className={cx('menu')}>

@@ -18,7 +18,7 @@
         "emptyCart": "Empty Cart",
         "total": "Total",
         "storePromotion": "MynhBake Store promotional",
-        "promotiocode": "Promotion Code",
+        "promotionCode": "Promotion Code",
         "promotioPrice": "Promotional money is reduced",
         "promotioNull": "No discount code",
         "toAddress": "Delivered to",
@@ -61,7 +61,7 @@
         "blogs": "Blogs",
         "userOption": {
             "userInfo": "Personal information",
-            "orderInfo": "Order Information",
+            "orderInfo": "Orders Information",
             "addressInfo": "Address",
             "logout": "Logout"
         }
@@ -234,5 +234,24 @@
             "okText": "Yes",
             "cancelText": "No"
         }
+    },
+    "breadcrumbs": {
+        "home": "Home",
+        "aboutUs": "About us",
+        "accessory": "Accessory",
+        "gallery": "Gallery",
+        "login": "Login",
+        "man": "Man's watch",
+        "woman": "Woman's Watch",
+        "register": "Register",
+        "blogs": "Blogs",
+        "cart": "Cart",
+        "checkout": "Checkout",
+        "buysuccess": "Order Success",
+        "history": "Order History",
+        "account": "Account",
+        "profile": "Personal information",
+        "orders": "Orders information",
+        "address": "Address"
     }
 }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { images } from '../../assets/images';
 import style from './AboutUs.module.scss';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -12,6 +13,7 @@ const AboutUs = () => {
     return (
         <div className={cx('about-us')}>
             <div className={cx('container')}>
+                <MyBreadcrumb />
                 <div className={cx('inner')}>
                     <div className={cx('block')}>
                         <h2 className={cx('title')}>{t('aboutUs.introduce')}</h2>

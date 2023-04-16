@@ -4,6 +4,7 @@ import Button from '../../components/Button/Button';
 import style from './BuySuccessPage.module.scss';
 import classNames from 'classnames/bind';
 import { useTranslation } from 'react-i18next';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 const cx = classNames.bind(style);
 
 const BuySuccessPage = () => {
@@ -11,6 +12,7 @@ const BuySuccessPage = () => {
     return (
         <div className={cx('buy-success-page')}>
             <div className={cx('container')}>
+                <MyBreadcrumb />
                 <div className={cx('body')}>
                     <div className={cx('body-header-noti')}>
                         <div className={cx('header-noti-icon')}>

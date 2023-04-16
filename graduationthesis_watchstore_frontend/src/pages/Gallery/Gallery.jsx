@@ -15,6 +15,7 @@ import { galleryFetchImageInstagram, galleryFetchProducts } from '../../features
 import * as func from '../../functions';
 import style from './Gallery.module.scss';
 import { toast } from 'react-toastify';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -118,6 +119,9 @@ const Gallery = () => {
 
     return (
         <div className={cx('gallery-page')} ref={popup} tabIndex={1} onKeyDown={e => handleKeyDown(e)}>
+            <div className="container">
+                <MyBreadcrumb />
+            </div>
             {listImages.length > 0 && (
                 <ul className={cx('images')}>
                     {listImages.map((item, index) => (

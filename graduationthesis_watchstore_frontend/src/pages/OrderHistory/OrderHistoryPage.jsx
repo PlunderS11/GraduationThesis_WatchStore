@@ -9,6 +9,7 @@ import { NumberWithCommas } from '../../functions';
 import style from './OrderHistoryPage.module.scss';
 import Button from '../../components/Button/Button';
 import axiosClient from '../../api/axiosClient';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 Moment.globalFormat = 'DD/MM/YYYY';
 
@@ -127,6 +128,7 @@ const OrderHistoryPage = () => {
             </Modal>
             <div className={cx('page-header')}>
                 <div className={cx('container')}>
+                    <MyBreadcrumb />
                     <div className={cx('page-header-container')}>
                         <div className={cx('page-header__title')}></div>
                     </div>

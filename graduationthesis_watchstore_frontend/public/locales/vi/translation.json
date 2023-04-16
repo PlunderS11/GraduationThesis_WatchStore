@@ -19,7 +19,7 @@
         "total": "Tổng cộng",
         "storePromotion": "MynhBake Store khuyến mãi",
         "chocePromotion": "Chọn hoặc nhập mã khuyến mãi",
-        "promotiocode": "Mã giảm giá",
+        "promotionCode": "Mã giảm giá",
         "promotioPrice": "Tiền khuyến mãi được giảm",
         "promotioNull": "Chưa có mã giảm giá",
         "toAddress": "Giao tới",
@@ -234,5 +234,24 @@
             "okText": "Có",
             "cancelText": "Không"
         }
+    },
+    "breadcrumbs": {
+        "home": "Trang chủ",
+        "aboutUs": "Giới thiệu",
+        "accessory": "Phụ kiện",
+        "gallery": "Thư viện ảnh",
+        "login": "Đăng nhập",
+        "man": "Đồng hồ Nam",
+        "woman": "Đồng hồ Nữ",
+        "register": "Đăng ký",
+        "blogs": "Bài viết",
+        "cart": "Giỏ hàng",
+        "checkout": "Thanh toán",
+        "buysuccess": "Đăt hàng thành công",
+        "history": "Lịch sử mua hàng",
+        "account": "Tài khoản",
+        "profile": "Thông tin cá nhân",
+        "orders": "Đơn hàng",
+        "address": "Địa chỉ"
     }
 }

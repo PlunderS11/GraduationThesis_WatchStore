@@ -1,14 +1,16 @@
 import jwt_decode from 'jwt-decode';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import ScrollToTop from './layouts/components/ScrollToTop/ScrollToTop';
 import MasterLayout from './layouts/Masterlayout/MasterLayout';
-import { publicRouter, restrictRoutes } from './routes';
+import { publicRouter } from './routes';
 import { fetchUserInfor } from './features/user';
 
 function App() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const token = useSelector(state => state.user.token);
     const [lastSessionLoaded, setLastSessionLoaded] = useState(false);
@@ -28,6 +30,10 @@ function App() {
         setLastSessionLoaded(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, accessToken]);
+    useEffect(() => {
+        location.pathname === '/home' && navigate('/');
+        location.pathname === '/account' && navigate('/account/profile');
+    }, [location, navigate]);
     return (
         <>
             {lastSessionLoaded && (
@@ -36,11 +42,6 @@ function App() {
                         <Routes>
                             {/* publicRouter */}
                             {publicRouter.map((router, i) => {
-                                const Page = router.component;
-                                return <Route key={i} path={router.path} element={<Page />} />;
-                            })}
-                            {/* restrictRoutes */}
-                            {restrictRoutes.map((router, i) => {
                                 const Page = router.component;
                                 return <Route key={i} path={router.path} element={<Page />} />;
                             })}

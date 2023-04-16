@@ -12,6 +12,7 @@ import Button from '../../components/Button/Button';
 
 import style from './ProductCategory.module.scss';
 import { NumberWithCommas } from '../../functions';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -52,6 +53,7 @@ const ProductCategory = () => {
         getProducts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.type, t]);
+
     const handleSearch = async () => {
         try {
             setLoading(true);
@@ -67,8 +69,9 @@ const ProductCategory = () => {
         <div className={cx('product-categories')}>
             <Spin spinning={loading}>
                 <div className="container">
+                    <MyBreadcrumb urlParams={t(`breadcrumbs.${params.type}`)} detail />
                     <div className={cx('filter')}>
-                        <Descriptions title={'Tìm kiếm'}>
+                        <Descriptions title={t('button.search')}>
                             <Descriptions.Item label={'Tên'}>
                                 <Input
                                     placeholder="afaef"
@@ -120,7 +123,7 @@ const ProductCategory = () => {
                                 ></Select>
                             </Descriptions.Item>
                             <Descriptions.Item>
-                                <Button onclick={handleSearch}>Tìm kiếm</Button>
+                                <Button onclick={handleSearch}>{t('button.search')}</Button>
                             </Descriptions.Item>
                         </Descriptions>
                     </div>

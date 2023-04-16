@@ -15,6 +15,7 @@ import TextArea from 'antd/es/input/TextArea';
 import axiosClient from '../../api/axiosClient';
 import { fetchUserInfor } from '../../features/user';
 import { images } from '../../assets/images';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(styles);
 
@@ -48,6 +49,7 @@ const Checkout = () => {
     ];
 
     useEffect(() => {
+        console.log(user.isLogin);
         user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -162,10 +164,9 @@ const Checkout = () => {
             <div className={cx('checkout-page')}>
                 <div className="page-header">
                     <div className="container">
-                        <div className="page-header-container">
-                            <div className="page-header__title">
-                                <h1>Checkout</h1>
-                            </div>
+                        <MyBreadcrumb />
+                        <div className={cx('title')}>
+                            <h1>{t('breadcrumbs.checkout')}</h1>
                         </div>
                     </div>
                 </div>

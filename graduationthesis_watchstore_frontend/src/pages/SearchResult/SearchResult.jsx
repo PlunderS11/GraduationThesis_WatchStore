@@ -9,6 +9,7 @@ import { changeProgress } from '../../features/loader';
 import axiosClient from '../../api/axiosClient';
 // import usePageTitle from '~/hooks/usePageTitle';
 import style from './SearchResult.module.scss';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -38,6 +39,7 @@ function SearchResult() {
     return (
         <main className={cx('search-page')}>
             <div className={cx('container')}>
+                <MyBreadcrumb />
                 {(fetchStatus === 0 || fetchStatus === 100) && (
                     <>
                         {products.length > 0 ? (

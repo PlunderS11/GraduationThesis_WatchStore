@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { removeItem, selectCartItems, selectTotalItems, selectTotalPrice, updateCartItem } from '../../features/cart';
 import style from './Cart.module.scss';
@@ -12,13 +12,16 @@ import { useTranslation } from 'react-i18next';
 import { NumberWithCommas } from '../../functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(style);
 
 function Cart({ customClass, open }) {
-    const dispatch = useDispatch();
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
+    const user = useSelector(state => state.user);
     const products = useSelector(selectCartItems);
     const totalItem = useSelector(selectTotalItems);
     const price = useSelector(selectTotalPrice);
@@ -169,7 +172,14 @@ function Cart({ customClass, open }) {
                         <Button to={'/cart'} customClass={style}>
                             {t('button.gotoCart')}
                         </Button>
-                        <Button to={'/checkout'} customClass={style}>
+                        <Button
+                            customClass={style}
+                            onclick={() => {
+                                if (user.isLogin) {
+                                    navigate('/checkout');
+                                } else toast.info(t('productDetail.buynowFail'));
+                            }}
+                        >
                             {t('cart.checkout')}
                         </Button>
                     </div>

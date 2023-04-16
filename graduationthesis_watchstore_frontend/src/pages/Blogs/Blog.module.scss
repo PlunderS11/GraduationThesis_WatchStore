@@ -1,0 +1,27 @@
+.blog-page {
+    margin-top: 300px;
+}
+
+.title {
+    margin-bottom: 30px;
+}
+
+.refBuyProductPage-cover {
+    display: flex !important;
+    padding: 10px;
+
+    img {
+        margin-right: 30px;
+        width: 200px;
+        height: 200px;
+        object-fit: contain;
+    }
+}
+
+.post-body-content {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+}

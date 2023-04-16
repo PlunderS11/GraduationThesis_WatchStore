@@ -1,0 +1,39 @@
+.blogdetail-page {
+    margin-top: 300px;
+}
+
+.blog-body {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.blog-body__header {
+    // width: 640px;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px 0 50px;
+}
+
+.blog-body-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 42px;
+}
+
+.blog-body-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 24px;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: #b2b2b2;
+}
+
+.blog-body__content {
+    line-height: 1.625;
+    word-break: break-all;
+}

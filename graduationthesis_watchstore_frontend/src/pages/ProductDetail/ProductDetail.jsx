@@ -16,6 +16,7 @@ import { NumberWithCommas } from '../../functions';
 import i18n from '../../i18n';
 
 import style from './ProductDetail.module.scss';
+import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 
 const cx = classNames.bind(style);
 
@@ -84,6 +85,7 @@ const ProductDetail = () => {
         <div className={cx('product-detail-page')}>
             {!isEmpty(product) && (
                 <div className={cx('container')}>
+                    <MyBreadcrumb urlParams={product.name} detail />
                     <div className={cx('product-detail')}>
                         <div className={cx('image-detail')}>
                             {product.images.length > 0 && (
@@ -117,7 +119,11 @@ const ProductDetail = () => {
                         </div>
                     </div>
                     <div className={cx('product-related')}>
-                        <ProductByCategory title={'Sản phẩm liên quan'} listProduct={relatedProducts} column={3} />
+                        <ProductByCategory
+                            title={t('gallery.headingProducts')}
+                            listProduct={relatedProducts}
+                            column={3}
+                        />
                     </div>
                 </div>
             )}
