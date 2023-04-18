@@ -8,21 +8,21 @@ const PostSchema = mongoose.Schema(
         },
         content: {
             type: String,
-            required: true,
+            required: false,
         },
         image: {
             type: String,
             required: true,
         },
-        descriptionvi: {
+        description: {
             type: String,
             required: true,
         },
-        isDelete: {
-            type: Boolean,
-            default: false,
-            required: true,
-        },
+        // isDelete: {
+        //     type: Boolean,
+        //     default: false,
+        //     required: true,
+        // },
     },
     { timestamps: true }
 );
