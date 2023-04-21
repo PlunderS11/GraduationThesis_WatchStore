@@ -1,14 +1,8 @@
-const Request = require("request-promise");
-const { chunk } = require("lodash");
+const Request = require('request-promise');
+const { chunk } = require('lodash');
 
 class OneSignalUtil {
-    static async pushNotification({
-        heading,
-        content,
-        oneSignalPlayerIds,
-        data,
-        pathUrl = "/",
-    }) {
+    static async pushNotification({ heading, content, oneSignalPlayerIds, data, pathUrl = '/' }) {
         const appId = process.env.APPID;
         const callbackUrl = process.env.CALLBACKURL;
         const restApiKey = process.env.RECTAPIKEY;
@@ -16,8 +10,8 @@ class OneSignalUtil {
         const chunkArray = chunk(oneSignalPlayerIds, 1000);
         for (const itemChunk of chunkArray) {
             const response = await Request({
-                method: "POST",
-                uri: "http://localhost:8080/api/notification",
+                method: 'POST',
+                uri: 'http://localhost:8080/api/notification',
                 headers: {
                     Authorization: `Basic ${restApiKey}`,
                 },
@@ -32,23 +26,17 @@ class OneSignalUtil {
                 json: true,
             });
 
-            console.log("one signal response", response);
+            console.log('one signal response', response);
         }
     }
 
-    static async pushNotificationAll({
-        content,
-        heading,
-        url,
-        data,
-        userType = "admin",
-    }) {
+    static async pushNotificationAll({ content, heading, url, data, userType = 'admin' }) {
         try {
             const { appId, callbackUrl, restApiKey } = this.getConfig(userType);
 
             const response = await Request({
-                method: "POST",
-                uri: "http://localhost:8080/api/notification",
+                method: 'POST',
+                uri: 'http://localhost:8080/api/notification',
                 headers: {
                     Authorization: `Basic ${restApiKey}`,
                 },
@@ -56,7 +44,7 @@ class OneSignalUtil {
                     app_id: appId,
                     contents: { en: content },
                     headings: { en: heading },
-                    included_segments: ["All"],
+                    included_segments: ['All'],
                     url: callbackUrl + url,
                     data,
                 },
