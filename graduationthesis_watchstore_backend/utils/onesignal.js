@@ -17,7 +17,7 @@ class OneSignalUtil {
         for (const itemChunk of chunkArray) {
             const response = await Request({
                 method: "POST",
-                uri: "http://localhost:8080/api/notification",
+                uri: "https://onesignal.com/api/v1/notifications",
                 headers: {
                     Authorization: `Basic ${restApiKey}`,
                 },
@@ -48,7 +48,7 @@ class OneSignalUtil {
 
             const response = await Request({
                 method: "POST",
-                uri: "http://localhost:8080/api/notification",
+                uri: "https://onesignal.com/api/v1/notifications",
                 headers: {
                     Authorization: `Basic ${restApiKey}`,
                 },

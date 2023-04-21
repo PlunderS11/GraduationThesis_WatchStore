@@ -14,6 +14,7 @@ const { ObjectId } = require('bson');
 const Notification = require("../models/notificationModel");
 const OneSignal = require("../models/oneSignalModel");
 const OneSignalUtil = require("../utils/onesignal");
+// const OneSignalUtilUser = require("../utils/onesignalUser");
 const moment = require("moment/moment");
 
 // ESTIMATE
@@ -172,37 +173,37 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
 
             const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
             //----------------------------------------------------------------
-            const notification = {
-                title: "Tiếp nhận đơn hàng",
-                content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                mode: `private`,
-                user: req.user.id,
-                order: order._id,
-                from: "admin",
-                type: "order",
-                mode: "private",
-                lastSendAt: moment().unix(),
-            };
+            // const notification = {
+            //     title: "Tiếp nhận đơn hàng",
+            //     content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+            //     shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+            //     mode: `private`,
+            //     user: req.user.id,
+            //     order: order._id,
+            //     from: "admin",
+            //     type: "order",
+            //     mode: "private",
+            //     lastSendAt: moment().unix(),
+            // };
+            
+            // await Notification.create(notification);
         
-            await Notification.create(notification);
+            // const oneSignals = await OneSignal.find({ user: req.user.id }).populate([
+            //     "user",
+            // ]);
         
-            const oneSignals = await OneSignal.find({ user: req.user.id }).populate([
-                "user",
-            ]);
-        
-            if (oneSignals.length) {
-                await OneSignalUtil.pushNotification({
-                    heading: "Đơn hàng mới",
-                    content: `Đơn hàng #${order.code} vừa được tạo`,
-                    data: {
-                        type: "ORDER",
-                        orderId: order._id + "",
-                    },
-                    oneSignalPlayerIds: oneSignals.map((e) => e.oneSignalId),
-                    pathUrl: "/account/orders",
-                });
-            }
+            // if (oneSignals.length) {
+            //     await OneSignalUtilUser.pushNotification({
+            //         heading: "Đơn hàng mới",
+            //         content: `Đơn hàng #${order.code} vừa được tạo`,
+            //         data: {
+            //             type: "ORDER",
+            //             orderId: order._id + "",
+            //         },
+            //         oneSignalPlayerIds: oneSignals.map((e) => e.oneSignalId),
+            //         pathUrl: "/account/orders",
+            //     });
+            // }
         
             const notificationAdmin = {
                 title: "Đơn hàng mới",
@@ -218,10 +219,20 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
             };
             await Notification.create(notificationAdmin);
         
-            const oneSignalsAdmin = await OneSignal.find({
-                "user.role": "admin",
-            }).populate(["user"]);
-        
+            const oneSignalsAdmin = await OneSignal.aggregate(
+                [
+                    {
+                      $lookup: {
+                        from: "users",
+                        localField: "user",
+                        foreignField: "_id",
+                        as: "user"
+                      }
+                    },
+                    { $unwind: "$user" },
+                    { $match: { "user.role": "admin" } }
+                  ]
+            );
             if (oneSignalsAdmin.length) {
                 await OneSignalUtil.pushNotification({
                     heading: "Đơn hàng mới",
@@ -231,9 +242,10 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                         orderId: order._id + "",
                     },
                     oneSignalPlayerIds: oneSignalsAdmin.map((e) => e.oneSignalId),
-                    pathUrl: "/dashboard/orders",
+                    pathUrl: "/orders",
                 });
             }
+           
             //----------------------------------------------------------------
             if (user.rank._id.toString() !== rs._id.toString()) {
                 await User.findByIdAndUpdate(req.user.id, {
@@ -485,6 +497,28 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
+
+        if (req.body.status==='CANCEL' && order.paymentType==='CASH') {
+            await Order.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        paymentStatus: 'CANCEL',
+                    },
+                },
+                { new: true }
+            );
+        } else if (req.body.status==='CANCEL' && order.paymentType==='ONLINE') {
+            await Order.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        paymentStatus: 'REFUNDING',
+                    },
+                },
+                { new: true }
+            );
+        }
         //-----------------------------------------------------------
         const oneSignal = await OneSignal.findOne({
             user: order.user._id.toString(),
@@ -523,6 +557,56 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
         //-----------------------------------------------------------
 
         res.status(200).json({ data: { collection: orderUpdate }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
+    }
+});
+
+// UPDATE STATUS PAYMENTS
+router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        const orderUpdate = await Order.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    paymentStatus: req.body.status,
+                },
+            },
+            { new: true }
+        );
+        if (req.body.status==='CANCEL') {
+            await Order.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        status:  {
+                            ...order.status._doc,
+                            state: 'CANCEL',
+                            cancelDate: new Date(),
+                        },
+                    },
+                },
+                { new: true }
+            );
+        }
+        if (req.body.status==='COMPLETE') {
+            await Order.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        status:  {
+                            ...order.status._doc,
+                            state: 'COMPLETE',
+                            completeDate: new Date(),
+                        },
+                    },
+                },
+                { new: true }
+            );
+        }
+        res.status(200).json({ data: { orderUpdate: orderUpdate }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
@@ -573,7 +657,7 @@ router.get('/admin', verifyTokenAndAdmin, async (req, res) => {
                         : undefined,
             };
         }
-        console.log(query);
+        
         const orderList = await Order.find({ ...query })
             .populate('user')
             .populate('orderDetails')
