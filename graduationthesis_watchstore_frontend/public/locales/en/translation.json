@@ -10,7 +10,10 @@
         "addToCart": "add to cart",
         "gotoCart": "Go to Cart",
         "goHome": "Go to the homepage",
-        "gotoOrderHistory": "Go to the order history"
+        "gotoOrderHistory": "Go to the order history",
+        "contactStore": "Contact store",
+        "orderCancel": "Cancel order",
+        "loadMore": "Load More"
     },
     "cart": {
         "checkout": "Checkout",
@@ -25,6 +28,7 @@
         "addAddress": "Add address",
         "chocePromotion": "Choce or enter code",
         "changeAddress": "Change",
+        "totalProduct": "Total product's price",
         "estimate": "Temporary price",
         "distancePrice": "Transport fee",
         "discountPrice": "Discount money",
@@ -192,12 +196,15 @@
         "selectCityOption": "Select province/city",
         "selectDistrictOption": "Select district",
         "selectWardOption": "Select ward",
+        "paymentMethod": "Payment Method",
         "cod": "Cash",
         "descriptionCOD": "Payment on delivery",
         "online": "Online",
         "descriptionOnl": "Payment online",
         "paymentDescription": "Payment total: ",
-        "buySuccess": "Order Success"
+        "buySuccess": "Order Success",
+        "orderHistoryTitle": "Please payment {{totalPrice}} upon delivery",
+        "leadTime": "Expected delivery date"
     },
     "aboutUs": {
         "introduce": "Introduce",
@@ -248,7 +255,7 @@
         "cart": "Cart",
         "checkout": "Checkout",
         "buysuccess": "Order Success",
-        "history": "Order History",
+        "orderHistory": "Order History",
         "account": "Account",
         "profile": "Personal information",
         "orders": "Orders information",

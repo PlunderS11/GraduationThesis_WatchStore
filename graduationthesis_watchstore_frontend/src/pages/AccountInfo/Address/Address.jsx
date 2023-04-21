@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Row, Form, Input, Button, Select } from 'antd';
+import { Col, Row, Form, Input, Button, Select, Spin } from 'antd';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -24,33 +24,37 @@ const Address = () => {
 
     useEffect(() => {
         const getUserInfor = async () => {
-            dispatch(fetchUserInfor);
-            const res = await axiosClient.get('user/userInfo');
-            if (res.data.address?.address !== undefined) {
-                form.setFieldsValue({
-                    username: res.data.address.name,
-                    phone: res.data.address.phone,
-                    province: res.data.address.province.ProvinceID,
-                    district: res.data.address.district.DistrictID,
-                    ward: res.data.address.ward.WardCode,
-                    address: res.data.address.address,
-                });
-                const resD = await GHN.post('master-data/district', {
-                    province_id: res.data.address.province.ProvinceID,
-                });
-                const resW = await await GHN.post('master-data/ward', {
-                    district_id: res.data.address.district.DistrictID,
-                });
-                setDistrict(resD.data);
-                setWard(resW.data);
+            try {
+                setLoading(true);
+                dispatch(fetchUserInfor);
+                const res = await axiosClient.get('user/userInfo');
+                if (res.data.address?.address !== undefined) {
+                    form.setFieldsValue({
+                        username: res.data.address.name,
+                        phone: res.data.address.phone,
+                        province: res.data.address.province.ProvinceID,
+                        district: res.data.address.district.DistrictID,
+                        ward: res.data.address.ward.WardCode,
+                        address: res.data.address.address,
+                    });
+                    const resD = await GHN.post('master-data/district', {
+                        province_id: res.data.address.province.ProvinceID,
+                    });
+                    const resW = await await GHN.post('master-data/ward', {
+                        district_id: res.data.address.district.DistrictID,
+                    });
+                    setDistrict(resD.data);
+                    setWard(resW.data);
+                }
+                // getProvince
+                const resP = await GHN.post('master-data/province');
+                setProvince(resP.data);
+            } catch (error) {
+            } finally {
+                setLoading(false);
             }
         };
-        const handleGetAddressProvince = async () => {
-            const resP = await GHN.post('master-data/province');
-            setProvince(resP.data);
-        };
         getUserInfor();
-        handleGetAddressProvince();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -100,125 +104,127 @@ const Address = () => {
     };
 
     return (
-        <div className={cx('profile__info')}>
-            <div className={cx('profile__info-title')}>
-                <h4 style={{ fontWeight: '700', fontSize: '20px' }}>Cập nhật thông tin</h4>
-            </div>
-            <div className={cx('profile__info-body')}>
-                <Form
-                    form={form}
-                    name="account-info"
-                    initialValues={{ remember: true }}
-                    autoComplete="off"
-                    layout="vertical"
-                    onFinish={handleUpdate}
-                    className="account-form"
-                    style={{ width: '100%' }}
-                >
-                    <Row>
-                        <Col span={18}>
-                            <Form.Item
-                                style={{ fontSize: '25px', fontWeight: 'bold' }}
-                                label="Họ tên"
-                                name="username"
-                                rules={[{ required: true, message: 'Bắc buộc' }]}
-                            >
-                                <Input placeholder="Họ tên người nhận" />
-                            </Form.Item>
-                            <Form.Item
-                                rules={[{ required: true, message: 'Bắc buộc' }]}
-                                style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                label="Số điện thoại"
-                                name="phone"
-                            >
-                                <Input placeholder="Số điện thoại" />
-                            </Form.Item>
-                            <Form.Item
-                                rules={[{ required: true, message: 'Bắc buộc' }]}
-                                style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                label="Tỉnh / Thành phố"
-                                name="province"
-                            >
-                                <Select
-                                    showSearch
-                                    optionFilterProp="children"
-                                    allowClear
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                    }
-                                    onChange={handleGetAddressDistrict}
-                                    options={province.map((item, i) => ({
-                                        value: item.ProvinceID,
-                                        label: item.NameExtension[1],
-                                    }))}
-                                ></Select>
-                            </Form.Item>
-                            <Form.Item
-                                rules={[{ required: true, message: 'Bắc buộc' }]}
-                                style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                label="Quận / Huyện"
-                                name="district"
-                            >
-                                <Select
-                                    showSearch
-                                    optionFilterProp="children"
-                                    allowClear
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                    }
-                                    onChange={handleGetAddressWard}
-                                    options={district.map(item => ({
-                                        value: item.DistrictID,
-                                        label: item.DistrictName,
-                                    }))}
-                                ></Select>
-                            </Form.Item>
-                            <Form.Item
-                                rules={[{ required: true, message: 'Bắc buộc' }]}
-                                style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                label="Phường / Xã"
-                                name="ward"
-                            >
-                                <Select
-                                    showSearch
-                                    optionFilterProp="children"
-                                    allowClear
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                    }
-                                    options={ward.map(item => ({
-                                        value: item.WardCode,
-                                        label: item.WardName,
-                                    }))}
-                                ></Select>
-                            </Form.Item>
-                            <Form.Item
-                                rules={[{ required: true, message: 'Bắc buộc' }]}
-                                style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                label="Địa chỉ"
-                                name="address"
-                            >
-                                <Input placeholder="Số nhà, tên đường" />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button
-                                    type="primary"
-                                    style={{
-                                        backgroundColor: '#3d464d',
-                                        height: '100%',
-                                        padding: '7px 16px',
-                                    }}
-                                    htmlType="submit"
-                                    loading={loading}
+        <Spin spinning={loading}>
+            <div className={cx('profile__info')}>
+                <div className={cx('profile__info-title')}>
+                    <h4 style={{ fontWeight: '700', fontSize: '20px' }}>Cập nhật thông tin</h4>
+                </div>
+                <div className={cx('profile__info-body')}>
+                    <Form
+                        form={form}
+                        name="account-info"
+                        initialValues={{ remember: true }}
+                        autoComplete="off"
+                        layout="vertical"
+                        onFinish={handleUpdate}
+                        className="account-form"
+                        style={{ width: '100%' }}
+                    >
+                        <Row>
+                            <Col span={18}>
+                                <Form.Item
+                                    style={{ fontSize: '25px', fontWeight: 'bold' }}
+                                    label="Họ tên"
+                                    name="username"
+                                    rules={[{ required: true, message: 'Bắc buộc' }]}
                                 >
-                                    {user.user.address?.address ? 'Cập nhật' : 'Lưu'}
-                                </Button>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                </Form>
+                                    <Input placeholder="Họ tên người nhận" />
+                                </Form.Item>
+                                <Form.Item
+                                    rules={[{ required: true, message: 'Bắc buộc' }]}
+                                    style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                    label="Số điện thoại"
+                                    name="phone"
+                                >
+                                    <Input placeholder="Số điện thoại" />
+                                </Form.Item>
+                                <Form.Item
+                                    rules={[{ required: true, message: 'Bắc buộc' }]}
+                                    style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                    label="Tỉnh / Thành phố"
+                                    name="province"
+                                >
+                                    <Select
+                                        showSearch
+                                        optionFilterProp="children"
+                                        allowClear
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        onChange={handleGetAddressDistrict}
+                                        options={province.map((item, i) => ({
+                                            value: item.ProvinceID,
+                                            label: item.NameExtension[1],
+                                        }))}
+                                    ></Select>
+                                </Form.Item>
+                                <Form.Item
+                                    rules={[{ required: true, message: 'Bắc buộc' }]}
+                                    style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                    label="Quận / Huyện"
+                                    name="district"
+                                >
+                                    <Select
+                                        showSearch
+                                        optionFilterProp="children"
+                                        allowClear
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        onChange={handleGetAddressWard}
+                                        options={district.map(item => ({
+                                            value: item.DistrictID,
+                                            label: item.DistrictName,
+                                        }))}
+                                    ></Select>
+                                </Form.Item>
+                                <Form.Item
+                                    rules={[{ required: true, message: 'Bắc buộc' }]}
+                                    style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                    label="Phường / Xã"
+                                    name="ward"
+                                >
+                                    <Select
+                                        showSearch
+                                        optionFilterProp="children"
+                                        allowClear
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        options={ward.map(item => ({
+                                            value: item.WardCode,
+                                            label: item.WardName,
+                                        }))}
+                                    ></Select>
+                                </Form.Item>
+                                <Form.Item
+                                    rules={[{ required: true, message: 'Bắc buộc' }]}
+                                    style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                    label="Địa chỉ"
+                                    name="address"
+                                >
+                                    <Input placeholder="Số nhà, tên đường" />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button
+                                        type="primary"
+                                        style={{
+                                            backgroundColor: '#3d464d',
+                                            height: '100%',
+                                            padding: '7px 16px',
+                                        }}
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        {user.user.address?.address ? 'Cập nhật' : 'Lưu'}
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Form>
+                </div>
             </div>
-        </div>
+        </Spin>
     );
 };
 

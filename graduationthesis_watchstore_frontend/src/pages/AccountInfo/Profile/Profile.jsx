@@ -50,7 +50,6 @@ const Profile = () => {
             <Spin spinning={loading}>
                 <div className={cx('body')}>
                     <h4 style={{ fontWeight: '700', marginBottom: '4px' }}>{t('accountInfo.generalInfo')}</h4>
-
                     <Form
                         name="account-info"
                         initialValues={{ remember: true }}
@@ -111,14 +110,6 @@ const Profile = () => {
                                 <Form.Item style={{ fontSize: '20px', fontWeight: 'bold' }} label="Email" name="email">
                                     <Input />
                                 </Form.Item>
-                                {/* <Form.Item
-                                        style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                        label="Mã giới thiệu"
-                                        name="introduce"
-                                        initialValue="PHUCBMD"
-                                    >
-                                        <Input disabled={true} />
-                                    </Form.Item> */}
                             </Col>
                         </Row>
                     </Form>

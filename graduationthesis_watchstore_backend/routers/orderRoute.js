@@ -738,50 +738,49 @@ router.get('/customer/:orderId', verifyTokenAndAuthorization, async (req, res) =
 });
 
 // GET MONTHLY INCOME
-router.get("/income", verifyTokenAndAdmin, async (req, res) => {
+router.get('/income', verifyTokenAndAdmin, async (req, res) => {
     const productId = req.query.pid;
     const date = new Date();
     const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
     const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
-  
+
     try {
-      const income = await Order.aggregate([
-        {
-            $lookup: {
-              from: "orderdetails",
-              localField: "orderDetails",
-              foreignField: "_id",
-              as: "ordersData"
-            }
-        },
-        {
-            $unwind: "$ordersData"
-        },
-        {
-            $match: {
-              createdAt: { $gte: previousMonth },
-              "ordersData.product":  ObjectId(productId)
+        const income = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderdetails',
+                    localField: 'orderDetails',
+                    foreignField: '_id',
+                    as: 'ordersData',
+                },
             },
-        },
-        {
-            $project: {
-              month: { $month: "$createdAt" },
-              sales: "$ordersData.quantity",
+            {
+                $unwind: '$ordersData',
             },
-          },
-          {
-            $group: {
-              _id: "$month",
-              total: { $sum: "$sales" },
+            {
+                $match: {
+                    createdAt: { $gte: previousMonth },
+                    'ordersData.product': ObjectId(productId),
+                },
             },
-          },
-    ])
-    
-      
-      res.status(200).json({ data: { income: income }, message: 'success', status: 200 });
+            {
+                $project: {
+                    month: { $month: '$createdAt' },
+                    sales: '$ordersData.quantity',
+                },
+            },
+            {
+                $group: {
+                    _id: '$month',
+                    total: { $sum: '$sales' },
+                },
+            },
+        ]);
+
+        res.status(200).json({ data: { income: income }, message: 'success', status: 200 });
     } catch (err) {
         res.status(500).json({ data: {}, message: err.message, status: 500 });
     }
-  });
+});
 
 module.exports = router;

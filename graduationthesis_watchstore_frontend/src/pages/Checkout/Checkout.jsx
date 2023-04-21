@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -49,7 +49,6 @@ const Checkout = () => {
     ];
 
     useEffect(() => {
-        console.log(user.isLogin);
         user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -322,7 +321,6 @@ const Checkout = () => {
                                             </div>
                                             <div className={cx('form-calculate-title')}>
                                                 <span className={cx('form-calculate-title-text')}>
-                                                    {' '}
                                                     {t('cart.discountPrice')}
                                                 </span>
                                                 <p

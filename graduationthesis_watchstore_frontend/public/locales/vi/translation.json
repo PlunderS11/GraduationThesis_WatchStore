@@ -10,7 +10,10 @@
         "addToCart": "Thêm vào giỏ hàng",
         "gotoCart": "Đến giỏ hàng",
         "goHome": "Về trang chủ",
-        "gotoOrderHistory": "Đến lịch sử đơn hàng"
+        "gotoOrderHistory": "Đến lịch sử đơn hàng",
+        "contactStore": "Liên hệ cửa hàng",
+        "orderCancel": "Hủy đơn",
+        "loadMore": "Xem thêm"
     },
     "cart": {
         "checkout": "Thanh toán",
@@ -25,9 +28,10 @@
         "toAddress": "Giao tới",
         "addAddress": "Thêm địa chỉ",
         "changeAddress": "Thay đổi",
+        "totalProduct": "Tổng tiền hàng",
         "estimate": "Tạm tính",
         "distancePrice": "Phí vận chuyển",
-        "discountPrice": "Giảm giá",
+        "discountPrice": "Tiền giảm giá",
         "totalPrice": "Tổng cộng",
         "note": "Ghi chú",
         "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v...",
@@ -192,12 +196,15 @@
         "selectCityOption": "Chọn tỉnh/thành phố",
         "selectDistrictOption": "Chọn quận/huyện",
         "selectWardOption": "Chọn xã/phường",
+        "paymentMethod": "Phương thức thanh toán",
         "cod": "Tiền mặt",
         "descriptionCOD": "Thanh toán khi nhận hàng",
         "online": "Trực tuyến",
         "descriptionOnl": "Thanh toán online",
         "paymentDescription": "Thanh toán tổng cộng: ",
-        "buySuccess": "Đặt hàng thành công"
+        "buySuccess": "Đặt hàng thành công",
+        "orderHistoryTitle": "Vui lòng thanh toán {{totalPrice}} khi nhận hàng",
+        "leadTime": "Dự kiến nhận hàng vào ngày"
     },
     "aboutUs": {
         "introduce": "Giới thiệu",
@@ -248,7 +255,7 @@
         "cart": "Giỏ hàng",
         "checkout": "Thanh toán",
         "buysuccess": "Đăt hàng thành công",
-        "history": "Lịch sử mua hàng",
+        "orderHistory": "Lịch sử mua hàng",
         "account": "Tài khoản",
         "profile": "Thông tin cá nhân",
         "orders": "Đơn hàng",
