@@ -1,5 +1,5 @@
 // import { MailOutlined, SettingOutlined, AppstoreOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import { Badge, Menu } from 'antd';
 import {
     LineStyle,
     PermIdentity,
@@ -39,7 +39,13 @@ const items = [
     {
         type: 'divider',
     },
-    getItem('Thông báo đơn hàng', ['sub4', '/notifications'], <NotificationsOutlined />),
+    getItem(
+        <Badge count={99} showZero offset={[20, 0]}>
+            Thông báo đơn hàng
+        </Badge>,
+        ['sub4', '/notifications'],
+        <NotificationsOutlined />,
+    ),
     {
         type: 'divider',
     },

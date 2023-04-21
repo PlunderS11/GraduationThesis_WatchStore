@@ -2,16 +2,25 @@ const Request = require('request-promise');
 const { chunk } = require('lodash');
 
 class OneSignalUtil {
-    static async pushNotification({ heading, content, oneSignalPlayerIds, data, pathUrl = '/' }) {
-        const appId = process.env.APPID;
-        const callbackUrl = process.env.CALLBACKURL;
-        const restApiKey = process.env.RECTAPIKEY;
+    static async pushNotification({ isAdmin, heading, content, oneSignalPlayerIds, data, pathUrl = '/' }) {
+        var appId = '';
+        var restApiKey = '';
+        var callbackUrl = '';
+        if (isAdmin) {
+            appId = process.env.APP_ID_ADMIN;
+            restApiKey = process.env.REST_API_KEY_ADMIN;
+            callbackUrl = process.env.CALLBACK_URL_ADMIN;
+        } else {
+            appId = process.env.APP_ID_CUSTOMER;
+            restApiKey = process.env.REST_API_KEY_CUSTOMER;
+            callbackUrl = process.env.CALLBACK_URL_CUSTOMER;
+        }
 
         const chunkArray = chunk(oneSignalPlayerIds, 1000);
         for (const itemChunk of chunkArray) {
             const response = await Request({
                 method: 'POST',
-                uri: 'http://localhost:8080/api/notification',
+                uri: 'https://onesignal.com/api/v1/notifications',
                 headers: {
                     Authorization: `Basic ${restApiKey}`,
                 },
@@ -25,8 +34,6 @@ class OneSignalUtil {
                 },
                 json: true,
             });
-
-            console.log('one signal response', response);
         }
     }
 
@@ -36,7 +43,7 @@ class OneSignalUtil {
 
             const response = await Request({
                 method: 'POST',
-                uri: 'http://localhost:8080/api/notification',
+                uri: 'https://onesignal.com/api/v1/notifications',
                 headers: {
                     Authorization: `Basic ${restApiKey}`,
                 },
