@@ -27,8 +27,9 @@ const ProductCategory = () => {
         brand: undefined,
         stock: undefined,
         price: undefined,
+        type: params.type === 'accessory' ? 'strap' : 'watch',
+        sex: params.type === 'accessory' ? undefined : params.type.split('')[0],
     });
-
     const [products, setProducts] = useState({});
     useEffect(() => {
         dispatch(changeProgress(95));
@@ -46,9 +47,15 @@ const ProductCategory = () => {
             default:
         }
         const getProducts = async () => {
-            const res = await axiosClient.get(url, { params: {} });
-            setProducts(res.data.prodCategory);
-            dispatch(changeProgress(100));
+            try {
+                setLoading(true);
+                const res = await axiosClient.get(url, { params: {} });
+                setProducts(res.data.prodCategory);
+                dispatch(changeProgress(100));
+            } catch (error) {
+            } finally {
+                setLoading(false);
+            }
         };
         getProducts();
         // eslint-disable-next-line react-hooks/exhaustive-deps

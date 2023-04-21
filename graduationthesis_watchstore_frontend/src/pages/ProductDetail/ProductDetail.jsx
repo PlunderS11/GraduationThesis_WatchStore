@@ -17,6 +17,7 @@ import i18n from '../../i18n';
 
 import style from './ProductDetail.module.scss';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
+import { Spin } from 'antd';
 
 const cx = classNames.bind(style);
 
@@ -28,17 +29,24 @@ const ProductDetail = () => {
 
     const user = useSelector(state => state.user);
     const [product, setProduct] = useState({});
+    const [loading, setLoading] = useState(false);
     const [relatedProducts, setRelatedProducts] = useState([]);
 
     useEffect(() => {
         const getProductDetail = async () => {
-            const res = await axiosClient.get(`product/detail/${params.slug}/3`);
-            if (!_.isEmpty(res.data.detailProduct)) {
-                setProduct(res.data.detailProduct.detail);
-                setRelatedProducts(res.data.detailProduct.relatedProducts);
-                dispatch(changeProgress(80));
-            } else {
-                navigate('/');
+            try {
+                setLoading(true);
+                const res = await axiosClient.get(`product/detail/${params.slug}/3`);
+                if (!_.isEmpty(res.data.detailProduct)) {
+                    setProduct(res.data.detailProduct.detail);
+                    setRelatedProducts(res.data.detailProduct.relatedProducts);
+                    dispatch(changeProgress(80));
+                } else {
+                    navigate('/');
+                }
+            } catch (error) {
+            } finally {
+                setLoading(false);
             }
         };
         getProductDetail();
@@ -82,52 +90,54 @@ const ProductDetail = () => {
         } else toast.info(t('productDetail.buynowFail'));
     };
     return (
-        <div className={cx('product-detail-page')}>
-            {!isEmpty(product) && (
-                <div className={cx('container')}>
-                    <MyBreadcrumb urlParams={product.name} detail />
-                    <div className={cx('product-detail')}>
-                        <div className={cx('image-detail')}>
-                            {product.images.length > 0 && (
-                                <ProductSlider listData={product.images} image customClass={style} autoplay />
-                            )}
+        <Spin spinning={loading}>
+            <div className={cx('product-detail-page')}>
+                {!isEmpty(product) && (
+                    <div className={cx('container')}>
+                        <MyBreadcrumb urlParams={product?.name} detail />
+                        <div className={cx('product-detail')}>
+                            <div className={cx('image-detail')}>
+                                {product.images.length > 0 && (
+                                    <ProductSlider listData={product?.images} image customClass={style} autoplay />
+                                )}
+                            </div>
+                            <div className={cx('content-detail')}>
+                                <h1 className={cx('name')}>{product?.name}</h1>
+                                <p className={cx('price')}>
+                                    {product.stock > 0
+                                        ? `${NumberWithCommas(product?.finalPrice)}đ`
+                                        : t('productCard.outOfStock')}
+                                </p>
+                                <p className={cx('description')}>{product?.[`description${i18n.language}`]}</p>
+                                <p className={cx('note')}>{product?.note}</p>
+                                {product.stock > 0 && (
+                                    <div className={cx('buy')}>
+                                        <Button customClass={style} onclick={handleAddToCart}>
+                                            {t('button.addToCart')}
+                                        </Button>
+                                        <Button customClass={style} onclick={handleBuyNow}>
+                                            {t('button.buy')}
+                                        </Button>
+                                    </div>
+                                )}
+                                <ul className={cx('features')}>
+                                    {product[`features${i18n.language}`]?.map((item, index) => (
+                                        <li key={index}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                        <div className={cx('content-detail')}>
-                            <h1 className={cx('name')}>{product.name}</h1>
-                            <p className={cx('price')}>
-                                {product.stock > 0
-                                    ? `${NumberWithCommas(product.finalPrice)}đ`
-                                    : t('productCard.outOfStock')}
-                            </p>
-                            <p className={cx('description')}>{product[`description${i18n.language}`]}</p>
-                            <p className={cx('note')}>{product.note}</p>
-                            {product.stock > 0 && (
-                                <div className={cx('buy')}>
-                                    <Button customClass={style} onclick={handleAddToCart}>
-                                        {t('button.addToCart')}
-                                    </Button>
-                                    <Button customClass={style} onclick={handleBuyNow}>
-                                        {t('button.buy')}
-                                    </Button>
-                                </div>
-                            )}
-                            <ul className={cx('features')}>
-                                {product[`features${i18n.language}`].map((item, index) => (
-                                    <li key={index}>{item}</li>
-                                ))}
-                            </ul>
+                        <div className={cx('product-related')}>
+                            <ProductByCategory
+                                title={t('gallery.headingProducts')}
+                                listProduct={relatedProducts}
+                                column={3}
+                            />
                         </div>
                     </div>
-                    <div className={cx('product-related')}>
-                        <ProductByCategory
-                            title={t('gallery.headingProducts')}
-                            listProduct={relatedProducts}
-                            column={3}
-                        />
-                    </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </Spin>
     );
 };
 

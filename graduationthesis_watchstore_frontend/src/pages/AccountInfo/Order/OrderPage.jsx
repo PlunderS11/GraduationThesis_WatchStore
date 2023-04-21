@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NumberWithCommas } from '../../../functions';
 import { useNavigate } from 'react-router-dom';
-import { Divider, Table } from 'antd';
+import { Divider, Spin, Table } from 'antd';
 import classNames from 'classnames/bind';
 
 import axiosClient from '../../../api/axiosClient';
@@ -13,6 +13,7 @@ const cx = classNames.bind(style);
 const OrderPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [orderHistory, setOrderHistory] = useState([]);
 
     useEffect(() => {
@@ -21,8 +22,14 @@ const OrderPage = () => {
     }, []);
 
     const fetchOrderHistory = async () => {
-        const res = await axiosClient.get('order/customer');
-        setOrderHistory(res.data.orders);
+        try {
+            setLoading(true);
+            const res = await axiosClient.get('order/customer');
+            setOrderHistory(res.data.orders);
+        } catch (error) {
+        } finally {
+            setLoading(false);
+        }
     };
 
     const columns = [
@@ -47,6 +54,7 @@ const OrderPage = () => {
             render: (value, record, index) =>
                 value.map(item => (
                     <div
+                        key={item._id}
                         className="cart-product-info"
                         onClick={() => navigate(`/account/order-history/${record._id}`, { state: { record } })}
                         style={{ cursor: 'pointer', wordBreak: 'break-all' }}
@@ -63,7 +71,9 @@ const OrderPage = () => {
             align: 'right',
             render: (value, record, index) =>
                 value.map(item => (
-                    <div className="cart-product-info">{NumberWithCommas(item.product.finalPrice)}&nbsp;₫</div>
+                    <div key={item._id} className="cart-product-info">
+                        {NumberWithCommas(item.product.finalPrice)}&nbsp;₫
+                    </div>
                 )),
         },
         {
@@ -72,7 +82,11 @@ const OrderPage = () => {
             dataIndex: 'orderDetails',
             align: 'center',
             render: (value, record, index) =>
-                value.map(item => <div className="cart-product-info">x{item.quantity}</div>),
+                value.map(item => (
+                    <div key={item._id} className="cart-product-info">
+                        x{item.quantity}
+                    </div>
+                )),
         },
         {
             key: 'leadtime',
@@ -136,7 +150,9 @@ const OrderPage = () => {
                 <h4 style={{ fontWeight: '700', fontSize: '20px' }}>Danh sách đơn hàng</h4>
             </div>
             <div style={{ border: '2px solid #f0f0f0' }}>
-                <Table rowKey={item => item._id} columns={columns} dataSource={orderHistory} bordered />
+                <Spin spinning={loading}>
+                    <Table rowKey={item => item._id} columns={columns} dataSource={orderHistory} bordered />
+                </Spin>
             </div>
         </div>
     );

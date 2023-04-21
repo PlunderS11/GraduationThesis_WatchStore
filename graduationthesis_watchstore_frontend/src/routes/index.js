@@ -28,9 +28,9 @@ const publicRouter = [
     { path: '/search', component: SearchResult, breadcrumb: 'home/search' },
     { path: '/account/:category', component: AccountInfo, breadcrumb: 'home/account' },
     { path: '/buysuccess', component: BuySuccessPage, breadcrumb: 'home/buysuccess' },
-    { path: '/account/order-history/:id', component: OrderHistoryPage, breadcrumb: 'home/history' },
+    { path: '/account/order-history/:id', component: OrderHistoryPage, breadcrumb: 'home/orderHistory' },
     { path: '/login', component: Login, breadcrumb: 'home/login' },
-    { path: '/forgot-password', component: Forgotpassword, breadcrumb: 'home/fprgotPassword' },
+    { path: '/forgot-password', component: Forgotpassword, breadcrumb: 'home/forgotPassword' },
     { path: '/register', component: Register, breadcrumb: 'home/register' },
 ];
 

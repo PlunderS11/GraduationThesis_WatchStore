@@ -71,7 +71,7 @@ const Blogs = () => {
                                                         </div>
                                                     </Descriptions.Item>
                                                     <Descriptions.Item>
-                                                        <Button to={`/blog/${item._id}`}>Xem thêm</Button>
+                                                        <Button to={`/blog/${item._id}`}>{t('button.loadMore')}</Button>
                                                     </Descriptions.Item>
                                                 </Descriptions>
                                             </div>
