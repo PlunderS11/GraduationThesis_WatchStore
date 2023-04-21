@@ -17,9 +17,10 @@ import Button from '~/components/Button/Button';
 const cx = classNames.bind(styles);
 
 const ModalStaffInfo = (props) => {
-    const { open, onClose, id } = props;
+    const { open, onClose, id, onResetId } = props;
 
     const handleCancel = () => {
+        onResetId('');
         onClose(false);
     };
 
@@ -28,7 +29,8 @@ const ModalStaffInfo = (props) => {
     const [user, setUser] = useState({});
 
     const fecthData = async () => {
-        if (id !== '') {
+        // console.log(id);
+        if (id !== undefined) {
             const getUser = async () => {
                 const res = await axiosClient.get('user/find/' + String(id));
                 setUser(res.data);
@@ -57,7 +59,9 @@ const ModalStaffInfo = (props) => {
         },
         validationSchema: Yup.object({
             username: Yup.string().required('Nhập tên nhân viên'),
-            phone: Yup.string().required('Nhập số điện thoại nhân viên'),
+            phone: Yup.string()
+                .required('Nhập số điện thoại nhân viên')
+                .matches(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/, 'Nhập số điện thoại không chính xác'),
             sex: Yup.string().required('Chọn giới tính'),
         }),
         onSubmit: async (values) => {
@@ -82,7 +86,7 @@ const ModalStaffInfo = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="THÔNG TIN NHÂN VIÊN"

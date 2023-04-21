@@ -68,7 +68,7 @@ const ModalChangePassword = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="ĐỐI MẬT KHẨU"
@@ -76,9 +76,9 @@ const ModalChangePassword = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-collection')}>
-                    <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
-                        <div className={cx('add-collection-item')}>
+                <div className={cx('new-pass')}>
+                    <form onSubmit={formik.handleSubmit} className={cx('add-pass-form')} spellCheck="false">
+                        <div className={cx('add-pass-item')}>
                             <InputField
                                 type="password"
                                 id="oldPassword"
@@ -93,7 +93,7 @@ const ModalChangePassword = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-pass-item')}>
                             <InputField
                                 type="password"
                                 id="newPassword"
@@ -108,7 +108,7 @@ const ModalChangePassword = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-pass-item')}>
                             <InputField
                                 type="password"
                                 id="newPasswordAgain"

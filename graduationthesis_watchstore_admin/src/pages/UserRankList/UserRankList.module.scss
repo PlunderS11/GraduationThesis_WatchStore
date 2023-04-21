@@ -1,15 +1,15 @@
-.collection-list {
+.rank-list {
     flex: 4;
     margin-top: 20px;
     position: relative;
 }
 
-.collection-list-item {
+.rank-list-item {
     display: flex;
     align-items: center;
 }
 
-.collection-list-img {
+.rank-list-img {
     width: 55px;
     height: 55px;
     border-radius: 50%;
@@ -17,7 +17,7 @@
     margin-right: 0px;
 }
 
-.collection-list-edit {
+.rank-list-edit {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -27,7 +27,7 @@
     cursor: pointer;
     margin-right: 20px;
 }
-.collection-list-edit-1 {
+.rank-list-edit-1 {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -39,7 +39,7 @@
     margin-left: 0px;
 }
 
-.collection-list-delete-button {
+.rank-list-delete-button {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -49,7 +49,7 @@
     margin-right: 20px;
 }
 
-.collection-list-restore-button {
+.rank-list-restore-button {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -59,7 +59,7 @@
     margin-right: 20px;
 }
 
-.collection-list-delete {
+.rank-list-delete {
     color: red;
     cursor: pointer;
 }
@@ -75,7 +75,7 @@
 
 .grid {
     width: 100%;
-    height: 545px;
+    height: 800px;
     // position: absolute;
     // top: 75px;
 }

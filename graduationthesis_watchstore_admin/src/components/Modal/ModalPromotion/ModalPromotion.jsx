@@ -18,9 +18,10 @@ import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 const ModalPromotion = (props) => {
-    const { open, onClose, id } = props;
+    const { open, onClose, id, onResetId } = props;
 
     const handleCancel = () => {
+        onResetId('');
         onClose(false);
     };
 
@@ -39,35 +40,35 @@ const ModalPromotion = (props) => {
         if (id !== '') {
             const getPromotion = async () => {
                 const res = await axiosClient.get('promotion/detail/' + String(id));
-                setPromotion(res.data.detailPromotion);
-                setStartAt(new Date(res.data.detailPromotion.startDate));
-                setEndAt(new Date(res.data.detailPromotion.endDate));
+                if (res) {
+                    setPromotion(res.data.detailPromotion);
+                    setStartAt(new Date(res.data.detailPromotion.startDate));
+                    setEndAt(new Date(res.data.detailPromotion.endDate));
 
-                const start = new Date(res.data.detailPromotion.startDate);
-                const yyyy_start = start.getFullYear();
-                let mm_start = start.getMonth() + 1; // Months start at 0!
-                let dd_start = start.getDate();
-                if (dd_start < 10) dd_start = '0' + dd_start;
-                if (mm_start < 10) mm_start = '0' + mm_start;
-                setStart(dd_start + '/' + mm_start + '/' + yyyy_start);
+                    const start = new Date(res.data.detailPromotion.startDate);
+                    const yyyy_start = start.getFullYear();
+                    let mm_start = start.getMonth() + 1; // Months start at 0!
+                    let dd_start = start.getDate();
+                    if (dd_start < 10) dd_start = '0' + dd_start;
+                    if (mm_start < 10) mm_start = '0' + mm_start;
+                    setStart(dd_start + '/' + mm_start + '/' + yyyy_start);
 
-                const end = new Date(res.data.detailPromotion.endDate);
-                const yyyy_end = end.getFullYear();
-                let mm_end = end.getMonth() + 1; // Months end at 0!
-                let dd_end = end.getDate();
-                if (dd_end < 10) dd_end = '0' + dd_end;
-                if (mm_end < 10) mm_end = '0' + mm_end;
-                setEnd(dd_end + '/' + mm_end + '/' + yyyy_end);
+                    const end = new Date(res.data.detailPromotion.endDate);
+                    const yyyy_end = end.getFullYear();
+                    let mm_end = end.getMonth() + 1; // Months end at 0!
+                    let dd_end = end.getDate();
+                    if (dd_end < 10) dd_end = '0' + dd_end;
+                    if (mm_end < 10) mm_end = '0' + mm_end;
+                    setEnd(dd_end + '/' + mm_end + '/' + yyyy_end);
+                }
             };
             getPromotion();
         }
     };
 
     useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
+        fecthData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -107,8 +108,12 @@ const ModalPromotion = (props) => {
                 .min(1, 'Giá trị khuyến mãi phải lớn hơn hoặc bằng 1')
                 .max(99, 'Giá trị khuyến mãi phải nhỏ hơn hoặc bằng 99')
                 .required('Nhập giá trị khuyến mãi(%)'),
-            startDate: Yup.string().required('Chọn ngày bắt đầu'),
-            endDate: Yup.string().required('Chọn ngày kết thúc'),
+            startDate: Yup.date()
+                .min(new Date(), 'Ngày bắt đàu phải lớn hơn ngày hiện tại')
+                .required('Chọn ngày bắt đầu'),
+            endDate: Yup.date()
+                .min(Yup.ref('startDate'), 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu')
+                .required('Chọn ngày kết thúc'),
         }),
         onSubmit: async (values) => {
             const { titlevi, titleen, code, value, startDate, endDate, isDelete } = values;
@@ -135,7 +140,15 @@ const ModalPromotion = (props) => {
     });
     return (
         <>
-            <Modal onCancel={handleCancel} open={open} title="CẬP NHẬT KHUYẾN MÃI" width={740} centered footer={[]}>
+            <Modal
+                destroyOnClose={true}
+                onCancel={handleCancel}
+                open={open}
+                title="CẬP NHẬT KHUYẾN MÃI"
+                width={740}
+                centered
+                footer={[]}
+            >
                 <div className={cx('new-promotion')}>
                     <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
                         <div className={cx('add-promotion-item')}>

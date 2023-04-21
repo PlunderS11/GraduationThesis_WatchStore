@@ -116,8 +116,8 @@ export default function UserRankList() {
 
             renderCell: (params) => {
                 return (
-                    <div className={cx('collection-list-item')}>
-                        <img src={params.row.icon} className={cx('collection-list-img')} alt="img" />
+                    <div className={cx('rank-list-item')}>
+                        <img src={params.row.icon} className={cx('rank-list-img')} alt="img" />
                     </div>
                 );
             },
@@ -142,7 +142,7 @@ export default function UserRankList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Chi tiêu tối thiểu',
-            width: 224,
+            width: 221,
             renderCell: (params) => {
                 return <>{NumberWithCommas(Number(params.row.minValue))}</>;
             },
@@ -153,7 +153,7 @@ export default function UserRankList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Chi tiêu tối đa',
-            width: 224,
+            width: 221,
             renderCell: (params) => {
                 return <>{NumberWithCommas(Number(params.row.maxValue))}</>;
             },
@@ -169,7 +169,7 @@ export default function UserRankList() {
                 return (
                     <>
                         <button
-                            className={cx('collection-list-edit-1')}
+                            className={cx('rank-list-edit-1')}
                             onClick={() => {
                                 setOpen(true);
                                 setId(params.row._id);
@@ -179,7 +179,7 @@ export default function UserRankList() {
                         </button>
 
                         <button
-                            className={cx('collection-list-delete-button')}
+                            className={cx('rank-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
                         >
                             Xóa
@@ -202,8 +202,8 @@ export default function UserRankList() {
 
             renderCell: (params) => {
                 return (
-                    <div className={cx('collection-list-item')}>
-                        <img src={params.row.icon} className={cx('collection-list-img')} alt="img" />
+                    <div className={cx('rank-list-item')}>
+                        <img src={params.row.icon} className={cx('rank-list-img')} alt="img" />
                     </div>
                 );
             },
@@ -228,7 +228,7 @@ export default function UserRankList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Chi tiêu tối thiểu',
-            width: 224,
+            width: 220,
             renderCell: (params) => {
                 return <>{NumberWithCommas(Number(params.row.minValue))}</>;
             },
@@ -239,7 +239,7 @@ export default function UserRankList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Chi tiêu tối đa',
-            width: 224,
+            width: 221,
             renderCell: (params) => {
                 return <>{NumberWithCommas(Number(params.row.maxValue))}</>;
             },
@@ -249,13 +249,13 @@ export default function UserRankList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 201,
             filterable: false,
             renderCell: (params) => {
                 return (
                     <>
                         <button
-                            className={cx('collection-list-edit-1')}
+                            className={cx('rank-list-edit-1')}
                             onClick={() => {
                                 setOpen(true);
                                 setId(params.row._id);
@@ -265,7 +265,7 @@ export default function UserRankList() {
                         </button>
 
                         <button
-                            className={cx('collection-list-restore-button')}
+                            className={cx('rank-list-restore-button')}
                             onClick={() => showRestoreConfirm(params.row._id)}
                         >
                             Khôi phục
@@ -303,7 +303,7 @@ export default function UserRankList() {
 
     return (
         <>
-            <div className={cx('collection-list')}>
+            <div className={cx('rank-list')}>
                 <Spin spinning={loading}>
                     <label className={cx('label')}>DANH SÁCH THỨ HẠNG</label>
                     <div style={{ height: 10 }}></div>
@@ -323,7 +323,7 @@ export default function UserRankList() {
                                 headers={columns_undeleted}
                                 datas={ranksUndeleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         ) : (
@@ -331,14 +331,23 @@ export default function UserRankList() {
                                 headers={columns_deleted}
                                 datas={ranksDeleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         )}
                     </div>
                 </Spin>
             </div>
-            {id !== '' && <ModalUserRank open={open} onClose={() => setOpen(false)} id={id}></ModalUserRank>}
+            {id !== '' && (
+                <ModalUserRank
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    id={id}
+                    onResetId={() => {
+                        setId('');
+                    }}
+                ></ModalUserRank>
+            )}
             <ModalUserRankNew open={openNew} onClose={() => setOpenNew(false)}></ModalUserRankNew>
         </>
     );

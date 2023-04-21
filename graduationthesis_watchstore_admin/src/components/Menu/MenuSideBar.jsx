@@ -1,6 +1,13 @@
 // import { MailOutlined, SettingOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
-import { LineStyle, PermIdentity, Storefront, AttachMoney } from '@material-ui/icons';
+import {
+    LineStyle,
+    PermIdentity,
+    Storefront,
+    AttachMoney,
+    FileCopyOutlined,
+    NotificationsOutlined,
+} from '@material-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import './MenuSideBar.css';
 function getItem(label, key, icon, children, type) {
@@ -32,10 +39,18 @@ const items = [
     {
         type: 'divider',
     },
-    getItem('Quản lý hóa đơn', 'sub4', <AttachMoney />, [
-        getItem('Hóa đơn', ['6', '/orders']),
+    getItem('Thông báo đơn hàng', ['sub4', '/notifications'], <NotificationsOutlined />),
+    {
+        type: 'divider',
+    },
+    getItem('Quản lý đơn hàng', 'sub5', <AttachMoney />, [
+        getItem('Đơn hàng', ['6', '/orders']),
         getItem('Khuyến mãi', ['7', '/promotions']),
     ]),
+    {
+        type: 'divider',
+    },
+    getItem('Quản lý bài viết', ['sub6', '/news'], <FileCopyOutlined />),
 ];
 const MenuSideBar = () => {
     const navigate = useNavigate();

@@ -12,7 +12,7 @@ import Button from '~/components/Button/Button';
 const cx = classNames.bind(styles);
 
 const ModalStaffNew = (props) => {
-    const { open, onClose } = props;
+    const { open, onClose, onResetId } = props;
 
     const handleCancel = () => {
         formik.values.username = '';
@@ -20,6 +20,13 @@ const ModalStaffNew = (props) => {
         formik.values.phone = '';
         formik.values.sex = '';
         formik.errors.sex = '';
+
+        formik.errors.username = '';
+        formik.errors.email = '';
+        formik.errors.phone = '';
+        formik.errors.sex = '';
+        formik.errors.sex = '';
+        onResetId('');
         onClose(false);
     };
 
@@ -36,8 +43,10 @@ const ModalStaffNew = (props) => {
         },
         validationSchema: Yup.object({
             username: Yup.string().required('Nhập tên nhân viên'),
-            email: Yup.string().required('Nhập email nhân viên'),
-            phone: Yup.string().required('Nhập số điện thoại nhân viên'),
+            email: Yup.string().required('Nhập email nhân viên').email('Nhập email không chính xác'),
+            phone: Yup.string()
+                .required('Nhập số điện thoại nhân viên')
+                .matches(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/, 'Nhập số điện thoại không chính xác'),
             sex: Yup.string().required('Chọn giới tính'),
         }),
         onSubmit: async (values) => {
@@ -57,7 +66,7 @@ const ModalStaffNew = (props) => {
                     navigate('/staffs');
                 }
             } catch (error) {
-                toast.error(error);
+                toast.error('Email nhân viên đã tồn tại');
             }
         },
     });
@@ -65,7 +74,7 @@ const ModalStaffNew = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="THÔNG TIN NHÂN VIÊN"

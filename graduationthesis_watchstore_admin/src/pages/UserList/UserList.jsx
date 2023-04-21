@@ -130,6 +130,7 @@ export default function UserList() {
             headerName: 'Tên khách hàng',
             width: 325,
         },
+
         {
             field: 'email',
             headerAlign: 'center',
@@ -143,7 +144,7 @@ export default function UserList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Số điện thoại',
-            width: 200,
+            width: 195,
         },
         {
             field: 'sex',
@@ -226,7 +227,7 @@ export default function UserList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Số điện thoại',
-            width: 200,
+            width: 195,
         },
         {
             field: 'sex',
@@ -320,7 +321,7 @@ export default function UserList() {
                                 headers={columns_undeleted}
                                 datas={users_undeleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         ) : (
@@ -328,7 +329,7 @@ export default function UserList() {
                                 headers={columns_deleted}
                                 datas={users_deleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         )}

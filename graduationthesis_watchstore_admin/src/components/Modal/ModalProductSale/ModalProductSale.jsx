@@ -1,11 +1,11 @@
 import { Modal } from 'antd';
 import classNames from 'classnames/bind';
 
-import { productData } from '~/data/dummyData.js';
+// import { productData } from '~/data/dummyData.js';
 import Chart from '~/components/Chart/Chart';
 import styles from './ModalProductSale.module.scss';
 import axiosClient from '~/api/axiosClient';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -13,14 +13,21 @@ const ModalProductSale = (props) => {
     const { open, onClose, id } = props;
 
     const handleCancel = () => {
+        // setPStats(null);
         onClose(false);
     };
 
     //-------------------------------------------------------------
 
-    // const [order, setOrder] = useState({});
     const [product, setProduct] = useState({});
     const [img, setImg] = useState();
+
+    const [pStats, setPStats] = useState([]);
+
+    const MONTHS = useMemo(
+        () => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Oct', 'Nov', 'Dec'],
+        [],
+    );
 
     const fecthData = async () => {
         if (id !== '') {
@@ -30,6 +37,26 @@ const ModalProductSale = (props) => {
                 setImg(res.data.detailProduct.images[0]);
             };
             getProduct();
+
+            const getStats = async () => {
+                try {
+                    const res = await axiosClient.get('order/income?pid=' + id);
+                    const list = res.data.income.sort((a, b) => {
+                        return a._id - b._id;
+                    });
+                    // list.map((item) =>
+                    //     setPStats((prev) => [...prev, { name: MONTHS[item._id - 1], Sales: item.total }]),
+                    // );
+                    const rs = list.reduce((acc, cur) => {
+                        acc.push({ name: MONTHS[cur._id - 1], 'Đã bán': cur.total });
+                        return acc;
+                    }, []);
+                    setPStats(rs);
+                } catch (err) {
+                    console.log(err);
+                }
+            };
+            getStats();
         }
     };
 
@@ -39,11 +66,23 @@ const ModalProductSale = (props) => {
         } finally {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, [id, MONTHS]);
+
+    // useEffect(() => {
+
+    // }, [id]);
 
     return (
         <>
-            <Modal onCancel={handleCancel} open={open} title="DOANH SỐ SẢN PHẨM" width={1000} centered footer={[]}>
+            <Modal
+                destroyOnClose={true}
+                onCancel={handleCancel}
+                open={open}
+                title="DOANH SỐ SẢN PHẨM"
+                width={1000}
+                centered
+                footer={[]}
+            >
                 <div className={cx('product')}>
                     <div className={cx('product-top')}>
                         <div className={cx('product-top-right')}>
@@ -63,7 +102,7 @@ const ModalProductSale = (props) => {
                             </div>
                         </div>
                         <div className={cx('product-top-left')}>
-                            <Chart data={productData} dataKey="Sales" title="Hiệu suất bán hàng" />
+                            <Chart data={pStats} dataKey="Đã bán" title="Hiệu suất bán hàng" />
                         </div>
                     </div>
                 </div>

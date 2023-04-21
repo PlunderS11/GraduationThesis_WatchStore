@@ -1,35 +1,32 @@
 import { Modal } from 'antd';
-// import { useState } from 'react';
-
 import classNames from 'classnames/bind';
+import { useEffect, useState } from 'react';
 
 import InputField from '~/components/InputField/InputField';
-import styles from './ModalUserInfo.module.scss';
+import styles from './ModalNotification.module.scss';
 import axiosClient from '~/api/axiosClient';
-import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-const ModalUserInfo = (props) => {
-    const { open, onClose, id } = props;
+const ModalNotification = (props) => {
+    const { open, onClose, id, onNavigate } = props;
 
     const handleCancel = () => {
+        onNavigate();
         onClose(false);
     };
 
     //-------------------------------------------------------------
 
-    const [user, setUser] = useState({});
-    const [address, setAddress] = useState({});
+    const [notification, setNotification] = useState({});
 
     const fecthData = async () => {
         if (id !== '') {
-            const getUser = async () => {
-                const res = await axiosClient.get('user/find/' + String(id));
-                setUser(res.data);
-                setAddress(res.data.address);
+            const getNotification = async () => {
+                const res = await axiosClient.get('notification/detail/' + String(id));
+                setNotification(res.data.notification);
             };
-            getUser();
+            getNotification();
         }
     };
 
@@ -46,19 +43,28 @@ const ModalUserInfo = (props) => {
                 destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
-                title="THÔNG TIN KHÁCH HÀNG"
+                title="CHI TIẾT THÔNG BÁO"
                 width={740}
                 centered
                 footer={[]}
             >
                 <div className={cx('new-user')}>
-                    {/* <h1 className={cx('add-product-title')}>Cập nhật danh mục</h1> */}
                     <form className={cx('add-user-form')} spellCheck="false">
-                        {/* <div className={cx('add-user-item')}>
-                            <label>Thông tin khách hàng</label>
-                        </div> */}
-                        {JSON.stringify(user) !== '{}' && (
+                        {JSON.stringify(notification) !== '{}' && (
                             <>
+                                <div className={cx('add-user-item')}>
+                                    <InputField
+                                        customClass={styles}
+                                        readonly={true}
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        placeholder="."
+                                        value={String(notification.title)}
+                                        label={'Tiêu đề'}
+                                        require
+                                    />
+                                </div>
                                 <div className={cx('add-user-item')}>
                                     <InputField
                                         customClass={styles}
@@ -67,8 +73,8 @@ const ModalUserInfo = (props) => {
                                         id="username"
                                         name="username"
                                         placeholder="."
-                                        value={String(user.username)}
-                                        label={'Tên khách hàng'}
+                                        value={String(notification.user.username)}
+                                        label={'Từ khách hàng'}
                                         require
                                     />
                                 </div>
@@ -78,38 +84,11 @@ const ModalUserInfo = (props) => {
                                         customClass={styles}
                                         readonly={true}
                                         type="text"
-                                        id="namevinameviname"
+                                        id="code"
+                                        name="code"
+                                        value={String(notification.order.code)}
                                         placeholder="."
-                                        value={String(user.rank.namevi)}
-                                        label={'Hạng'}
-                                        require
-                                    />
-                                </div>
-
-                                <div className={cx('add-user-item')}>
-                                    <InputField
-                                        customClass={styles}
-                                        readonly={true}
-                                        type="text"
-                                        id="sex"
-                                        name="sex"
-                                        placeholder="."
-                                        value={String(user.sex === 'm' ? 'Nam' : 'Nữ')}
-                                        label={'Giới tính'}
-                                        require
-                                    />
-                                </div>
-
-                                <div className={cx('add-user-item')}>
-                                    <InputField
-                                        customClass={styles}
-                                        readonly={true}
-                                        type="text"
-                                        id="email"
-                                        name="email"
-                                        value={String(user.email)}
-                                        placeholder="."
-                                        label={'Email'}
+                                        label={'Mã đơn hàng'}
                                         require
                                     />
                                 </div>
@@ -118,11 +97,24 @@ const ModalUserInfo = (props) => {
                                         customClass={styles}
                                         readonly={true}
                                         type="text"
-                                        id="phone"
-                                        name="phone"
+                                        id="shortContent"
+                                        name="shortContent"
                                         placeholder="."
-                                        value={String(user.phone)}
-                                        label={'Số điện thoại'}
+                                        value={String(notification.shortContent)}
+                                        label={'Tóm tắt'}
+                                        require
+                                    />
+                                </div>
+                                <div className={cx('add-user-item')}>
+                                    <InputField
+                                        customClass={styles}
+                                        readonly={true}
+                                        type="textarea"
+                                        id="content"
+                                        name="content"
+                                        placeholder="."
+                                        value={String(notification.content)}
+                                        label={'Nội dung'}
                                         require
                                     />
                                 </div>
@@ -134,36 +126,12 @@ const ModalUserInfo = (props) => {
                                         id="created_at"
                                         name="created_at"
                                         placeholder="."
-                                        value={String(new Date(user.createdAt).toLocaleString())}
+                                        value={String(new Date(notification.createdAt).toLocaleString())}
                                         label={'Ngày tạo'}
                                         require
                                     />
                                 </div>
                             </>
-                        )}
-
-                        {JSON.stringify(address) !== '{}' && (
-                            <div className={cx('add-user-item')}>
-                                <InputField
-                                    customClass={styles}
-                                    readonly={true}
-                                    type="textarea"
-                                    id="address"
-                                    name="address"
-                                    placeholder="."
-                                    value={
-                                        address.address +
-                                        ', ' +
-                                        address.ward.WardName +
-                                        ', ' +
-                                        address.district.DistrictName +
-                                        ', ' +
-                                        address.province.ProvinceName
-                                    }
-                                    label={'Địa chỉ'}
-                                    require
-                                />
-                            </div>
                         )}
                     </form>
                 </div>
@@ -171,4 +139,4 @@ const ModalUserInfo = (props) => {
         </>
     );
 };
-export default ModalUserInfo;
+export default ModalNotification;

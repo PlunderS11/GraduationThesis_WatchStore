@@ -1,31 +1,31 @@
-.new-collection {
+.new-rank {
     flex: 4;
     margin-left: 100px;
     margin-top: 20px;
 }
 
-.add-collection-form {
+.add-rank-form {
     margin-top: 10px;
 }
 
-.add-collection-item {
+.add-rank-item {
     width: 500px;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
 
-.add-collection-item > label {
+.add-rank-item > label {
     color: gray;
     font-weight: 600;
     margin-bottom: 10px;
 }
 
-.add-collection-item > input {
+.add-rank-item > input {
     padding: 10px;
 }
 
-.add-collection-item > select {
+.add-rank-item > select {
     padding: 10px;
 }
 
@@ -95,4 +95,16 @@
     right: 5px;
     border: 2px solid black;
     border-radius: 50%;
+}
+
+.input-feedback {
+    font-size: 11px;
+    margin-bottom: 15px;
+    color: red;
+    display: block;
+
+    &::before {
+        content: '* ';
+        font-size: 13px;
+    }
 }

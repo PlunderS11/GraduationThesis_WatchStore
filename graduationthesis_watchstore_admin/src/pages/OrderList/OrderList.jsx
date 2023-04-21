@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import * as moment from 'moment';
 import { DatePicker, Form, Select } from 'antd';
 import { toast } from 'react-toastify';
+import { CSVLink } from 'react-csv';
 
 import styles from './OrderList.module.scss';
 // import GridMultiFilter from '~/components/GridMultiFilter/GridMultiFilter';
@@ -43,8 +44,6 @@ export default function OrderList() {
         endDate: undefined,
     });
 
-    console.log(query);
-
     useEffect(() => {
         const getProducts = async () => {
             const res = await axiosClient.get('order/admin');
@@ -59,6 +58,24 @@ export default function OrderList() {
                         total_amount += oderdetails_list[j].quantity;
                     }
                     oders_list[i].total_amount = total_amount;
+
+                    var title = '';
+                    if (oders_list[i].status.state === 'PENDING') {
+                        title = 'Chờ xác nhận';
+                    } else if (oders_list[i].status.state === 'PACKAGE') {
+                        title = 'Đóng gói';
+                    } else if (oders_list[i].status.state === 'DELIVERING') {
+                        title = 'Đang vận chuyển';
+                    } else if (oders_list[i].status.state === 'COMPLETE') {
+                        title = 'Đã giao';
+                    } else if (oders_list[i].status.state === 'CANCEL') {
+                        title = 'Đã hủy';
+                    }
+                    oders_list[i].status_vi = title;
+
+                    // moment(params.value).format('DD/MM/YYYY')
+
+                    oders_list[i].orderDate_vi = new Date(oders_list[i].dateOrdered).toLocaleString();
                 }
                 setOrders(oders_list);
             }
@@ -131,7 +148,12 @@ export default function OrderList() {
         var title = '';
         if (children === 'PENDING') {
             title = 'Chờ thanh toán';
-        } else {
+        } else if (children === 'COMPLETE') {
+            title = 'Hoàn thành';
+        } else if (children === 'CANCEL') {
+            title = 'Thất bại';
+        } else if (children === 'REFUNDING') {
+            title = 'Hoàn tiền';
         }
         return <button className={cx('button-cell', type)}>{title}</button>;
     };
@@ -146,6 +168,22 @@ export default function OrderList() {
                 setRerender(!rerender);
                 setId('');
                 toast.success('Cập nhật trạng thái đơn hàng thành công!');
+            }
+        } catch (error) {
+            toast.error(error);
+        }
+    };
+
+    const handleChangeOrderStatusPayment = async (value, code) => {
+        // console.log(`selected ${value} ${code}`);
+        try {
+            const res = await axiosClient.put('order/statusPayment/update/' + code, {
+                status: value,
+            });
+            if (res) {
+                setRerender(!rerender);
+                setId('');
+                toast.success('Cập nhật trạng thái thanh toán đơn hàng thành công!');
             }
         } catch (error) {
             toast.error(error);
@@ -167,10 +205,14 @@ export default function OrderList() {
             sortable: false,
             renderCell: (params) => {
                 var disable = false;
-                if (params.row.status.state === 'CANCEL') {
+                if (params.row.status.state === 'CANCEL' || params.row.status.state === 'COMPLETE') {
                     disable = true;
                 }
                 // console.log(disable);
+                var disableStatus = false;
+                if (params.row.paymentType === 'CASH') {
+                    disableStatus = true;
+                }
                 return (
                     <div className={cx('order-code')}>
                         <ul className={cx('ul-text')}>
@@ -200,6 +242,7 @@ export default function OrderList() {
                                         {
                                             value: 'COMPLETE',
                                             label: 'Đã giao',
+                                            disabled: disableStatus,
                                         },
                                         {
                                             value: 'CANCEL',
@@ -292,9 +335,26 @@ export default function OrderList() {
             filterable: false,
             sortable: false,
             renderCell: (params) => {
+                var disable = false;
                 var typePay = '';
+
+                if (params.row.status.state === 'PENDING' || params.row.status.state === 'PACKAGE') {
+                    disable = true;
+                }
+
+                if (
+                    params.row.paymentStatus === 'COMPLETE' ||
+                    params.row.paymentStatus === 'CANCEL' ||
+                    params.row.paymentStatus === 'REFUNDING'
+                ) {
+                    disable = true;
+                }
+
                 if (params.row.paymentType === 'CASH') {
                     typePay = 'Tiền mặt';
+                } else if (params.row.paymentType === 'ONLINE') {
+                    typePay = 'Trực tuyến';
+                    disable = true;
                 }
                 return (
                     <div className={cx('order-code')}>
@@ -312,6 +372,8 @@ export default function OrderList() {
                                 <Select
                                     className={cx('select-cell')}
                                     defaultValue={params.row.paymentStatus}
+                                    disabled={disable}
+                                    onChange={(value) => handleChangeOrderStatusPayment(value, params.row._id)}
                                     options={[
                                         {
                                             value: 'PENDING',
@@ -324,6 +386,11 @@ export default function OrderList() {
                                         {
                                             value: 'CANCEL',
                                             label: 'Thất bại',
+                                        },
+                                        {
+                                            value: 'REFUNDING',
+                                            label: 'Hoàn tiền',
+                                            disabled: true,
                                         },
                                     ]}
                                 />
@@ -361,7 +428,7 @@ export default function OrderList() {
                         <ul>
                             <li>
                                 <button
-                                    className={cx('product-list-edit')}
+                                    className={cx('order-list-edit')}
                                     onClick={() => {
                                         setOpen(true);
                                         setId(params.row._id);
@@ -372,7 +439,7 @@ export default function OrderList() {
                             </li>
                             <li>
                                 <button
-                                    className={cx('product-list-edit')}
+                                    className={cx('order-list-edit')}
                                     onClick={() => {
                                         setOpenDetail(true);
                                         setId(params.row._id);
@@ -420,9 +487,89 @@ export default function OrderList() {
         }
     };
 
+    // const handleStatus = (status) => {
+    //     var title = '';
+    //     if (status === 'PENDING') {
+    //         title = 'Chờ xác nhận';
+    //     } else if (status === 'PACKAGE') {
+    //         title = 'Đóng gói';
+    //     } else if (status === 'DELIVERING') {
+    //         title = 'Đang vận chuyển';
+    //     } else if (status === 'COMPLETE') {
+    //         title = 'Đã giao';
+    //     } else if (status === 'CANCEL') {
+    //         title = 'Đã hủy';
+    //     }
+    //     return title;
+    // };
+
+    const headers = [
+        { label: 'Mã đơn', key: 'code' },
+        {
+            label: 'Trạng thái',
+            key: 'status_vi',
+        },
+        {
+            label: 'Tên khách hàng',
+            key: 'recipient.username',
+        },
+        {
+            label: 'SĐT',
+            key: 'recipient.phone',
+        },
+        {
+            label: 'Địa chỉ nhà',
+            key: 'recipient.address',
+        },
+        {
+            label: 'Phường/Xã',
+            key: 'recipient.addressWard.WardName',
+        },
+        {
+            label: 'Quận/Huyện',
+            key: 'recipient.addressDistrict.DistrictName',
+        },
+        {
+            label: 'Tỉnh/Thành phố',
+            key: 'recipient.addressProvince.ProvinceName',
+        },
+        {
+            label: 'Tổng số lượng',
+            key: 'total_amount',
+        },
+        {
+            label: 'Tổng tiền hàng',
+            key: 'originalPrice',
+        },
+        {
+            label: 'Tiền giảm giá',
+            key: 'discountPrice',
+        },
+        {
+            label: 'Tiền ship',
+            key: 'shipPrice',
+        },
+        {
+            label: 'Tổng tiền',
+            key: 'finalPrice',
+        },
+        {
+            label: 'Ngày tạo',
+            key: 'orderDate_vi',
+        },
+    ];
+
+    // const cellRenderer = (cell, key) => {
+    //     if (key === 'code') {
+    //         return <a href={cell}>{cell}</a>; // Render a link for the "Website" cell
+    //     } else {
+    //         return cell;
+    //     }
+    // };
+
     return (
         <>
-            <div className={cx('product-list')}>
+            <div className={cx('order-list')}>
                 <label className={cx('label')}>DANH SÁCH ĐƠN HÀNG</label>
                 <div className={cx('header')}>
                     <ul>
@@ -564,7 +711,17 @@ export default function OrderList() {
                                 <Button customClass={styles} onClick={handleSearch}>
                                     Tiềm kiếm
                                 </Button>
-                                <Button customClass={styles}>Xuất excel</Button>
+                                {/* <Button customClass={styles}> */}
+                                <CSVLink
+                                    filename={'list-orders.csv'}
+                                    className={cx('export')}
+                                    data={orders}
+                                    headers={headers}
+                                    target="_blank"
+                                >
+                                    Xuất CSV
+                                </CSVLink>
+                                {/* </Button> */}
                             </div>
                         </li>
                     </ul>
@@ -574,9 +731,21 @@ export default function OrderList() {
                     <Grid datas={orders} headers={columns} rowHeight={150} pagesize={10} hideToolbar={true} />
                 </div>
             </div>
-            {id !== '' && <ModalOrderUpdate open={open} onClose={() => setOpen(false)} id={id}></ModalOrderUpdate>}
             {id !== '' && (
-                <ModalOrderDetail open={openDetail} onClose={() => setOpenDetail(false)} id={id}></ModalOrderDetail>
+                <ModalOrderUpdate
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalOrderUpdate>
+            )}
+            {id !== '' && (
+                <ModalOrderDetail
+                    open={openDetail}
+                    onClose={() => setOpenDetail(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalOrderDetail>
             )}
         </>
     );

@@ -15,11 +15,12 @@ import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 const ModalProduct = (props) => {
-    const { open, onClose, id } = props;
+    const { open, onClose, id, onResetId } = props;
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
         setDelImg([]);
+        onResetId('');
         onClose(false);
     };
 
@@ -43,6 +44,8 @@ const ModalProduct = (props) => {
                 setCollections(res.data.collections);
             };
             getCollections();
+
+            // console.log(123);
         }
     };
 
@@ -97,8 +100,8 @@ const ModalProduct = (props) => {
             name: Yup.string().required('Nhập tên sản phẩm'),
             brand: Yup.string().required('Nhập hãng'),
             type: Yup.string().required('Chọn loại sản phẩm'),
-            originalPrice: Yup.string().required('Nhập giá ban đầu'),
-            finalPrice: Yup.string().required('Nhập giá cuối'),
+            originalPrice: Yup.number().required('Nhập giá ban đầu').min(1, 'Giá ban đầu phải lớn hơn 0'),
+            finalPrice: Yup.number().required('Nhập giá cuối').min(1, 'Giá cuối phải lớn hơn 0'),
             sex: Yup.string().required('Chọn gới tính'),
             // images: Yup.array().min(1, 'Chọn ảnh sản phẩm'),
             collectionObj: Yup.string().required('Chọn bộ sưu tập'),
@@ -106,7 +109,7 @@ const ModalProduct = (props) => {
             descriptionen: Yup.string().required('Nhập mô tả tiếng Anh'),
             featuresvi: Yup.string().required('Nhập tính năng tiếng Việt'),
             featuresen: Yup.string().required('Nhập tính năng tiếng Anh'),
-            stock: Yup.string().required('Nhập tồn kho'),
+            stock: Yup.number().required('Nhập tồn kho').min(1, 'Tồn kho phải lớn hơn 0'),
         }),
         onSubmit: async (values) => {
             const {
@@ -130,7 +133,7 @@ const ModalProduct = (props) => {
             // console.log(values);
 
             const formData = new FormData();
-            if (image.length > 0) {
+            if (images.length > 0) {
                 for (let i = 0; i < images.length; i++) {
                     formData.append('images', images[i]);
                 }
@@ -170,7 +173,7 @@ const ModalProduct = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="CẬP NHẬT SẢN PHẨM"
@@ -196,7 +199,7 @@ const ModalProduct = (props) => {
                         <div className={cx('add-product-item')}>
                             <label className={cx('lable-update')}>Cập nhật hình ảnh sản phẩm</label>
                             {/* <input type="file" id="image" /> */}
-                            <label className={cx('input-image')} for="images">
+                            <label className={cx('input-image')} htmlFor="images">
                                 Chọn hình ảnh
                             </label>
                             <input

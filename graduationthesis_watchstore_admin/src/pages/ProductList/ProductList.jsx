@@ -474,8 +474,15 @@ export default function ProductList() {
             {id !== '' && (
                 <ModalProductSale open={openDetail} onClose={() => setOpenDetail(false)} id={id}></ModalProductSale>
             )}
-            {id !== '' && <ModalProduct open={openUpdate} onClose={() => setOpenUpdate(false)} id={id}></ModalProduct>}
-            <ModalProductNew open={openNew} onClose={() => setOpenNew(false)} id={id}></ModalProductNew>
+            {id !== '' && (
+                <ModalProduct
+                    open={openUpdate}
+                    onClose={() => setOpenUpdate(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalProduct>
+            )}
+            <ModalProductNew open={openNew} onClose={() => setOpenNew(false)}></ModalProductNew>
         </>
     );
 }

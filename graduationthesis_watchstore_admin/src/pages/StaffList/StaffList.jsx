@@ -88,9 +88,9 @@ export default function StaffList() {
 
     const showDeleteConfirm = (id) => {
         confirm({
-            title: 'HẠN CHẾ KHÁCH HÀNG',
+            title: 'HẠN CHẾ NHÂN VIÊN',
             icon: <ExclamationCircleFilled />,
-            content: 'Bạn chắc chắn muốn hạn chế khách hàng?',
+            content: 'Bạn chắc chắn muốn hạn chế nhân viên?',
             okText: 'Hạn chế',
             okType: 'danger',
             cancelText: 'Trở lại',
@@ -103,9 +103,9 @@ export default function StaffList() {
 
     const showRestoreConfirm = (id) => {
         confirm({
-            title: 'KHÔI PHỤC KHÁCH HÀNG',
+            title: 'KHÔI PHỤC NHÂN VIÊN',
             icon: <ExclamationCircleFilled />,
-            content: 'Bạn chắc chắn muốn khôi phục khách hàng?',
+            content: 'Bạn chắc chắn muốn khôi phục nhân viên?',
             okText: 'Khôi phục',
             okType: 'primary',
             cancelText: 'Trở lại',
@@ -122,6 +122,21 @@ export default function StaffList() {
         } else if (value === 'w') {
             return 'Nữ';
         }
+    };
+
+    const showResetPassConfirm = (id) => {
+        confirm({
+            title: 'ĐẶT LẠI MẬT KHẨU',
+            icon: <ExclamationCircleFilled />,
+            content: 'Bạn có chắc muốn đặt lại mật khẩu tài khoản nhân viên?',
+            okText: 'Đặt lại',
+            okType: 'primary',
+            cancelText: 'Trở lại',
+            onOk() {
+                handleResetpassword(id);
+            },
+            onCancel() {},
+        });
     };
 
     const handleResetpassword = async (id) => {
@@ -211,7 +226,7 @@ export default function StaffList() {
                             <button
                                 className={cx('user-list-edit')}
                                 onClick={() => {
-                                    handleResetpassword(params.row._id);
+                                    showResetPassConfirm(params.row._id);
                                 }}
                             >
                                 Đặt lại mật khẩu
@@ -303,7 +318,7 @@ export default function StaffList() {
                             <button
                                 className={cx('user-list-edit')}
                                 onClick={() => {
-                                    handleResetpassword(params.row._id);
+                                    showResetPassConfirm(params.row._id);
                                 }}
                             >
                                 Đặt lại mật khẩu
@@ -378,8 +393,20 @@ export default function StaffList() {
                     </div>
                 </Spin>
             </div>
-            {id !== '' && <ModalStaffInfo open={open} onClose={() => setOpen(false)} id={id}></ModalStaffInfo>}
-            <ModalStaffNew open={openNew} onClose={() => setOpenNew(false)} id={id}></ModalStaffNew>
+            {id !== '' && (
+                <ModalStaffInfo
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalStaffInfo>
+            )}
+            <ModalStaffNew
+                open={openNew}
+                onClose={() => setOpenNew(false)}
+                id={id}
+                onResetId={() => setId('')}
+            ></ModalStaffNew>
         </>
     );
 }

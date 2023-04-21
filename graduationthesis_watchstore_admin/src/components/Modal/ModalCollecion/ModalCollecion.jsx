@@ -16,9 +16,10 @@ import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 const ModalCollecion = (props) => {
-    const { open, onClose, id } = props;
+    const { open, onClose, id, onResetId } = props;
 
     const handleCancel = () => {
+        onResetId('');
         onClose(false);
     };
 
@@ -78,7 +79,15 @@ const ModalCollecion = (props) => {
     });
     return (
         <>
-            <Modal onCancel={handleCancel} open={open} title="CẬP NHẬT DANH MỤC" width={740} centered footer={[]}>
+            <Modal
+                destroyOnClose={true}
+                onCancel={handleCancel}
+                open={open}
+                title="CẬP NHẬT DANH MỤC"
+                width={740}
+                centered
+                footer={[]}
+            >
                 <div className={cx('new-collection')}>
                     {/* <h1 className={cx('add-collection-title')}>Cập nhật danh mục</h1> */}
                     <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
