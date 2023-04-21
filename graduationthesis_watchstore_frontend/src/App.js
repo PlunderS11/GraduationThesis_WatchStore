@@ -41,7 +41,7 @@ function App() {
     OneSignal.on('subscriptionChange', async function (isSubscribed) {
         isSubscribed
             ? await axiosClient.post('onesignal/sub', { oneSignalId: localStorage.getItem('oneSignalId') })
-            : await axiosClient.delete('onesignal/sub', { data: { oneSignalId: localStorage.getItem('oneSignalId') } });
+            : await axiosClient.delete('onesignal/unsub', { data: { oneSignalId: localStorage.getItem('oneSignalId') } });
     });
     useEffect(() => {
         location.pathname === '/home' && navigate('/');
