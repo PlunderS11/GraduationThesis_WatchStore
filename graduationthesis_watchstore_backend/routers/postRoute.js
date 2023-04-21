@@ -113,14 +113,10 @@ router.put('/:id', upload.single('image'), verifyTokenAndAdmin, async (req, res)
 });
 
 // DELETE
-router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
+router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        await Post.findByIdAndUpdate(
+        await Post.findByIdAndDelete(
             req.params.id,
-            {
-                isDelete: true,
-            },
-            { new: true }
         );
 
         res.status(200).json({ data: {}, message: 'Delete post success', status: 200 });
@@ -130,7 +126,7 @@ router.put('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
-//GET ALL PROMOTION
+//GET ALL POST
 router.get('/', async (req, res) => {
     try {
         const post = await Post.find();

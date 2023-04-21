@@ -11,6 +11,11 @@ const User = require('../models/userModel');
 const Rank = require('../models/rankModel');
 const { ObjectId } = require('bson');
 
+const Notification = require("../models/notificationModel");
+const OneSignal = require("../models/oneSignalModel");
+const OneSignalUtil = require("../utils/onesignal");
+const moment = require("moment/moment");
+
 // ESTIMATE
 router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
     try {
@@ -165,9 +170,71 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 }
             }, 0);
 
-            console.log(totalPriceOrderUser);
             const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
-
+            //----------------------------------------------------------------
+            const notification = {
+                title: "Tiếp nhận đơn hàng",
+                content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+                shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+                mode: `private`,
+                user: req.user.id,
+                order: order._id,
+                from: "admin",
+                type: "order",
+                mode: "private",
+                lastSendAt: moment().unix(),
+            };
+        
+            await Notification.create(notification);
+        
+            const oneSignals = await OneSignal.find({ user: req.user.id }).populate([
+                "user",
+            ]);
+        
+            if (oneSignals.length) {
+                await OneSignalUtil.pushNotification({
+                    heading: "Đơn hàng mới",
+                    content: `Đơn hàng #${order.code} vừa được tạo`,
+                    data: {
+                        type: "ORDER",
+                        orderId: order._id + "",
+                    },
+                    oneSignalPlayerIds: oneSignals.map((e) => e.oneSignalId),
+                    pathUrl: "/account/orders",
+                });
+            }
+        
+            const notificationAdmin = {
+                title: "Đơn hàng mới",
+                content: `Đơn hàng #${order.code} vừa được tạo.`,
+                shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
+                mode: `private`,
+                user: req.user.id,
+                order: order._id,
+                from: "customer",
+                type: "order",
+                mode: "private",
+                lastSendAt: moment().unix(),
+            };
+            await Notification.create(notificationAdmin);
+        
+            const oneSignalsAdmin = await OneSignal.find({
+                "user.role": "admin",
+            }).populate(["user"]);
+        
+            if (oneSignalsAdmin.length) {
+                await OneSignalUtil.pushNotification({
+                    heading: "Đơn hàng mới",
+                    content: `Đơn hàng #${order.code} vừa được tạo`,
+                    data: {
+                        type: "ORDER",
+                        orderId: order._id + "",
+                    },
+                    oneSignalPlayerIds: oneSignalsAdmin.map((e) => e.oneSignalId),
+                    pathUrl: "/dashboard/orders",
+                });
+            }
+            //----------------------------------------------------------------
             if (user.rank._id.toString() !== rs._id.toString()) {
                 await User.findByIdAndUpdate(req.user.id, {
                     $set: { rank: rs },
@@ -357,8 +424,13 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         const order = await Order.findById(req.params.id);
         var status = {};
+        let title = "",
+        body = "";
+        const storeName = "MynhBakeStore";
         switch (req.body.status) {
             case 'PENDING':
+                title = `${storeName} đang xử lý đơn hàng`;
+                body = `Đơn hàng #${order.code} đang được ${storeName} xử lý.`;
                 status = {
                     ...order.status._doc,
                     state: 'PENDING',
@@ -366,6 +438,8 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 };
                 break;
             case 'PACKAGE':
+                title = "Đơn của bạn đang được đóng gói";
+                body = `Đơn hàng #${order.code} của Quý Khách Hàng đang được đóng gói.`;
                 status = {
                     ...order.status._doc,
                     state: 'PACKAGE',
@@ -373,6 +447,8 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 };
                 break;
             case 'DELIVERING':
+                title = "Đơn của bạn đang được vận chuyển";
+                body = `Đơn hàng #${order.code} của Quý Khách Hàng đã được bàn giao cho đơn vị vận chuyển.`;
                 status = {
                     ...order.status._doc,
                     state: 'DELIVERING',
@@ -380,6 +456,8 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 };
                 break;
             case 'COMPLETE':
+                title = "Đơn hàng đã được giao";
+                body = `Đơn hàng #${order.code} của Quý Khách Hàng đã giao hoàn tất. ${storeName} xin tiếp nhận mọi đóng góp, khiếu nại qua Hotline và khẩn trương xác minh, phản hồi đến Quý Khách Hàng `;
                 status = {
                     ...order.status._doc,
                     state: 'COMPLETE',
@@ -387,6 +465,8 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 };
                 break;
             case 'CANCEL':
+                title = "Đơn hàng đã được hủy";
+                body = `Đơn hàng #${order.code} của Quý Khách Hàng vừa bị hủy.`;
                 status = {
                     ...order.status._doc,
                     state: 'CANCEL',
@@ -405,11 +485,47 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
+        //-----------------------------------------------------------
+        const oneSignal = await OneSignal.findOne({
+            user: order.user._id.toString(),
+        }).populate(["user"]);
+    
+        const data = {
+            orderId: order._id + "",
+            type: "order",
+        };
+    
+        const notification = {
+            title: title,
+            content: body,
+            shortContent: body,
+            mode: `private`,
+            user: order.user._id,
+            order: order._id,
+            from: "admin",
+            type: "order",
+            mode: "private",
+            lastSendAt: moment().unix(),
+        };
+    
+        const notificationSave = await Notification.create(notification);
+    
+        if (oneSignal) {
+            await OneSignalUtil.pushNotification({
+                heading: title,
+                content: body,
+                data,
+                oneSignalPlayerIds: [oneSignal.oneSignalId],
+            });
+            notificationSave.lastSendAt = moment().unix();
+            await notificationSave.save();
+        }
+        //-----------------------------------------------------------
 
         res.status(200).json({ data: { collection: orderUpdate }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ data: {}, message: eerror.messagerror, status: 500 });
+        res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
     }
 });
 

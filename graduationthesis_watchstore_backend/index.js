@@ -11,6 +11,8 @@ const orderRoute = require('./routers/orderRoute');
 const promotionRoute = require('./routers/promotionRoute');
 const rankRoute = require('./routers/rankRoute');
 const postRoute = require('./routers/postRoute');
+const notificationRoute = require('./routers/notificationRoute');
+const oneSignalRoute = require('./routers/oneSignalRoute');
 
 connectDB();
 
@@ -27,5 +29,7 @@ app.use('/api/order', orderRoute);
 app.use('/api/promotion', promotionRoute);
 app.use('/api/rank', rankRoute);
 app.use('/api/post', postRoute);
+app.use('/api/notification', notificationRoute);
+app.use('/api/onesignal', oneSignalRoute);
 
 app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
