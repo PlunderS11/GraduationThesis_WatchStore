@@ -1,15 +1,15 @@
-.product-list {
+.order-list {
     flex: 4;
     margin-top: 20px;
     position: relative;
 }
 
-.product-list-item {
+.order-list-item {
     display: flex;
     align-items: center;
 }
 
-.product-list-img {
+.order-list-img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -18,7 +18,7 @@
     margin-right: 10px;
 }
 
-.product-list-edit {
+.order-list-edit {
     width: 75px;
     border: none;
     border-radius: 10px;
@@ -32,7 +32,7 @@
     margin-top: 10px;
 }
 
-.product-list-delete-button {
+.order-list-delete-button {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -42,7 +42,7 @@
     margin-right: 20px;
 }
 
-.product-list-restore-button {
+.order-list-restore-button {
     border: none;
     border-radius: 10px;
     padding: 5px 10px;
@@ -52,7 +52,7 @@
     margin-right: 20px;
 }
 
-.product-list-delete {
+.order-list-delete {
     color: red;
     cursor: pointer;
 }
@@ -122,6 +122,30 @@
     margin-top: 10px;
 }
 
+.export {
+    height: 35px;
+    width: 150px;
+    margin-top: 10px;
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #000000;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+
+    &:hover {
+        color: #000000;
+        background: #ffffff;
+        border-color: #000000;
+    }
+}
+
 .address {
     width: 20px;
 }
@@ -167,7 +191,10 @@
     background-color: #fff0f1;
     color: yellowgreen;
 }
-
+.button-cell.REFUNDING {
+    background-color: #fff0f1;
+    color: #d3ab25;
+}
 .button-cell.PACKAGE {
     background-color: #fff0f1;
     color: gray;

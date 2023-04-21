@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Chart.module.scss';
-import { LineChart, Line, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, CartesianGrid, Tooltip, ResponsiveContainer, YAxis } from 'recharts';
 
 const cx = classNames.bind(styles);
 
@@ -12,6 +12,7 @@ export default function Chart({ title, data, dataKey, grid }) {
                 <LineChart data={data}>
                     <XAxis dataKey="name" stroke="#5550bd" />
                     <Line type="monotone" dataKey={dataKey} stroke="#5550bd" />
+                    <YAxis />
                     <Tooltip />
                     {grid && <CartesianGrid stroke="#e0dfdf" strokeDasharray="5 5" />}
                 </LineChart>

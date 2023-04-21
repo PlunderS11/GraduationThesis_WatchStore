@@ -62,7 +62,7 @@ router.delete('delete:/id', verifyTokenAndAdmin, async (req, res) => {
 // GET USER
 router.get('/find/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).populate('rank');
         const { password, ...other } = user._doc;
         res.status(200).json({ data: { ...other }, message: 'Success', status: 200 });
     } catch (error) {
@@ -96,7 +96,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
 //GET USERS ROLE USER
 router.get('/users/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const users = await User.find({ role: 'user' });
+        const users = await User.find({ role: 'user' }).populate('rank');
         res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);

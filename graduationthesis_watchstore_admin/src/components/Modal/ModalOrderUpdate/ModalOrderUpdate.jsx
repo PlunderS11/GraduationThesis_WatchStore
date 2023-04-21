@@ -16,9 +16,10 @@ import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 const ModalOrderUpdate = (props) => {
-    const { open, onClose, id } = props;
+    const { open, onClose, id, onResetId } = props;
 
     const handleCancel = () => {
+        onResetId('');
         onClose(false);
     };
 
@@ -56,13 +57,15 @@ const ModalOrderUpdate = (props) => {
         },
         validationSchema: Yup.object({
             username: Yup.string().required('Nhập tên Khách hàng'),
-            phone: Yup.string().required('Nhập số điện thoại'),
+            phone: Yup.string()
+                .required('Nhập số điện thoại')
+                .matches(/(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/, 'Nhập số điện thoại không chính xác'),
         }),
 
         onSubmit: async (values) => {
             const { username, phone } = values;
 
-            console.log(values);
+            // console.log(values);
             try {
                 const res = await axiosClient.put('order/info/update/' + id, {
                     username: username,
@@ -81,7 +84,7 @@ const ModalOrderUpdate = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="CẬP NHẬT THÔNG TIN KHÁCH HÀNG"

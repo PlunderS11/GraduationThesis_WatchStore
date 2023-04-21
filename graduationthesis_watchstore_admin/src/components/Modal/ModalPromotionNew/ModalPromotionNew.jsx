@@ -24,6 +24,13 @@ const ModalPromotionNew = (props) => {
         formik.values.startDate = null;
         formik.values.endDate = null;
 
+        formik.errors.titlevi = '';
+        formik.errors.titleen = '';
+        formik.errors.code = '';
+        formik.errors.value = '';
+        formik.errors.startDate = '';
+        formik.errors.endDate = '';
+
         onClose(false);
     };
 
@@ -37,12 +44,17 @@ const ModalPromotionNew = (props) => {
         if (date !== null) {
             const d = new Date(date);
             setStartAt(d);
+        } else {
+            setStartAt(undefined);
         }
     };
+
     const onChangeEndDate = (date) => {
         if (date !== null) {
             const d = new Date(date);
             setEndAt(d);
+        } else {
+            setEndAt(undefined);
         }
     };
 
@@ -65,8 +77,12 @@ const ModalPromotionNew = (props) => {
                 .min(1, 'Giá trị khuyến mãi phải lớn hơn hoặc bằng 1')
                 .max(99, 'Giá trị khuyến mãi phải nhỏ hơn hoặc bằng 99')
                 .required('Nhập giá trị khuyến mãi(%)'),
-            startDate: Yup.string().required('Chọn ngày bắt đầu'),
-            endDate: Yup.string().required('Chọn ngày kết thúc'),
+            startDate: Yup.date()
+                .min(new Date(), 'Ngày bắt đàu phải lớn hơn ngày hiện tại')
+                .required('Chọn ngày bắt đầu'),
+            endDate: Yup.date()
+                .min(Yup.ref('startDate'), 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu')
+                .required('Chọn ngày kết thúc'),
         }),
         onSubmit: async (values) => {
             const { titlevi, titleen, code, value, startDate, endDate, isDelete } = values;
@@ -96,7 +112,7 @@ const ModalPromotionNew = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="THÊM MỚI KHUYẾN MÃI"

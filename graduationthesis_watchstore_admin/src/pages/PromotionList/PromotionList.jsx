@@ -143,7 +143,7 @@ export default function PromotionList() {
             width: 100,
             type: 'number',
             renderCell: (params) => {
-                return <div className={cx('product-list-item')}>{params.row.value}%</div>;
+                return <div className={cx('promotion-list-item')}>{params.row.value}%</div>;
             },
         },
 
@@ -184,7 +184,7 @@ export default function PromotionList() {
                 return (
                     <>
                         <button
-                            className={cx('product-list-edit')}
+                            className={cx('promotion-list-edit')}
                             onClick={() => {
                                 setOpen(true);
                                 setId(params.row._id);
@@ -194,7 +194,7 @@ export default function PromotionList() {
                         </button>
 
                         <button
-                            className={cx('product-list-restore-button')}
+                            className={cx('promotion-list-restore-button')}
                             onClick={() => showRestoreConfirm(params.row._id)}
                         >
                             Khôi phục
@@ -235,7 +235,7 @@ export default function PromotionList() {
             width: 100,
             type: 'number',
             renderCell: (params) => {
-                return <div className={cx('product-list-item')}>{params.row.value}%</div>;
+                return <div className={cx('promotion-list-item')}>{params.row.value}%</div>;
             },
         },
 
@@ -278,17 +278,17 @@ export default function PromotionList() {
                 return (
                     <>
                         <button
-                            className={cx('product-list-edit')}
+                            className={cx('promotion-list-edit')}
                             onClick={() => {
-                                setOpen(true);
                                 setId(params.row._id);
+                                setOpen(true);
                             }}
                         >
                             Chỉnh sửa
                         </button>
 
                         <button
-                            className={cx('product-list-delete-button')}
+                            className={cx('promotion-list-delete-button')}
                             onClick={() => showDeleteConfirm(params.row._id)}
                         >
                             Xóa
@@ -322,7 +322,7 @@ export default function PromotionList() {
 
     return (
         <>
-            <div className={cx('product-list')}>
+            <div className={cx('promotion-list')}>
                 <Spin spinning={loading}>
                     <label className={cx('label')}>DANH SÁCH KHUYẾN MÃI</label>
                     <div style={{ height: 10 }}></div>
@@ -343,7 +343,7 @@ export default function PromotionList() {
                                 headers={columns_undeleted}
                                 datas={promotionsUneleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         ) : (
@@ -351,14 +351,23 @@ export default function PromotionList() {
                                 headers={columns_deleted}
                                 datas={promotionsDeleted}
                                 rowHeight={64}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         )}
                     </div>
                 </Spin>
             </div>
-            {id !== '' && <ModalPromotion open={open} onClose={() => setOpen(false)} id={id}></ModalPromotion>}
+            {id !== '' && (
+                <ModalPromotion
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    id={id}
+                    onResetId={() => {
+                        setId('');
+                    }}
+                ></ModalPromotion>
+            )}
             <ModalPromotionNew open={openNew} onClose={() => setOpenNew(false)}></ModalPromotionNew>
         </>
     );

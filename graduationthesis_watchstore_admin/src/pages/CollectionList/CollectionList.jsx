@@ -265,7 +265,7 @@ export default function CollectionList() {
                                 headers={columns_undeleted}
                                 datas={collectionsUndeleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         ) : (
@@ -273,14 +273,21 @@ export default function CollectionList() {
                                 headers={columns_deleted}
                                 datas={collectionsDeleted}
                                 rowHeight={63}
-                                pagesize={6}
+                                pagesize={10}
                                 hideToolbar={false}
                             />
                         )}
                     </div>
                 </Spin>
             </div>
-            {id !== '' && <ModalCollecion open={open} onClose={() => setOpen(false)} id={id}></ModalCollecion>}
+            {id !== '' && (
+                <ModalCollecion
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalCollecion>
+            )}
             <ModalCollecionNew open={openNew} onClose={() => setOpenNew(false)}></ModalCollecionNew>
         </>
     );

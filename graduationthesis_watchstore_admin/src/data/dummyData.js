@@ -1,51 +1,51 @@
 export const userData = [
     {
-        name: 'Jan',
-        'Active User': 4000,
+        name: 'Tháng 1',
+        'Người dùng hoạt động': 4000,
     },
     {
-        name: 'Feb',
-        'Active User': 3000,
+        name: 'Tháng 2',
+        'Người dùng hoạt động': 3000,
     },
     {
-        name: 'Mar',
-        'Active User': 5000,
+        name: 'Tháng 3',
+        'Người dùng hoạt động': 5000,
     },
     {
-        name: 'Apr',
-        'Active User': 4000,
+        name: 'Tháng 4',
+        'Người dùng hoạt động': 4000,
     },
     {
-        name: 'May',
-        'Active User': 3000,
+        name: 'Tháng 5',
+        'Người dùng hoạt động': 3000,
     },
     {
-        name: 'Jun',
-        'Active User': 2000,
+        name: 'Tháng 6',
+        'Người dùng hoạt động': 2000,
     },
     {
-        name: 'Jul',
-        'Active User': 4000,
+        name: 'Tháng 7',
+        'Người dùng hoạt động': 4000,
     },
     {
-        name: 'Agu',
-        'Active User': 3000,
+        name: 'Tháng 8',
+        'Người dùng hoạt động': 3000,
     },
     {
-        name: 'Sep',
-        'Active User': 4000,
+        name: 'Tháng 9',
+        'Người dùng hoạt động': 4000,
     },
     {
-        name: 'Oct',
-        'Active User': 1000,
+        name: 'Tháng 10',
+        'Người dùng hoạt động': 1000,
     },
     {
-        name: 'Nov',
-        'Active User': 4000,
+        name: 'Tháng 11',
+        'Người dùng hoạt động': 4000,
     },
     {
-        name: 'Dec',
-        'Active User': 3000,
+        name: 'Tháng 12',
+        'Người dùng hoạt động': 3000,
     },
 ];
 

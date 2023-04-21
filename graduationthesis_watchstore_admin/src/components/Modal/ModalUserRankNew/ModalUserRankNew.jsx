@@ -27,6 +27,14 @@ const ModalUserRankNew = (props) => {
         formik.values.icon = [];
         formik.values.descriptionen = '';
         formik.values.descriptionvi = '';
+
+        formik.errors.namevi = '';
+        formik.errors.nameen = '';
+        formik.errors.minValue = '';
+        formik.errors.maxValue = '';
+        formik.errors.icon = '';
+        formik.errors.descriptionen = '';
+        formik.errors.descriptionvi = '';
         onClose(false);
     };
 
@@ -66,9 +74,12 @@ const ModalUserRankNew = (props) => {
         validationSchema: Yup.object({
             namevi: Yup.string().required('Nhập tên tiếng Việt'),
             nameen: Yup.string().required('Nhập tên tiếng Anh'),
-            minValue: Yup.string().required('Nhập chi tiêu tối thiểu'),
-            maxValue: Yup.string().required('Nhập chi tiêu tối đa'),
-            icon: Yup.array().min(1, 'Chọn ảnh sản phẩm'),
+            minValue: Yup.number().min(1, 'Chi tiêu tối thiểu phải lớn hơn 0').required('Nhập chi tiêu tối thiểu'),
+            maxValue: Yup.number()
+                // .min(1, 'Chi tiêu tối đa phải lớn hơn 0')
+                .moreThan(Yup.ref('minValue'), 'Chi tiêu tối đa phải lớn hơn chi tiêu tối thiểu')
+                .required('Nhập chi tiêu tối đa'),
+            icon: Yup.array().min(1, 'Chọn hình ảnh thứ hạng'),
             descriptionvi: Yup.string().required('Nhập mô tả tiếng Việt'),
             descriptionen: Yup.string().required('Nhập mô tả tiếng Anh'),
         }),
@@ -104,7 +115,7 @@ const ModalUserRankNew = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="THÊM MỚI THỨ HẠNG"
@@ -112,20 +123,20 @@ const ModalUserRankNew = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-collection')}>
-                    {/* <h1 className={cx('add-collection-title')}>Cập nhật danh mục</h1> */}
-                    <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
+                <div className={cx('new-rank')}>
+                    {/* <h1 className={cx('add-rank-title')}>Cập nhật danh mục</h1> */}
+                    <form onSubmit={formik.handleSubmit} className={cx('add-rank-form')} spellCheck="false">
                         <div className={cx('add-product-item')}>
                             <label className={cx('lable-update')}>Cập nhật hình ảnh thứ hạng</label>
                             {/* <input type="file" id="image" /> */}
                             <br />
-                            <label className={cx('input-image')} htmlFor="images">
+                            <label className={cx('input-image')} htmlFor="icon">
                                 Chọn hình ảnh
                             </label>
                             <input
                                 type="file"
-                                id="images"
-                                name="images"
+                                id="icon"
+                                name="icon"
                                 accept="image/*"
                                 onChange={(e) => handleMultiFile(e)}
                                 hidden
@@ -141,11 +152,11 @@ const ModalUserRankNew = (props) => {
                                     </div>
                                 ))}
                             </div>
-                            {formik.errors.images && <div className={cx('input-feedback')}>{formik.errors.images}</div>}
+                            {formik.errors.icon && <div className={cx('input-feedback')}>{formik.errors.icon}</div>}
                         </div>
                         <label className={cx('lable-update')}>Thông tin thứ hạng</label>
 
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-rank-item')}>
                             <InputField
                                 type="text"
                                 id="namevi"
@@ -161,7 +172,7 @@ const ModalUserRankNew = (props) => {
                             />
                         </div>
 
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-rank-item')}>
                             <InputField
                                 type="text"
                                 id="nameen"
@@ -176,9 +187,9 @@ const ModalUserRankNew = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-rank-item')}>
                             <InputField
-                                type="text"
+                                type="number"
                                 id="minValue"
                                 name="minValue"
                                 placeholder="."
@@ -191,9 +202,9 @@ const ModalUserRankNew = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-rank-item')}>
                             <InputField
-                                type="text"
+                                type="number"
                                 id="maxValue"
                                 name="maxValue"
                                 placeholder="."
@@ -206,7 +217,7 @@ const ModalUserRankNew = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-rank-item')}>
                             <InputField
                                 type="textarea"
                                 id="descriptionen"
@@ -221,7 +232,7 @@ const ModalUserRankNew = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <div className={cx('add-collection-item')}>
+                        <div className={cx('add-rank-item')}>
                             <InputField
                                 type="textarea"
                                 id="descriptionvi"
@@ -236,7 +247,7 @@ const ModalUserRankNew = (props) => {
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                        <Spin loading={loading}>
+                        <Spin spinning={loading}>
                             <Button type="submit" customClass={styles}>
                                 THÊM
                             </Button>

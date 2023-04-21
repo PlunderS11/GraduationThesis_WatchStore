@@ -25,6 +25,10 @@ const ModalCollecionNew = (props) => {
         formik.values.name = '';
         formik.values.descriptionen = '';
         formik.values.descriptionvi = '';
+
+        formik.errors.name = '';
+        formik.errors.descriptionen = '';
+        formik.errors.descriptionvi = '';
         onClose(false);
     };
 
@@ -66,7 +70,15 @@ const ModalCollecionNew = (props) => {
     });
     return (
         <>
-            <Modal onCancel={handleCancel} open={open} title="THÊM MỚI DANH MỤC" width={740} centered footer={[]}>
+            <Modal
+                destroyOnClose={true}
+                onCancel={handleCancel}
+                open={open}
+                title="THÊM MỚI DANH MỤC"
+                width={740}
+                centered
+                footer={[]}
+            >
                 <div className={cx('new-collection')}>
                     <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
                         <div className={cx('add-collection-item')}>

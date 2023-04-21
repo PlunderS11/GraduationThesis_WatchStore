@@ -27,8 +27,8 @@ const Login = () => {
             remember: false,
         },
         validationSchema: Yup.object({
-            email: Yup.string().required('login.userError'),
-            password: Yup.string().required('login.passwordError'),
+            email: Yup.string().required('Nhập tên đăng nhập'),
+            password: Yup.string().required('Nhập mật khẩu'),
         }),
         validateOnChange: false,
         validateOnBlur: false,
@@ -45,7 +45,7 @@ const Login = () => {
                 dispatch(setCurrentUser(res.data.token));
                 navigate('/');
             } catch (error) {
-                toast.error(`${error.response.status}`);
+                toast.error('Tên đăng nhập hoặc mật khẩu không chính xác');
             }
         },
     });
@@ -66,11 +66,11 @@ const Login = () => {
                     id="email"
                     name="email"
                     placeholder="."
-                    value={formik.values.user}
+                    value={formik.values.email}
                     label={'Tên đăng nhập'}
                     require
-                    touched={formik.touched.user}
-                    error={formik.errors.user}
+                    touched={formik.touched.email}
+                    error={formik.errors.email}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                 />
@@ -89,9 +89,9 @@ const Login = () => {
                     onBlur={formik.handleBlur}
                 />
 
-                <div className={cx('forgot')}>
+                {/* <div className={cx('forgot')}>
                     {'Quên mật khẩu'}? <a>{'Bấm vào đây'}</a>
-                </div>
+                </div> */}
                 <Button type="submit" customClass={style}>
                     Đăng nhập
                 </Button>

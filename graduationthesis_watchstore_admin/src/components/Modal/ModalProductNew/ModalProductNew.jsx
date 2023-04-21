@@ -19,7 +19,6 @@ const ModalProductNew = (props) => {
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
-        setDelImg([]);
         formik.values.name = '';
         formik.values.brand = '';
         formik.values.type = '';
@@ -33,6 +32,21 @@ const ModalProductNew = (props) => {
         formik.values.featuresen = '';
         formik.values.stock = '';
         formik.values.note = '';
+
+        formik.errors.name = '';
+        formik.errors.brand = '';
+        formik.errors.type = '';
+        formik.errors.originalPrice = '';
+        formik.errors.sex = '';
+        formik.errors.images = '';
+        formik.errors.collectionId = '';
+        formik.errors.descriptionen = '';
+        formik.errors.descriptionvi = '';
+        formik.errors.featuresvi = '';
+        formik.errors.featuresen = '';
+        formik.errors.stock = '';
+        formik.errors.note = '';
+        setDelImg([]);
         onClose(false);
     };
 
@@ -98,16 +112,16 @@ const ModalProductNew = (props) => {
             name: Yup.string().required('Nhập tên sản phẩm'),
             brand: Yup.string().required('Nhập hãng'),
             type: Yup.string().required('Chọn loại sản phẩm'),
-            originalPrice: Yup.string().required('Nhập giá ban đầu'),
+            originalPrice: Yup.number().required('Nhập giá ban đầu').min(1, 'Giá ban đầu phải lớn hơn 0'),
             // finalPrice: Yup.string().required('Nhập giá cuối'),
             sex: Yup.string().required('Chọn gới tính'),
-            images: Yup.array().min(1, 'Chọn ảnh sản phẩm'),
+            images: Yup.array().min(1, 'Chọn hình ảnh sản phẩm'),
             collectionId: Yup.string().required('Chọn bộ sưu tập'),
             descriptionvi: Yup.string().required('Nhập mô tả tiếng Việt'),
             descriptionen: Yup.string().required('Nhập mô tả tiếng Anh'),
             featuresvi: Yup.string().required('Nhập tính năng tiếng Việt'),
             featuresen: Yup.string().required('Nhập tính năng tiếng Anh'),
-            stock: Yup.string().required('Nhập tồn kho'),
+            stock: Yup.number().required('Nhập tồn kho').min(1, 'Tồn kho phải lớn hơn 0'),
         }),
         onSubmit: async (values) => {
             const {
@@ -169,7 +183,7 @@ const ModalProductNew = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="THÊM MỚI SẢN PHẨM"

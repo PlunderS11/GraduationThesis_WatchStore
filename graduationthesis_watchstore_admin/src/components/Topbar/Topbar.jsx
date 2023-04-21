@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import { Button, Popover } from 'antd';
 
@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '~/features/user/userSlice';
 import ModalStaffInfo from '../Modal/ModalStaffInfo/ModalStaffInfo';
 import ModalChangePassword from '../Modal/ModalChangePassword/ModalChangePassword';
-import axiosClient from '~/api/axiosClient';
+// import axiosClient from '~/api/axiosClient';
 
 const cx = classNames.bind(styles);
 
@@ -19,29 +19,29 @@ export default function Topbar() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [userInfo, setUserInfo] = useState({});
+    // const [userInfo, setUserInfo] = useState({});
     const [openInfo, setOpenInfo] = useState(false);
     const [openChangePass, setOpenChangePass] = useState(false);
 
-    console.log(userInfo);
+    // console.log(userInfo);
 
-    const fecthData = async () => {
-        if (user.user.id !== undefined) {
-            const getUser = async () => {
-                const res = await axiosClient.get('user/find/' + user.user.id);
-                setUserInfo(res.data);
-            };
-            getUser();
-        }
-    };
+    // const fecthData = async () => {
+    //     if (user.user.id !== undefined) {
+    //         const getUser = async () => {
+    //             const res = await axiosClient.get('user/find/' + user.user.id);
+    //             setUserInfo(res.data);
+    //         };
+    //         getUser();
+    //     }
+    // };
 
-    useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // useEffect(() => {
+    //     try {
+    //         fecthData();
+    //     } finally {
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     const handleLogout = () => {
         dispatch(logOut({ id: '', role: '' }));
@@ -83,7 +83,7 @@ export default function Topbar() {
                     </Popover>
                 </div>
             </div>
-            <ModalStaffInfo open={openInfo} onClose={() => setOpenInfo(false)} id={user.user.id} />
+            <ModalStaffInfo open={openInfo} onClose={() => setOpenInfo(false)} id={user.user.id} onResetId={() => {}} />
             <ModalChangePassword open={openChangePass} onClose={() => setOpenChangePass(false)} />
         </div>
     );

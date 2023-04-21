@@ -16,6 +16,11 @@ import PromotionList from './pages/PromotionList';
 import OrderList from './pages/OrderList';
 import UserRankList from './pages/UserRankList/UserRankList';
 import StaffList from './pages/StaffList/StaffList';
+import NewsList from './pages/NewsList/NewsList';
+import runOneSignal from './oneSignal';
+import OneSignal from 'react-onesignal';
+import axiosClient from './api/axiosClient';
+import NotificationList from './pages/NotificationList/NotificationList';
 
 function App() {
     const user = useSelector((state) => state.user);
@@ -35,6 +40,19 @@ function App() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        runOneSignal();
+    }, []);
+
+    OneSignal.on('subscriptionChange', async function (isSubscribed) {
+        console.log(isSubscribed);
+        isSubscribed
+            ? await axiosClient.post('/onesignal/sub', { oneSignalId: localStorage.getItem('oneSignalId.bmd') })
+            : await axiosClient.delete('/onesignal/unsub', {
+                  data: { oneSignalId: localStorage.getItem('oneSignalId.bmd') },
+              });
+    });
 
     return (
         <MasterLayout>
@@ -167,6 +185,36 @@ function App() {
                                         <MenuSideBar />
                                     </div>
                                     <StaffList />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/news"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <NewsList />
+                                </div>
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/notifications"
+                        element={
+                            <>
+                                <Topbar />
+                                <div className="container">
+                                    <div className="sidebar">
+                                        {/* <Sidebar /> */}
+                                        <MenuSideBar />
+                                    </div>
+                                    <NotificationList />
                                 </div>
                             </>
                         }

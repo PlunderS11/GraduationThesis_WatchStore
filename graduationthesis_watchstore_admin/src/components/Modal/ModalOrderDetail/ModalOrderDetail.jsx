@@ -8,9 +8,10 @@ import { useEffect, useState } from 'react';
 const cx = classNames.bind(styles);
 
 const ModalOrderDetail = (props) => {
-    const { open, onClose, id } = props;
+    const { open, onClose, id, onResetId } = props;
 
     const handleCancel = () => {
+        onResetId('');
         onClose(false);
     };
 
@@ -69,7 +70,7 @@ const ModalOrderDetail = (props) => {
     return (
         <>
             <Modal
-                destroyOnClose
+                destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
                 title="CHI TIẾT ĐƠN HÀNG"
@@ -77,11 +78,11 @@ const ModalOrderDetail = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('product-bottom')}>
-                    <div className={cx('add-product-form')}>
+                <div className={cx('order-bottom')}>
+                    <div className={cx('add-order-form')}>
                         {status !== '{}' && (
                             <>
-                                <div className={cx('add-product-item')}>
+                                <div className={cx('add-order-item')}>
                                     <label>
                                         Trạng thái đơn hàng: <span>{StatusName(status)}</span>
                                     </label>
@@ -166,11 +167,11 @@ const ModalOrderDetail = (props) => {
                         )}
                     </div>
                 </div>
-                <div className={cx('product-bottom')}>
-                    <div className={cx('add-product-form')}>
+                <div className={cx('order-bottom')}>
+                    <div className={cx('add-order-form')}>
                         {JSON.stringify(orderDetails) !== '[]' && (
                             <>
-                                <div className={cx('add-product-item')}>
+                                <div className={cx('add-order-item')}>
                                     <label>Chi tiết đơn hàng</label>
                                 </div>
 
@@ -194,7 +195,7 @@ const ModalOrderDetail = (props) => {
                                                         />
                                                     </td>
                                                     <td className={cx('td_name_orderDetail')}>
-                                                        <div className={cx('product_name')}>
+                                                        <div className={cx('order_name')}>
                                                             {orderDetail.product.name}
                                                         </div>
                                                     </td>

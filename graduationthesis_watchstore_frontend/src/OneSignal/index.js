@@ -14,7 +14,7 @@ export default async function runOneSignal() {
         OneSignal.isPushNotificationsEnabled(isPushEnabled => {
             if (isPushEnabled) {
                 OneSignal.getUserId(userId => {
-                    localStorage.setItem('oneSignalId.bmd', userId);
+                    localStorage.setItem('oneSignalId', userId);
                 });
             }
         });
