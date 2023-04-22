@@ -18,7 +18,7 @@ const Button = ({ children, href, to, customClass, loading, onclick, ...passProp
         props.to = to;
     }
     return (
-        <Tag className={cx('button', customClass?.['button'])} {...props} onClick={onclick}>
+        <Tag disabled={loading} className={cx('button', customClass?.['button'])} {...props} onClick={onclick}>
             {loading && (
                 <div className={cx('loading-icon')}>
                     <LoadingOutlined style={{ fontSize: '200%' }} />

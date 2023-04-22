@@ -26,6 +26,10 @@ const PromotionSchema = new mongoose.Schema(
             type: Date,
             required: true,
         },
+        users: {
+            type: Array,
+            require: true,
+        },
         isDelete: {
             type: Boolean,
             default: false,

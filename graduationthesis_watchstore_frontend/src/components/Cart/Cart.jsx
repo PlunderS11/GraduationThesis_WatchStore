@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { removeItem, selectCartItems, selectTotalItems, selectTotalPrice, updateCartItem } from '../../features/cart';
 import style from './Cart.module.scss';
@@ -13,24 +13,48 @@ import { NumberWithCommas } from '../../functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(style);
 
 function Cart({ customClass, open }) {
     const { t } = useTranslation();
+    const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [visiblePopover, setVisiblePopover] = useState(false);
 
     const user = useSelector(state => state.user);
     const products = useSelector(selectCartItems);
     const totalItem = useSelector(selectTotalItems);
     const price = useSelector(selectTotalPrice);
 
+    // handle scroll to close popover notification
+    useEffect(() => {
+        const handleClosePopover = () => {
+            setVisiblePopover(() => window.scrollY <= 50 && false);
+        };
+        window.addEventListener('scroll', handleClosePopover);
+        return () => {
+            window.removeEventListener('scroll', handleClosePopover);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [document.body.scrollTop]);
+
+    useEffect(() => {
+        setVisiblePopover(false);
+    }, [location.pathname]);
+
+    const handleOpenChange = newOpen => {
+        setVisiblePopover(newOpen);
+    };
+
     return (
         <Popover
             trigger={'click'}
             placement="bottomRight"
-            // open={open && false}
+            open={visiblePopover}
+            onOpenChange={handleOpenChange}
             content={
                 <div>
                     {products.length > 0 ? (

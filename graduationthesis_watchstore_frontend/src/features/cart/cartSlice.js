@@ -3,6 +3,7 @@ import { fetchEstimate } from './cartThunk';
 
 const initialState = {
     items: localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [],
+    promotionCode: localStorage.getItem('promotionCode') ? JSON.parse(localStorage.getItem('promotionCode')) : null,
     estimate: {},
     isLoadingCart: false,
 };
@@ -71,6 +72,10 @@ const cartSlice = createSlice({
                 state.isLoadingCart = false;
             }
         },
+        clearPromotionCode(state, action) {
+            localStorage.removeItem('promotionCode');
+            state.promotionCode = null;
+        },
     },
     extraReducers(builder) {
         builder
@@ -78,6 +83,7 @@ const cartSlice = createSlice({
                 state.isLoadingCart = true;
             })
             .addCase(fetchEstimate.fulfilled, (state, action) => {
+                state.promotionCode = action.payload.promotion ? action.payload.promotion.code : '';
                 state.estimate = action.payload;
                 state.isLoadingCart = false;
             })
@@ -89,4 +95,4 @@ const cartSlice = createSlice({
 
 export default cartSlice.reducer;
 
-export const { addToCart, changeStatus, updateCartItem, removeItem, clearCart } = cartSlice.actions;
+export const { addToCart, changeStatus, updateCartItem, removeItem, clearCart, clearPromotionCode } = cartSlice.actions;

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
+import i18n from 'i18next';
 import axiosClient from '../../api/axiosClient';
 import { toast } from 'react-toastify';
 
@@ -11,22 +11,22 @@ export const fetchEstimate = createAsyncThunk('cart/fetchEstimate', async (data,
 
         const resUser = await axiosClient.get('user/userInfo');
         var promotionCode = '';
-        if (data) {
-            const resPromotion = await axiosClient.get('promotion');
-            const resOrder = await axiosClient.get('order/customer');
-            const promotionExist = resOrder.data.orders.find(item => item.promotion?.code === data);
-            const promotion = resPromotion.data.promotions.find(p => p.code === data);
-            if (promotion?.isDelete || !promotion) {
-                toast.info('Khuyến mãi không tồn tại');
-            } else if (new Date().getTime() < new Date(promotion?.startDate).getTime()) {
-                toast.info('Khuyến mãi chưa bắt đầu');
-            } else if (new Date().getTime() > new Date(promotion?.endDate).getTime()) {
-                toast.info('Khuyến mãi đã hết');
+        var code = data || getState().cart.promotionCode;
+        if (code) {
+            const resPromotion = await axiosClient.get(`promotion/detail/${code}`);
+            const promotionExist = resPromotion.data.promotion?.users.includes(resUser.data._id);
+            if (resPromotion.data.promotion?.isDelete || !resPromotion.data.promotion) {
+                toast.info(i18n.t('cart.promotion.null'));
+            } else if (new Date().getTime() < new Date(resPromotion.data.promotion?.startDate).getTime()) {
+                toast.info(i18n.t('cart.promotion.start'));
+            } else if (new Date().getTime() > new Date(resPromotion.data.promotion?.endDate).getTime()) {
+                toast.info(i18n.t('cart.promotion.end'));
             } else if (promotionExist) {
-                toast.info('Khuyến mãi đã được sử dụng');
+                toast.info(i18n.t('cart.promotion.isUsed'));
             } else {
-                toast.success('Áp dụng mã khuyến mãi thành công!');
-                promotionCode = data;
+                toast.success(i18n.t('cart.promotion.success'));
+                promotionCode = code;
+                localStorage.setItem('promotionCode', JSON.stringify(promotionCode));
             }
         }
         const res = await axiosClient.post('order/estimate', {

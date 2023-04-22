@@ -20,7 +20,7 @@
         "noItem": "Bạn chưa chọn sản phẩm nào!",
         "emptyCart": "Giỏ hàng trống",
         "total": "Tổng cộng",
-        "storePromotion": "MynhBake Store khuyến mãi",
+        "storePromotion": "Khuyến mãi",
         "chocePromotion": "Chọn hoặc nhập mã khuyến mãi",
         "promotionCode": "Mã giảm giá",
         "promotioPrice": "Tiền khuyến mãi được giảm",
@@ -41,6 +41,13 @@
             "canceled": "Đã hủy",
             "package": "Đóng gói",
             "delivering": "Đang gửi hàng"
+        },
+        "promotion": {
+            "null": "Khuyến mãi không tồn tại",
+            "start": "Khuyến mãi chưa bắt đầu",
+            "end": "Khuyến mãi đã kết thúc",
+            "isUsed": "Khuyến mãi đã được sử dụng",
+            "success": "Áp dụng mã khuyến mãi thành công!"
         }
     },
     "footer": {
@@ -204,7 +211,8 @@
         "paymentDescription": "Thanh toán tổng cộng: ",
         "buySuccess": "Đặt hàng thành công",
         "orderHistoryTitle": "Vui lòng thanh toán {{totalPrice}} khi nhận hàng",
-        "leadTime": "Dự kiến nhận hàng vào ngày"
+        "leadTime": "Dự kiến nhận hàng vào ngày",
+        "updateRank": "Thăng hạng thành viên lên"
     },
     "aboutUs": {
         "introduce": "Giới thiệu",

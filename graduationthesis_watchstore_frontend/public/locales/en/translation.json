@@ -20,7 +20,7 @@
         "noItem": "You have not selected any products!",
         "emptyCart": "Empty Cart",
         "total": "Total",
-        "storePromotion": "MynhBake Store promotional",
+        "storePromotion": "promotional",
         "promotionCode": "Promotion Code",
         "promotioPrice": "Promotional money is reduced",
         "promotioNull": "No discount code",
@@ -41,6 +41,13 @@
             "canceled": "Canceled",
             "package": "Package",
             "delivering": "Delivering"
+        },
+        "promotion": {
+            "null": "Promotion does not exist",
+            "start": "Promotion has not started yet",
+            "end": "Promotion has ended",
+            "isUsed": "Promotion already used",
+            "success": "Promo code applied successfully!"
         }
     },
     "footer": {
@@ -204,7 +211,8 @@
         "paymentDescription": "Payment total: ",
         "buySuccess": "Order Success",
         "orderHistoryTitle": "Please payment {{totalPrice}} upon delivery",
-        "leadTime": "Expected delivery date"
+        "leadTime": "Expected delivery date",
+        "updateRank": "Member rank up"
     },
     "aboutUs": {
         "introduce": "Introduce",

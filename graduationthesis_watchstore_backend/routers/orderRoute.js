@@ -57,6 +57,7 @@ router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
                     addressDistrict: req.body.district,
                     addressWard: req.body.ward,
                     productDetails,
+                    promotion,
                     distancePrice,
                     discountPrice,
                     totalPrice: productPrice,
@@ -86,8 +87,11 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
         }
         if (promotion) {
             discountValue = promotion.value;
+            const newUsers = [...promotion.users, req.user.id];
+            await Promotion.findByIdAndUpdate(promotion._id, {
+                $set: { users: newUsers },
+            });
         }
-
         // check ton kho
         let check = true;
         for (let i = 0; i < products.length; i++) {
@@ -126,7 +130,6 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
 
             let order = new Order({
                 user: { ...orther },
-
                 promotion: promotion,
                 orderDetails,
                 recipient: {
@@ -185,9 +188,7 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 mode: 'private',
                 lastSendAt: moment().unix(),
             };
-
             await Notification.create(notification);
-
             const oneSignals = await OneSignal.aggregate([
                 {
                     $lookup: {
@@ -200,12 +201,14 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 { $unwind: '$user' },
                 { $match: { 'user.role': 'user' } },
             ]);
-
-            if (oneSignals.length) {
+            if (oneSignals.length > 0) {
                 await OneSignalUtil.pushNotification({
                     isAdmin: false,
-                    heading: 'Đơn hàng mới',
-                    content: `Đơn hàng #${order.code} vừa được tạo`,
+                    heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
+                    content:
+                        req.body.language === 'vi'
+                            ? `Đơn hàng #${order.code} vừa được tạo`
+                            : `The order #${order.code} just created`,
                     data: {
                         type: 'ORDER',
                         orderId: order._id + '',
@@ -241,7 +244,7 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 { $unwind: '$user' },
                 { $match: { 'user.role': 'admin' } },
             ]);
-            if (oneSignalsAdmin.length) {
+            if (oneSignalsAdmin.length > 0) {
                 await OneSignalUtil.pushNotification({
                     isAdmin: true,
                     heading: 'Đơn hàng mới',
@@ -254,7 +257,6 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                     pathUrl: '/orders',
                 });
             }
-
             //----------------------------------------------------------------
             if (user.rank._id.toString() !== rs._id.toString()) {
                 await User.findByIdAndUpdate(req.user.id, {
@@ -297,6 +299,9 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                     }
                     if (promotion) {
                         discountValue = promotion.value;
+                        await Promotion.findByIdAndUpdate(promotion._id, {
+                            $set: { users: newUsers },
+                        });
                     }
                     // check ton kho
                     let check = true;
@@ -412,8 +417,11 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                         if (oneSignals.length) {
                             await OneSignalUtil.pushNotification({
                                 isAdmin: false,
-                                heading: 'Đơn hàng mới',
-                                content: `Đơn hàng #${order.code} vừa được tạo`,
+                                heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
+                                content:
+                                    req.body.language === 'vi'
+                                        ? `Đơn hàng #${order.code} vừa được tạo`
+                                        : `The order #${order.code} just created`,
                                 data: {
                                     type: 'ORDER',
                                     orderId: order._id + '',

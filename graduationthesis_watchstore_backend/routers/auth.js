@@ -9,7 +9,7 @@ dotenv.config();
 const User = require('../models/userModel');
 const OTP = require('../models/otpModel');
 const Rank = require('../models/rankModel');
-const sendEmail = require('../utils/sendEmail');
+const SendMailUtil = require('../utils/sendEmail');
 
 router.post('/verifyOTP', async (req, res) => {
     try {
@@ -73,7 +73,7 @@ router.post('/register', async (req, res) => {
                 rank,
             });
             const user = await newUser.save();
-            await sendEmail(user._id, user.email, 'Verify Email');
+            await SendMailUtil.verifyOTP(user._id, user.email, 'Verify Email');
             res.status(200).json({ data: { userId: user._id }, message: 'Please verify email', status: 200 });
         }
     } catch (err) {
@@ -98,7 +98,7 @@ router.post('/login', async (req, res) => {
                 if (!user.verified) {
                     let token = await OTP.findOne({ userId: user._id });
                     if (!token) {
-                        await sendEmail(user._id, user.email, 'Verify Email');
+                        await SendMailUtil.verifyOTP(user._id, user.email, 'Verify Email');
                     }
                     return res.status(200).send({
                         data: { userId: user._id },
@@ -132,7 +132,7 @@ router.post('/forgotPassword', async (req, res) => {
             res.status(500).json({ data: {}, message: 'khong ton tai user', status: 500 });
         } else {
             const forgotPassword = true;
-            await sendEmail(user._id, user.email, 'Verify Email Forgot Password', forgotPassword);
+            await SendMailUtil.verifyOTP(user._id, user.email, 'Verify Email Forgot Password', forgotPassword);
             res.status(200).json({ data: { userId: user._id }, message: 'Please verify email', status: 200 });
         }
     } catch (err) {

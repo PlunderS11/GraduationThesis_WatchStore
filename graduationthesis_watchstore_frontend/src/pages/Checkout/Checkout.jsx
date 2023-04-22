@@ -16,6 +16,8 @@ import axiosClient from '../../api/axiosClient';
 import { fetchUserInfor } from '../../features/user';
 import { images } from '../../assets/images';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
+import i18n from '../../i18n';
+import { clearPromotionCode } from '../../features/cart/cartSlice';
 
 const cx = classNames.bind(styles);
 
@@ -82,13 +84,14 @@ const Checkout = () => {
                 phone: resUser.data.phone,
                 address: resUser.data.address.address,
                 username: resUser.data.username,
+                language: i18n.language,
             });
             dispatch(clearCart());
             if (res.status === 201) {
-                toast.success(`Thăng hạng thành viên lên ${res.data.rank.namevi}`);
+                toast.success(`${t('checkout.updateRank')} ${res.data.rank[`name${i18n.language}`]}`);
                 dispatch(fetchUserInfor());
             } else {
-                toast.success('Đặt hàng thành công');
+                toast.success(t('checkout.buySuccess'));
             }
         } catch (error) {
             toast.error(error.response.data.message);
@@ -123,13 +126,14 @@ const Checkout = () => {
                 phone: resUser.data.phone,
                 address: resUser.data.address.address,
                 username: resUser.data.username,
+                language: i18n.language,
             });
             dispatch(clearCart());
             if (res.status === 201) {
-                toast.success(`Thăng hạng thành viên lên ${res.data.rank.namevi}`);
+                toast.success(`${t('checkout.updateRank')} ${res.data.rank[`name${i18n.language}`]}`);
                 dispatch(fetchUserInfor());
             } else {
-                toast.success('Đặt hàng thành công');
+                toast.success(t('checkout.buySuccess'));
             }
         } catch (error) {
             console.log(error);
@@ -142,6 +146,7 @@ const Checkout = () => {
 
     useEffect(() => {
         stripeToken && handleBuyOnline();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stripeToken]);
 
     const showModal = () => {
@@ -245,7 +250,18 @@ const Checkout = () => {
                                         </div>
                                     </Modal>
                                     <div className={cx('coupon')}>
-                                        <span>{t('cart.storePromotion')}</span>
+                                        <div className={cx('change')}>
+                                            <span style={{ fontWeight: 600 }}>{t('cart.storePromotion')}</span>
+                                            <div
+                                                className={cx('change-a')}
+                                                onClick={() => {
+                                                    dispatch(clearPromotionCode());
+                                                    dispatch(fetchEstimate());
+                                                }}
+                                            >
+                                                {t('checkout.remove')}
+                                            </div>
+                                        </div>
                                         <div className={cx('coupon-chonse')} onClick={showModal}>
                                             {estimate?.discountPrice > 0 ? (
                                                 <>
