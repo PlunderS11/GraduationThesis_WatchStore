@@ -1,4 +1,3 @@
-// import { MailOutlined, SettingOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { Badge, Menu } from 'antd';
 import {
     LineStyle,
@@ -8,8 +7,10 @@ import {
     FileCopyOutlined,
     NotificationsOutlined,
 } from '@material-ui/icons';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './MenuSideBar.css';
+import { useEffect, useState } from 'react';
+import axiosClient from '~/api/axiosClient';
 function getItem(label, key, icon, children, type) {
     return {
         key,
@@ -19,49 +20,68 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
-const items = [
-    getItem('Trang chủ', ['sub1', '/'], <LineStyle />),
-    {
-        type: 'divider',
-    },
-    getItem('Quản lý người dùng', 'sub2', <PermIdentity />, [
-        getItem('Khách hàng', ['1', '/users']),
-        getItem('Thứ hạng khách hàng', ['2', '/ranks']),
-        getItem('Nhân viên', ['3', '/staffs']),
-    ]),
-    {
-        type: 'divider',
-    },
-    getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
-        getItem('Sản phẩm', ['4', '/products']),
-        getItem('Danh mục', ['5', '/collections']),
-    ]),
-    {
-        type: 'divider',
-    },
-    getItem(
-        <Badge count={99} showZero offset={[20, 0]}>
-            Thông báo đơn hàng
-        </Badge>,
-        ['sub4', '/notifications'],
-        <NotificationsOutlined />,
-    ),
-    {
-        type: 'divider',
-    },
-    getItem('Quản lý đơn hàng', 'sub5', <AttachMoney />, [
-        getItem('Đơn hàng', ['6', '/orders']),
-        getItem('Khuyến mãi', ['7', '/promotions']),
-    ]),
-    {
-        type: 'divider',
-    },
-    getItem('Quản lý bài viết', ['sub6', '/news'], <FileCopyOutlined />),
-];
+// const items = [
+//     getItem('Trang chủ', ['sub1', '/'], <LineStyle />),
+//     {
+//         type: 'divider',
+//     },
+//     getItem('Quản lý người dùng', 'sub2', <PermIdentity />, [
+//         getItem('Khách hàng', ['1', '/users']),
+//         getItem('Thứ hạng khách hàng', ['2', '/ranks']),
+//         getItem('Nhân viên', ['3', '/staffs']),
+//     ]),
+//     {
+//         type: 'divider',
+//     },
+//     getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
+//         getItem('Sản phẩm', ['4', '/products']),
+//         getItem('Danh mục', ['5', '/collections']),
+//     ]),
+//     {
+//         type: 'divider',
+//     },
+//     getItem(
+//         <Badge count={100} showZero offset={[30, 0]}>
+//             Thông báo đơn hàng
+//         </Badge>,
+//         ['sub4', '/notifications'],
+//         <NotificationsOutlined />,
+//     ),
+//     {
+//         type: 'divider',
+//     },
+//     getItem('Quản lý đơn hàng', 'sub5', <AttachMoney />, [
+//         getItem('Đơn hàng', ['6', '/orders']),
+//         getItem('Khuyến mãi', ['7', '/promotions']),
+//     ]),
+//     {
+//         type: 'divider',
+//     },
+//     getItem('Quản lý bài viết', ['sub6', '/news'], <FileCopyOutlined />),
+// ];
 const MenuSideBar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [notifications, setNotifications] = useState();
+
+    const fecthData = async () => {
+        const getNotification = async () => {
+            const res = await axiosClient.get('notification/admin/notseen');
+            setNotifications(res.data.total);
+        };
+        getNotification();
+    };
+
+    // console.log(productsUneleted);
+
+    useEffect(() => {
+        try {
+            fecthData();
+        } finally {
+        }
+    }, [location]);
+
     const onClick = (e) => {
-        // console.log('click ', e.key.split(',')[1]);
         navigate(e.key.split(',')[1]);
     };
     return (
@@ -73,7 +93,45 @@ const MenuSideBar = () => {
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
             mode="inline"
-            items={items}
+            items={[
+                getItem('Trang chủ', ['sub1', '/'], <LineStyle />),
+                {
+                    type: 'divider',
+                },
+                getItem('Quản lý người dùng', 'sub2', <PermIdentity />, [
+                    getItem('Khách hàng', ['1', '/users']),
+                    getItem('Thứ hạng khách hàng', ['2', '/ranks']),
+                    getItem('Nhân viên', ['3', '/staffs']),
+                ]),
+                {
+                    type: 'divider',
+                },
+                getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
+                    getItem('Sản phẩm', ['4', '/products']),
+                    getItem('Danh mục', ['5', '/collections']),
+                ]),
+                {
+                    type: 'divider',
+                },
+                getItem(
+                    <Badge count={notifications} showZero offset={[30, 0]}>
+                        Thông báo đơn hàng
+                    </Badge>,
+                    ['sub4', '/notifications'],
+                    <NotificationsOutlined />,
+                ),
+                {
+                    type: 'divider',
+                },
+                getItem('Quản lý đơn hàng', 'sub5', <AttachMoney />, [
+                    getItem('Đơn hàng', ['6', '/orders']),
+                    getItem('Khuyến mãi', ['7', '/promotions']),
+                ]),
+                {
+                    type: 'divider',
+                },
+                getItem('Quản lý bài viết', ['sub6', '/news'], <FileCopyOutlined />),
+            ]}
         />
     );
 };

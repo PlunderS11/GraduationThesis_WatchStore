@@ -13,6 +13,7 @@ import Grid from '~/components/Grid/Grid';
 import * as moment from 'moment';
 import ModalPromotion from '~/components/Modal/ModalPromotion/ModalPromotion';
 import ModalPromotionNew from '~/components/Modal/ModalPromotionNew/ModalPromotionNew';
+import ModalSendPromotion from '~/components/Modal/ModalSendPromotion/ModalSendPromotion';
 
 const cx = classNames.bind(styles);
 
@@ -28,6 +29,7 @@ export default function PromotionList() {
     const [id, setId] = useState('');
     const [open, setOpen] = useState(false);
     const [openNew, setOpenNew] = useState(false);
+    const [openSend, setOpenSend] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
@@ -119,21 +121,21 @@ export default function PromotionList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên tiếng Việt',
-            width: 200,
+            width: 220,
         },
         {
             field: 'titleen',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên tiếng Anh',
-            width: 200,
+            width: 220,
         },
         {
             field: 'code',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Mã khuyến mãi',
-            width: 250,
+            width: 260,
         },
         {
             field: 'value',
@@ -178,27 +180,33 @@ export default function PromotionList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 150,
             filterable: false,
             renderCell: (params) => {
                 return (
                     <>
-                        <button
-                            className={cx('promotion-list-edit')}
-                            onClick={() => {
-                                setOpen(true);
-                                setId(params.row._id);
-                            }}
-                        >
-                            Chỉnh sửa
-                        </button>
+                        <ul>
+                            <li>
+                                <button
+                                    className={cx('promotion-list-edit')}
+                                    onClick={() => {
+                                        setId(params.row._id);
+                                        setOpen(true);
+                                    }}
+                                >
+                                    Chỉnh sửa
+                                </button>
+                            </li>
 
-                        <button
-                            className={cx('promotion-list-restore-button')}
-                            onClick={() => showRestoreConfirm(params.row._id)}
-                        >
-                            Khôi phục
-                        </button>
+                            <li>
+                                <button
+                                    className={cx('promotion-list-restore-button')}
+                                    onClick={() => showRestoreConfirm(params.row._id)}
+                                >
+                                    Khôi phục
+                                </button>
+                            </li>
+                        </ul>
                     </>
                 );
             },
@@ -211,21 +219,21 @@ export default function PromotionList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên tiếng Việt',
-            width: 200,
+            width: 220,
         },
         {
             field: 'titleen',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên tiếng Anh',
-            width: 200,
+            width: 220,
         },
         {
             field: 'code',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Mã khuyến mãi',
-            width: 250,
+            width: 260,
         },
         {
             field: 'value',
@@ -272,27 +280,58 @@ export default function PromotionList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 200,
+            width: 150,
             filterable: false,
             renderCell: (params) => {
+                var showSend = true;
+
+                if (
+                    new Date().getTime() > new Date(params.row.endDate).getTime() ||
+                    new Date().getTime() < new Date(params.row.startDate).getTime()
+                ) {
+                    showSend = false;
+                }
                 return (
                     <>
-                        <button
-                            className={cx('promotion-list-edit')}
-                            onClick={() => {
-                                setId(params.row._id);
-                                setOpen(true);
-                            }}
-                        >
-                            Chỉnh sửa
-                        </button>
+                        <ul>
+                            <li>
+                                {showSend && (
+                                    <button
+                                        className={cx('promotion-list-restore-button')}
+                                        onClick={() => {
+                                            setOpenSend(true);
+                                            setId(params.row._id);
+                                        }}
+                                    >
+                                        Gửi
+                                    </button>
+                                )}
+                            </li>
+                            {!showSend && (
+                                <>
+                                    <li>
+                                        <button
+                                            className={cx('promotion-list-edit')}
+                                            onClick={() => {
+                                                setId(params.row._id);
+                                                setOpen(true);
+                                            }}
+                                        >
+                                            Chỉnh sửa
+                                        </button>
+                                    </li>
 
-                        <button
-                            className={cx('promotion-list-delete-button')}
-                            onClick={() => showDeleteConfirm(params.row._id)}
-                        >
-                            Xóa
-                        </button>
+                                    <li>
+                                        <button
+                                            className={cx('promotion-list-delete-button')}
+                                            onClick={() => showDeleteConfirm(params.row._id)}
+                                        >
+                                            Xóa
+                                        </button>
+                                    </li>
+                                </>
+                            )}
+                        </ul>
                     </>
                 );
             },
@@ -342,7 +381,7 @@ export default function PromotionList() {
                             <Grid
                                 headers={columns_undeleted}
                                 datas={promotionsUneleted}
-                                rowHeight={63}
+                                rowHeight={100}
                                 pagesize={10}
                                 hideToolbar={false}
                             />
@@ -350,7 +389,7 @@ export default function PromotionList() {
                             <Grid
                                 headers={columns_deleted}
                                 datas={promotionsDeleted}
-                                rowHeight={64}
+                                rowHeight={100}
                                 pagesize={10}
                                 hideToolbar={false}
                             />
@@ -367,6 +406,16 @@ export default function PromotionList() {
                         setId('');
                     }}
                 ></ModalPromotion>
+            )}
+            {id !== '' && (
+                <ModalSendPromotion
+                    open={openSend}
+                    onClose={() => setOpenSend(false)}
+                    id={id}
+                    onResetId={() => {
+                        setId('');
+                    }}
+                ></ModalSendPromotion>
             )}
             <ModalPromotionNew open={openNew} onClose={() => setOpenNew(false)}></ModalPromotionNew>
         </>
