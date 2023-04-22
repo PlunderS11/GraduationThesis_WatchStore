@@ -16,6 +16,20 @@ router.get('/admin/',verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+//GET ALL OF ADMIN
+router.get('/admin/notseen/',verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const notifications = await Notification.find({
+            isDeleted: false,
+            from:"customer",
+            isSeen: false
+        }).populate(["user", "order"]).sort({ createdAt: "desc" });
+        res.status(200).json({ data: { notifications:notifications, total: notifications.length }, message: 'success', status: 200 });
+    } catch (error) {
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
 //GET ALL OF USER
 router.get('/', async (req, res) => {
     try {
