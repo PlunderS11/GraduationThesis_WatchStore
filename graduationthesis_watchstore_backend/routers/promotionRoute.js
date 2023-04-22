@@ -52,7 +52,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
-router.put('/reset', verifyTokenAndAdmin, async (req, res) => {
+router.put('/reset/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         const updatePromotion = await Promotion.findByIdAndUpdate(
             req.params.id,
@@ -128,7 +128,7 @@ router.get('/detail/:code', async (req, res) => {
 });
 
 // GET PROMOTION BY ID
-router.get('/detail/:id', async (req, res) => {
+router.get('/detailById/:id', async (req, res) => {
     try {
         const promotion = await Promotion.findOne({ _id: req.params.id }).exec();
 
