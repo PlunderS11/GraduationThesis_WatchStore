@@ -73,6 +73,7 @@
         "userOption": {
             "userInfo": "Thông tin cá nhân",
             "orderInfo": "Thông tin đơn hàng",
+            "notification": "Thông báo",
             "addressInfo": "Địa chỉ",
             "logout": "Đăng xuất"
         }
@@ -267,6 +268,7 @@
         "account": "Tài khoản",
         "profile": "Thông tin cá nhân",
         "orders": "Đơn hàng",
+        "notification": "Thông báo",
         "address": "Địa chỉ"
     }
 }

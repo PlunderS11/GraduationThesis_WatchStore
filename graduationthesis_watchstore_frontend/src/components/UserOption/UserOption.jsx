@@ -26,13 +26,17 @@ function UserOption({ user }) {
         },
         {
             key: '3',
+            label: <Link to={'/account/notification'}>{t('header.userOption.notification')}</Link>,
+        },
+        {
+            key: '4',
             label: <Link to={'/account/address'}>{t('header.userOption.addressInfo')}</Link>,
         },
         {
             type: 'divider',
         },
         {
-            key: '4',
+            key: '5',
             label: (
                 <Link to={'/login'} onClick={() => dispatch(logOut())}>
                     {t('header.userOption.logout')}

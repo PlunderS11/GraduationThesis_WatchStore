@@ -73,6 +73,7 @@
         "userOption": {
             "userInfo": "Personal information",
             "orderInfo": "Orders Information",
+            "notification": "Notification",
             "addressInfo": "Address",
             "logout": "Logout"
         }
@@ -267,6 +268,7 @@
         "account": "Account",
         "profile": "Personal information",
         "orders": "Orders information",
+        "notification": "Notification",
         "address": "Address"
     }
 }

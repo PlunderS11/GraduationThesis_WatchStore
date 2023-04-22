@@ -93,11 +93,11 @@ const Checkout = () => {
             } else {
                 toast.success(t('checkout.buySuccess'));
             }
+            navigate('/buysuccess');
         } catch (error) {
             toast.error(error.response.data.message);
         } finally {
             setIsLoadingBuy(false);
-            navigate('/buysuccess');
         }
     };
 
@@ -135,12 +135,12 @@ const Checkout = () => {
             } else {
                 toast.success(t('checkout.buySuccess'));
             }
+            navigate('/buysuccess');
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);
         } finally {
             setIsLoadingBuy(false);
-            navigate('/buysuccess');
         }
     };
 

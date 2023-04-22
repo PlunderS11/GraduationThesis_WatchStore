@@ -26,6 +26,7 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
     if (req.body.password) {
         req.body.password = CryptoJS.AES.encrypt(req.body.password, process.env.PASS_SECRET).toString();
     }
+    console.log(req.body);
     try {
         const updateUser = await User.findByIdAndUpdate(
             req.params.id,
@@ -221,30 +222,29 @@ router.put('/resetpassword/:id', verifyTokenAndAdmin, async (req, res) => {
 });
 
 //GET USER STATS
-router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
+router.get('/stats', verifyTokenAndAdmin, async (req, res) => {
     const date = new Date();
     const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
-  
-    try {
-      const data = await User.aggregate([
-        { $match: { createdAt: { $gte: lastYear }, role: "user" } },
-        {
-          $project: {
-            month: { $month: "$createdAt" },
-          },
-        },
-        {
-          $group: {
-            _id: "$month",
-            total: { $sum: 1 },
-          },
-        },
-      ]);
-      res.status(200).json({ data: { data: data }, message: 'success', status: 200 });
 
+    try {
+        const data = await User.aggregate([
+            { $match: { createdAt: { $gte: lastYear }, role: 'user' } },
+            {
+                $project: {
+                    month: { $month: '$createdAt' },
+                },
+            },
+            {
+                $group: {
+                    _id: '$month',
+                    total: { $sum: 1 },
+                },
+            },
+        ]);
+        res.status(200).json({ data: { data: data }, message: 'success', status: 200 });
     } catch (err) {
         res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
     }
-  });
+});
 
 module.exports = router;

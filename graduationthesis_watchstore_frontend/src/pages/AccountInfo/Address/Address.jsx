@@ -92,6 +92,7 @@ const Address = () => {
                     name: value.username,
                     phone: value.phone,
                 },
+                phone: value.phone,
             });
             toast.success('Cập nhật địa chỉ thành công');
             state &&

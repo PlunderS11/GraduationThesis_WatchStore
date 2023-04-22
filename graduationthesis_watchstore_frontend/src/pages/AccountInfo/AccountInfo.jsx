@@ -10,6 +10,7 @@ import Profile from './Profile/Profile';
 import Address from './Address/Address';
 import OrderPage from './Order/OrderPage';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
+import Notification from './Notification/Notification';
 
 const cx = classNames.bind(style);
 
@@ -46,6 +47,7 @@ const AccountInfo = () => {
                         <Col span={18}>
                             {params.category === 'profile' && <Profile />}
                             {params.category === 'orders' && <OrderPage />}
+                            {params.category === 'notification' && <Notification />}
                             {params.category === 'address' && <Address />}
                         </Col>
                     </Row>

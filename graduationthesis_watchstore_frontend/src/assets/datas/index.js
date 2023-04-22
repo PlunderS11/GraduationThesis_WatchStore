@@ -11,6 +11,7 @@ const menuHeader = [
 const accountOptions = [
     { path: '/account/profile', name: 'userInfo' },
     { path: '/account/orders', name: 'orderInfo' },
+    { path: '/account/notification', name: 'notification' },
     { path: '/account/address', name: 'addressInfo' },
     { path: '/', name: 'logout' },
 ];
