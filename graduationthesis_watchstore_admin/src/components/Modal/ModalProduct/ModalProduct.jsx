@@ -148,8 +148,13 @@ const ModalProduct = (props) => {
             formData.append('collectionObj', collectionObj);
             formData.append('descriptionvi', descriptionvi);
             formData.append('descriptionen', descriptionen);
-            formData.append('featuresvi', featuresvi.split(';'));
-            formData.append('featuresen', featuresen.split(';'));
+            featuresvi.split(';').map((item) => {
+                formData.append('featuresvi', item);
+            });
+            featuresen.split(';').map((item) => {
+                formData.append('featuresen', item);
+            });
+            // formData.append('featuresen', [...featuresen.split(';')]);
             formData.append('note', note);
             formData.append('sold', sold);
             formData.append('stock', stock);

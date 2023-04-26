@@ -93,7 +93,7 @@ const ModalNewsUpdate = (props) => {
         initialValues: {
             title: post.title + '',
             image: Array.prototype.slice.call(image),
-            description: post.description,
+            description: post.description + '',
             content: post.content,
         },
         validationSchema: Yup.object().shape({
@@ -214,6 +214,7 @@ const ModalNewsUpdate = (props) => {
                             <RichTextEditor
                                 ref={contentRef}
                                 onInit={() => {
+                                    console.log(post.content);
                                     contentRef.current?.setContent(post.content);
                                 }}
                                 onChange={(e) => {
@@ -222,7 +223,7 @@ const ModalNewsUpdate = (props) => {
                                     setPost({
                                         ...post,
                                         title: formik.values.title,
-                                        description: formik.values.title,
+                                        description: formik.values.description,
                                         content: e,
                                     });
                                 }}
