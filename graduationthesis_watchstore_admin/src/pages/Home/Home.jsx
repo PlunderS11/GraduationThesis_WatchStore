@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
-// import FeaturedInfo from '~/components/FeaturedInfo/FeaturedInfo';
+import FeaturedInfo from '~/components/FeaturedInfo/FeaturedInfo';
 // import NewMember from '~/components/NewMember/NewMember';
 import LastestTransactions from '~/components/LastestTransactions/LastestTransactions';
 import Chart from '~/components/Chart/Chart';
@@ -38,7 +38,7 @@ export default function Home() {
 
     return (
         <div className={cx('home')}>
-            {/* <FeaturedInfo /> */}
+            <FeaturedInfo />
             <Chart data={userStats} title="Biểu đồ phân tích người dùng" dataKey="Người dùng hoạt động" />
             <div className={cx('home-widgets')}>
                 {/* <NewMember /> */}

@@ -38,6 +38,7 @@ const ModalNewsUpdate = (props) => {
         // formik.errors.description = '';
         // formik.errors.image = '';
         // formik.errors.content = '';
+        setImage([]);
         setDelImg([]);
         onResetId('');
         onClose(false);
@@ -215,7 +216,7 @@ const ModalNewsUpdate = (props) => {
                                 ref={contentRef}
                                 onInit={() => {
                                     console.log(post.content);
-                                    contentRef.current?.setContent(post.content);
+                                    contentRef.current?.setContent(post.content || '');
                                 }}
                                 onChange={(e) => {
                                     // post.content = e;
