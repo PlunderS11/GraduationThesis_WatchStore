@@ -15,6 +15,8 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
         const newPromotion = new Promotion({
             titlevi: req.body.titlevi,
             titleen: req.body.titleen,
+            type: req.body.type,
+            forRank: req.body.forRank,
             code: req.body.code,
             value: req.body.value,
             startDate: timestampsStart,
@@ -142,7 +144,7 @@ router.get('/detailById/:id', async (req, res) => {
 //GET PROMOTIONS UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const promotions_undeleted = await Promotion.find({ isDelete: false }).exec();
+        const promotions_undeleted = await Promotion.find({ isDelete: false, type: 'normal' }).exec();
 
         res.status(200).json({ data: { promotions_undeleted: promotions_undeleted }, message: 'success', status: 200 });
     } catch (error) {
@@ -154,9 +156,21 @@ router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
 //GET PROMOTIONS DELETED
 router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const promotions_deleted = await Promotion.find({ isDelete: true }).exec();
+        const promotions_deleted = await Promotion.find({ isDelete: true, type: 'normal' }).exec();
 
         res.status(200).json({ data: { promotions_deleted: promotions_deleted }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error, status: 500 });
+    }
+});
+
+//GET PROMOTIONS SPECIAL
+router.get('/special/', verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const promotions_special = await Promotion.find({ type: 'special' }).exec();
+
+        res.status(200).json({ data: { promotions_special: promotions_special }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error, status: 500 });
@@ -236,5 +250,26 @@ router.post('/sendEmailToUser', verifyTokenAndAdmin, async (req, res) => {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
+// GET PROMOTION BY IDUser
+// CUSTOMER
+router.get('/myPromotion', verifyTokenAndAuthorization, async (req, res) => {
+    try {
+        const promotions = await Promotion.find({ users: { $nin: [req.user.id] } }).exec();
+        const user = await User.findById(req.user.id).populate('rank');
+        const findRank = await Rank.find({ minValue: { $lte: user.rank.minValue } });
 
+        const promotionUsed = await Promotion.find({ users: { $in: [req.user.id] } }).exec();
+        const promotionAvailable = promotions
+            .filter(
+                item =>
+                    new Date().getTime() > new Date(item.startDate).getTime() &&
+                    new Date().getTime() < new Date(item.endDate).getTime() &&
+                    item.type === 'normal'
+            )
+            .concat(promotions.filter(p => !!findRank.find(r => r._id.toString() === p.forRank)));
+        res.status(200).json({ data: { promotionAvailable, promotionUsed }, message: 'success', status: 200 });
+    } catch (error) {
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
 module.exports = router;

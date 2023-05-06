@@ -180,7 +180,7 @@ router.get('/detail/:id', async (req, res) => {
 //GET PROMOTIONS UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const ranks_undeleted = await Rank.find({ isDelete: false }).exec();
+        const ranks_undeleted = await Rank.find({ isDelete: false, nameen: {$ne: 'Unrank'} }).exec();
 
         res.status(200).json({ data: { ranks_undeleted: ranks_undeleted }, message: 'success', status: 200 });
     } catch (error) {

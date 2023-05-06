@@ -10,6 +10,14 @@ const PromotionSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        type: {
+            type: String,
+            required: true,
+        },
+        forRank: {
+            type: String,
+            required: false,
+        },
         code: {
             type: String,
             required: true,
