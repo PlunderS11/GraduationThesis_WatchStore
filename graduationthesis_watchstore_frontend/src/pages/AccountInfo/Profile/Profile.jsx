@@ -94,7 +94,7 @@ const Profile = () => {
                                         }}
                                         htmlType="submit"
                                     >
-                                        Lưu
+                                        {t('button.save')}
                                     </Button>
                                 </Form.Item>
                             </Col>

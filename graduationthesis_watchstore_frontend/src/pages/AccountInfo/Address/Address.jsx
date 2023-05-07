@@ -9,9 +9,11 @@ import axiosClient, { GHN } from '../../../api/axiosClient';
 import style from './Address.module.scss';
 import classNames from 'classnames/bind';
 import { fetchUserInfor } from '../../../features/user';
+import { useTranslation } from 'react-i18next';
 const cx = classNames.bind(style);
 
 const Address = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
@@ -108,7 +110,7 @@ const Address = () => {
         <Spin spinning={loading}>
             <div className={cx('profile__info')}>
                 <div className={cx('profile__info-title')}>
-                    <h4 style={{ fontWeight: '700', fontSize: '20px' }}>Cập nhật thông tin</h4>
+                    <h4 style={{ fontWeight: '700', fontSize: '20px' }}>{t('accountInfo.updateInfor')}</h4>
                 </div>
                 <div className={cx('profile__info-body')}>
                     <Form
@@ -125,24 +127,24 @@ const Address = () => {
                             <Col span={18}>
                                 <Form.Item
                                     style={{ fontSize: '25px', fontWeight: 'bold' }}
-                                    label="Họ tên"
+                                    label={t('checkout.name')}
                                     name="username"
                                     rules={[{ required: true, message: 'Bắc buộc' }]}
                                 >
-                                    <Input placeholder="Họ tên người nhận" />
+                                    <Input placeholder={t('checkout.name')} />
                                 </Form.Item>
                                 <Form.Item
                                     rules={[{ required: true, message: 'Bắc buộc' }]}
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                    label="Số điện thoại"
+                                    label={t('checkout.phone')}
                                     name="phone"
                                 >
-                                    <Input placeholder="Số điện thoại" />
+                                    <Input placeholder={t('checkout.phone')} />
                                 </Form.Item>
                                 <Form.Item
                                     rules={[{ required: true, message: 'Bắc buộc' }]}
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                    label="Tỉnh / Thành phố"
+                                    label={t('checkout.selectCityOption')}
                                     name="province"
                                 >
                                     <Select
@@ -162,7 +164,7 @@ const Address = () => {
                                 <Form.Item
                                     rules={[{ required: true, message: 'Bắc buộc' }]}
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                    label="Quận / Huyện"
+                                    label={t('checkout.selectDistrictOption')}
                                     name="district"
                                 >
                                     <Select
@@ -182,7 +184,7 @@ const Address = () => {
                                 <Form.Item
                                     rules={[{ required: true, message: 'Bắc buộc' }]}
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                    label="Phường / Xã"
+                                    label={t('checkout.selectWardOption')}
                                     name="ward"
                                 >
                                     <Select
@@ -201,7 +203,7 @@ const Address = () => {
                                 <Form.Item
                                     rules={[{ required: true, message: 'Bắc buộc' }]}
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
-                                    label="Địa chỉ"
+                                    label={t('checkout.address')}
                                     name="address"
                                 >
                                     <Input placeholder="Số nhà, tên đường" />
@@ -217,7 +219,7 @@ const Address = () => {
                                         htmlType="submit"
                                         loading={loading}
                                     >
-                                        {user.user.address?.address ? 'Cập nhật' : 'Lưu'}
+                                        {user.user.address?.address ? t('button.update') : t('button.save')}
                                     </Button>
                                 </Form.Item>
                             </Col>

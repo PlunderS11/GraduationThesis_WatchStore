@@ -3,6 +3,7 @@ const { default: mongoose } = require('mongoose');
 const { verifyTokenAndAdmin, verifyTokenAndAuthorization } = require('../middleware/verifyToken');
 const Promotion = require('../models/promotionModel');
 const User = require('../models/userModel');
+const Rank = require('../models/rankModel');
 const moment = require('moment');
 const SendMailUtil = require('../utils/sendEmail');
 
@@ -15,6 +16,8 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
         const newPromotion = new Promotion({
             titlevi: req.body.titlevi,
             titleen: req.body.titleen,
+            type: req.body.type,
+            forRank: req.body.forRank,
             code: req.body.code,
             value: req.body.value,
             startDate: timestampsStart,
@@ -117,12 +120,35 @@ router.get('/', verifyTokenAndAuthorization, async (req, res) => {
 
 // GET PROMOTION BY CODE
 // CUSTOMER
-router.get('/detail/:code', async (req, res) => {
+router.get('/detail/:code', verifyTokenAndAuthorization, async (req, res) => {
     try {
         const promotion = await Promotion.findOne({ code: req.params.code }).exec();
         res.status(200).json({ data: { promotion }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
+// GET PROMOTION BY IDUser
+// CUSTOMER
+router.get('/myPromotion', verifyTokenAndAuthorization, async (req, res) => {
+    try {
+        const promotions = await Promotion.find({ users: { $nin: [req.user.id] } }).exec();
+        const user = await User.findById(req.user.id).populate('rank');
+        const findRank = await Rank.find({ minValue: { $lte: user.rank.minValue } });
+
+        const promotionUsed = await Promotion.find({ users: { $in: [req.user.id] } }).exec();
+        const promotionAvailable = promotions
+            .filter(
+                item =>
+                    new Date().getTime() > new Date(item.startDate).getTime() &&
+                    new Date().getTime() < new Date(item.endDate).getTime() &&
+                    item.type === 'normal'
+            )
+            .concat(promotions.filter(p => !!findRank.find(r => r._id.toString() === p.forRank)));
+        res.status(200).json({ data: { promotionAvailable, promotionUsed }, message: 'success', status: 200 });
+    } catch (error) {
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });

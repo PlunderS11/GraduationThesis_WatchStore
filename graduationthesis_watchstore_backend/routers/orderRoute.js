@@ -164,7 +164,6 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
             await order.save();
 
             // Check rank
-            const orderList = await Order.find().populate('user').sort({ dateOrdered: -1 }).exec();
             const rank = await Rank.find();
             var totalPriceOrderUser = await Order.aggregate([
                 {
@@ -318,7 +317,6 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                         pathUrl: `/account/order-history/${order._id}`,
                     });
                 }
-
                 const notificationAdmin = {
                     title: 'Đơn hàng mới',
                     content: `Đơn hàng #${order.code} vừa được tạo.`,
@@ -393,6 +391,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                     }
                     if (promotion) {
                         discountValue = promotion.value;
+                        const newUsers = [...promotion.users, req.user.id];
                         await Promotion.findByIdAndUpdate(promotion._id, {
                             $set: { users: newUsers },
                         });
@@ -406,6 +405,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                             break;
                         }
                     }
+
                     let orderDetails = [];
                     let productPrice = 0;
                     if (check) {
@@ -434,7 +434,6 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
 
                         let order = new Order({
                             user: { ...orther },
-
                             promotion: promotion,
                             orderDetails,
                             recipient: {
@@ -466,21 +465,31 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                         await order.save();
 
                         // Check rank
-                        const orderList = await Order.find()
-                            .populate('user')
-                            .populate('orderDetails')
-                            .populate('promotion')
-                            .sort({ dateOrdered: -1 })
-                            .exec();
                         const rank = await Rank.find();
-                        const totalPriceOrderUser = orderList.reduce((acc, cur) => {
-                            if (cur.user._id.toString() == req.user.id) {
-                                return acc + cur.finalPrice;
-                            }
-                        }, 0);
-                        const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
-                        //----------------------------------------------------------------
+                        var totalPriceOrderUser = await Order.aggregate([
+                            {
+                                $lookup: {
+                                    from: 'users',
+                                    localField: 'user',
+                                    foreignField: '_id',
+                                    as: 'user',
+                                },
+                            },
+                            {
+                                $unwind: '$user',
+                            },
+                            {
+                                $match: {
+                                    'user._id': ObjectId(req.user.id),
+                                },
+                            },
+                            { $group: { _id: null, totalFinalPrice: { $sum: '$finalPrice' } } },
+                            { $project: { totalFinalPrice: true, _id: false } },
+                        ]).then(items => items[0].totalFinalPrice);
 
+                        const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
+
+                        //----------------------------------------------------------------
                         if (user.rank._id.toString() !== rs._id.toString()) {
                             await User.findByIdAndUpdate(req.user.id, {
                                 $set: { rank: rs },
@@ -497,9 +506,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                 mode: 'private',
                                 lastSendAt: moment().unix(),
                             };
-
                             await Notification.create(notification);
-
                             const oneSignals = await OneSignal.aggregate([
                                 {
                                     $lookup: {
@@ -512,8 +519,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                 { $unwind: '$user' },
                                 { $match: { 'user.role': 'user' } },
                             ]);
-
-                            if (oneSignals.length) {
+                            if (oneSignals.length > 0) {
                                 await OneSignalUtil.pushNotification({
                                     isAdmin: false,
                                     heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
@@ -526,7 +532,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                         orderId: order._id + '',
                                     },
                                     oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
-                                    pathUrl: '/account/orders',
+                                    pathUrl: `/account/order-history/${order._id}`,
                                 });
                             }
 
@@ -556,7 +562,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                 { $unwind: '$user' },
                                 { $match: { 'user.role': 'admin' } },
                             ]);
-                            if (oneSignalsAdmin.length) {
+                            if (oneSignalsAdmin.length > 0) {
                                 await OneSignalUtil.pushNotification({
                                     isAdmin: true,
                                     heading: 'Đơn hàng mới',
@@ -583,9 +589,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                 mode: 'private',
                                 lastSendAt: moment().unix(),
                             };
-
                             await Notification.create(notification);
-
                             const oneSignals = await OneSignal.aggregate([
                                 {
                                     $lookup: {
@@ -598,8 +602,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                 { $unwind: '$user' },
                                 { $match: { 'user.role': 'user' } },
                             ]);
-
-                            if (oneSignals.length) {
+                            if (oneSignals.length > 0) {
                                 await OneSignalUtil.pushNotification({
                                     isAdmin: false,
                                     heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
@@ -612,10 +615,9 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                         orderId: order._id + '',
                                     },
                                     oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
-                                    pathUrl: '/account/orders',
+                                    pathUrl: `/account/order-history/${order._id}`,
                                 });
                             }
-
                             const notificationAdmin = {
                                 title: 'Đơn hàng mới',
                                 content: `Đơn hàng #${order.code} vừa được tạo.`,
@@ -642,7 +644,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                                 { $unwind: '$user' },
                                 { $match: { 'user.role': 'admin' } },
                             ]);
-                            if (oneSignalsAdmin.length) {
+                            if (oneSignalsAdmin.length > 0) {
                                 await OneSignalUtil.pushNotification({
                                     isAdmin: true,
                                     heading: 'Đơn hàng mới',

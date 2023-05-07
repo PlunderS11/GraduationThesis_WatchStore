@@ -11,6 +11,7 @@ import Address from './Address/Address';
 import OrderPage from './Order/OrderPage';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import Notification from './Notification/Notification';
+import Voucher from './Voucher/Voucher';
 
 const cx = classNames.bind(style);
 
@@ -49,6 +50,7 @@ const AccountInfo = () => {
                             {params.category === 'orders' && <OrderPage />}
                             {params.category === 'notification' && <Notification />}
                             {params.category === 'address' && <Address />}
+                            {params.category === 'voucher' && <Voucher />}
                         </Col>
                     </Row>
                 </div>

@@ -13,6 +13,7 @@ const accountOptions = [
     { path: '/account/orders', name: 'orderInfo' },
     { path: '/account/notification', name: 'notification' },
     { path: '/account/address', name: 'addressInfo' },
+    { path: '/account/voucher', name: 'voucher' },
     { path: '/', name: 'logout' },
 ];
 

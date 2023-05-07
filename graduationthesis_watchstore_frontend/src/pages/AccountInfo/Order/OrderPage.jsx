@@ -147,7 +147,7 @@ const OrderPage = () => {
     return (
         <div className={cx('profile__info')}>
             <div className={cx('profile__info-title')}>
-                <h4 style={{ fontWeight: '700', fontSize: '20px' }}>Danh sách đơn hàng</h4>
+                <h4 style={{ fontWeight: '700', fontSize: '20px' }}>{t('accountInfo.listOrder')}</h4>
             </div>
             <div style={{ border: '2px solid #f0f0f0' }}>
                 <Spin spinning={loading}>

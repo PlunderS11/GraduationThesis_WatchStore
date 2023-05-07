@@ -52,11 +52,13 @@ const Notification = props => {
         <Spin spinning={loading}>
             <div className={cx('profile__info')}>
                 <div className={cx('profile__info-title')}>
-                    <h4 style={{ fontWeight: '700', fontSize: '20px' }}>Thông báo của tôi</h4>
+                    <h4 style={{ fontWeight: '700', fontSize: '20px' }}>{t('accountInfo.myNotification')}</h4>
                 </div>
                 <div style={{ border: '2px solid #f0f0f0', padding: '20px' }}>
                     <div className={cx('notification-header')}>
-                        <div className={cx('notification-header-title')}>{`Thông báo mới (${notiSeen})`}</div>
+                        <div className={cx('notification-header-title')}>{`${t(
+                            'accountInfo.notificationNew'
+                        )} (${notiSeen})`}</div>
                         {/* <Button onclick={handleSeenAllNoti}>Đọc tất cả</Button> */}
                     </div>
                     {noti.map(item => (

@@ -13,7 +13,9 @@
         "gotoOrderHistory": "Đến lịch sử đơn hàng",
         "contactStore": "Liên hệ cửa hàng",
         "orderCancel": "Hủy đơn",
-        "loadMore": "Xem thêm"
+        "loadMore": "Xem thêm",
+        "update": "Cập nhật",
+        "save": "Lưu"
     },
     "cart": {
         "checkout": "Thanh toán",
@@ -75,6 +77,7 @@
             "orderInfo": "Thông tin đơn hàng",
             "notification": "Thông báo",
             "addressInfo": "Địa chỉ",
+            "voucher": "Kho voucher",
             "logout": "Đăng xuất"
         }
     },
@@ -201,9 +204,9 @@
         "checkout": "Thanh toán",
         "itemsPrice": "Đơn hàng",
         "shippingPrice": "Phí vận chuyển",
-        "selectCityOption": "Chọn tỉnh/thành phố",
-        "selectDistrictOption": "Chọn quận/huyện",
-        "selectWardOption": "Chọn xã/phường",
+        "selectCityOption": "Tỉnh/thành phố",
+        "selectDistrictOption": "Quận/huyện",
+        "selectWardOption": "Xã/phường",
         "paymentMethod": "Phương thức thanh toán",
         "cod": "Tiền mặt",
         "descriptionCOD": "Thanh toán khi nhận hàng",
@@ -232,7 +235,17 @@
     },
     "accountInfo": {
         "updateInfor": "Cập nhật thông tin",
-        "generalInfo": "Thông tin chung"
+        "generalInfo": "Thông tin chung",
+        "listOrder": "Danh sách đơn hàng",
+        "myNotification": "Thông báo của tôi",
+        "myVoucher": "Voucher của tôi",
+        "notificationNew": "Thông báo mới",
+        "promotionName": "Tên chương trình ",
+        "noused": "Chưa dùng",
+        "used": "Đã dùng",
+        "startDate": "Ngày bắt đầu",
+        "endDate": "Ngày kết thúc",
+        "value": "Giá trị"
     },
     "table": {
         "image": "Hình ảnh",
@@ -269,6 +282,7 @@
         "profile": "Thông tin cá nhân",
         "orders": "Đơn hàng",
         "notification": "Thông báo",
-        "address": "Địa chỉ"
+        "address": "Địa chỉ",
+        "voucher": "Kho voucher"
     }
 }

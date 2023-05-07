@@ -33,10 +33,14 @@ function UserOption({ user }) {
             label: <Link to={'/account/address'}>{t('header.userOption.addressInfo')}</Link>,
         },
         {
+            key: '5',
+            label: <Link to={'/account/voucher'}>{t('header.userOption.voucher')}</Link>,
+        },
+        {
             type: 'divider',
         },
         {
-            key: '5',
+            key: '6',
             label: (
                 <Link to={'/login'} onClick={() => dispatch(logOut())}>
                     {t('header.userOption.logout')}

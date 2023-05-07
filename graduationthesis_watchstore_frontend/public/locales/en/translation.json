@@ -13,7 +13,9 @@
         "gotoOrderHistory": "Go to the order history",
         "contactStore": "Contact store",
         "orderCancel": "Cancel order",
-        "loadMore": "Load More"
+        "loadMore": "Load More",
+        "update": "Update",
+        "save": "Save"
     },
     "cart": {
         "checkout": "Checkout",
@@ -75,6 +77,7 @@
             "orderInfo": "Orders Information",
             "notification": "Notification",
             "addressInfo": "Address",
+            "voucher": "Voucher store",
             "logout": "Logout"
         }
     },
@@ -232,7 +235,17 @@
     },
     "accountInfo": {
         "updateInfor": "Update Information",
-        "generalInfo": "General Information"
+        "generalInfo": "General Information",
+        "listOrder": "List order",
+        "myNotification": "My notification",
+        "myVoucher": "My voucher",
+        "notificationNew": "Notification new",
+        "promotionName": "Promotion name",
+        "noused": "Not used",
+        "used": "Used",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "value": "Value"
     },
     "table": {
         "image": "Image",
@@ -269,6 +282,7 @@
         "profile": "Personal information",
         "orders": "Orders information",
         "notification": "Notification",
-        "address": "Address"
+        "address": "Address",
+        "voucher": "Voucher store"
     }
 }

@@ -52,6 +52,7 @@ const Checkout = () => {
 
     useEffect(() => {
         user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
+        localStorage.getItem('promotionCode') && setCoupon(JSON.parse(localStorage.getItem('promotionCode')));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

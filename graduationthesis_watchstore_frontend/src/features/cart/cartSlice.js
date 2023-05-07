@@ -68,6 +68,7 @@ const cartSlice = createSlice({
                 state.estimate = {};
                 state.isLoadingCart = true;
                 localStorage.removeItem('cartItems');
+                localStorage.removeItem('promotionCode');
             } finally {
                 state.isLoadingCart = false;
             }

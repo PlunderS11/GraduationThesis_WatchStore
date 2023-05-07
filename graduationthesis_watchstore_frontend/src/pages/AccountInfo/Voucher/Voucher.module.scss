@@ -1,0 +1,29 @@
+@use '../../../components/GlobalStyles' as *;
+.profile__info {
+    width: 100%;
+    padding: 0 15px;
+}
+
+.profile__info-title {
+    padding: 1.5rem 2rem;
+    border-top: none;
+    border-bottom: none;
+    background-color: transparent;
+    border: 2px solid #f0f0f0;
+}
+
+.profile__info-body {
+    padding: 2rem;
+    border: 2px solid #f0f0f0;
+}
+
+.card {
+    width: 47% !important;
+    padding: 10px 20px !important;
+    margin: 8px;
+    text-align: center;
+    background-color: #fff;
+    border: 2px solid transparent;
+    border-bottom-right-radius: 5px;
+    overflow: hidden;
+}
