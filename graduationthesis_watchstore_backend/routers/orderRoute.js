@@ -698,6 +698,7 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
                         ...order.status._doc,
                         state: 'CANCEL',
                     },
+                    paymentStatus: order.paymentType === 'CASH' ? 'CANCEL' : 'REFUNDING',
                 },
             });
             res.status(200).json({ data: {}, message: 'success', status: 200 });
