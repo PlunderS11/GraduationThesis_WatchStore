@@ -66,11 +66,11 @@ const OrderHistoryPage = () => {
 
     const handleOrderCancel = async () => {
         try {
+            setModalOpen(false);
             setLoading(true);
             const res = await axiosClient.post('order/cancel/', { orderId: order._id });
             if (res.status === 200) {
                 setCancel(true);
-                setModalOpen(false);
             }
         } catch (error) {
         } finally {
@@ -131,17 +131,17 @@ const OrderHistoryPage = () => {
     return (
         <div>
             <Modal
-                title="Thông báo"
+                title={t('breadcrumbs.notification')}
                 centered
-                cancelText="Không"
-                okText="Có"
+                cancelText={t('antd.popconfirm.cancelText')}
+                okText={t('antd.popconfirm.okText')}
                 // confirmLoading={historyStore.isLoadingHistoryOrders}
                 className={cx('modal-style')}
                 open={modalOpen}
                 onOk={() => handleOrderCancel()}
                 onCancel={() => setModalOpen(false)}
             >
-                <p>Bạn chắc chắc hủy đơn?</p>
+                <p>{t('antd.popconfirm.title')}</p>
             </Modal>
             <Spin spinning={loading}>
                 {order.finalPrice && (
@@ -165,8 +165,9 @@ const OrderHistoryPage = () => {
                                         </div>
                                         <div className={cx('body__info-header-btn')}>
                                             <Button>{t('button.contactStore')}</Button>
-                                            {order?.status.state !== 'CANCELED' &&
-                                                order?.status !== 'COMPLETE' &&
+                                            {order?.status.state !== 'CANCEL' &&
+                                                order?.status.state !== 'COMPLETE' &&
+                                                order?.status.state !== 'DELIVERING' &&
                                                 cancel === false && (
                                                     <Button onclick={() => setModalOpen(true)}>
                                                         {t('button.orderCancel')}
@@ -210,10 +211,10 @@ const OrderHistoryPage = () => {
                                                             current={step}
                                                             direction="vertical"
                                                             items={
-                                                                cancel || order?.status.state === 'CANCELED'
+                                                                cancel || order?.status.state === 'CANCEL'
                                                                     ? [
                                                                           {
-                                                                              title: t('cart.status.canceled'),
+                                                                              title: t('cart.status.cancel'),
                                                                           },
                                                                       ]
                                                                     : [
@@ -248,7 +249,7 @@ const OrderHistoryPage = () => {
                                                                               ),
                                                                           },
                                                                           {
-                                                                              title: t('cart.status.completed'),
+                                                                              title: t('cart.status.complete'),
                                                                               description: step === 3 && (
                                                                                   <span>
                                                                                       {moment(

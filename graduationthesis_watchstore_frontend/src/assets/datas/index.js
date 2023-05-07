@@ -146,4 +146,13 @@ const showrooms = [
     },
 ];
 
-export { menuFooter, accountOptions, showrooms, menuHeader };
+const orderStatus = {
+    all: '',
+    pending: 'PENDING',
+    package: 'PACKAGE',
+    delivering: 'DELIVERING',
+    complete: 'COMPLETE',
+    cancel: 'CANCEL',
+};
+
+export { menuFooter, accountOptions, showrooms, menuHeader, orderStatus };

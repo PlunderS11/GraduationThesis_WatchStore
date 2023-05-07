@@ -8,6 +8,9 @@ i18n.use(HttpApi)
     .use(initReactI18next)
     .init({
         fallbackLng: 'vi',
+        // lng: 'vi',
+        debug: false,
+        // whitelist: availableLanguages,
         interpolation: {
             escapeValue: false,
         },

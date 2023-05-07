@@ -8,21 +8,17 @@ export const fetchEstimate = createAsyncThunk('cart/fetchEstimate', async (data,
         // eslint-disable-next-line no-unused-vars
         const { rejectWithValue, getState } = thunkApi;
         const products = getState().cart.items;
-
         const resUser = await axiosClient.get('user/userInfo');
         var promotionCode = '';
         var code = data || getState().cart.promotionCode;
         if (code) {
-            const resPromotion = await axiosClient.get(`promotion/detail/${code}`);
-            const promotionExist = resPromotion.data.promotion?.users.includes(resUser.data._id);
-            if (resPromotion.data.promotion?.isDelete || !resPromotion.data.promotion) {
-                toast.info(i18n.t('cart.promotion.null'));
-            } else if (new Date().getTime() < new Date(resPromotion.data.promotion?.startDate).getTime()) {
-                toast.info(i18n.t('cart.promotion.start'));
-            } else if (new Date().getTime() > new Date(resPromotion.data.promotion?.endDate).getTime()) {
-                toast.info(i18n.t('cart.promotion.end'));
-            } else if (promotionExist) {
+            const resPromotion = await axiosClient.get('promotion/myPromotion');
+            const promotionAvailable = resPromotion?.data.promotionAvailable?.find(p => p.code === code);
+            const promotionExist = !!resPromotion?.data.promotionUsed?.find(p => p.code === code);
+            if (promotionExist) {
                 toast.info(i18n.t('cart.promotion.isUsed'));
+            } else if (!promotionAvailable) {
+                toast.info(i18n.t('cart.promotion.null'));
             } else {
                 toast.success(i18n.t('cart.promotion.success'));
                 promotionCode = code;

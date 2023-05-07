@@ -682,7 +682,7 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
                 },
             })
             .exec();
-        if (order.status.state === 'PENDING') {
+        if (order.status.state === 'PENDING' || order.status.state === 'PACKAGE') {
             for (let i = 0; i < order.orderDetails.length; i++) {
                 const element = order.orderDetails[i];
                 await Product.findByIdAndUpdate(element.product._id, {
@@ -696,7 +696,7 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
                 $set: {
                     status: {
                         ...order.status._doc,
-                        state: 'CANCELED',
+                        state: 'CANCEL',
                     },
                 },
             });
@@ -985,7 +985,7 @@ router.get('/admin/:id', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL ORDER BY ID USER
 router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        const orderList = await Order.find()
+        const orderList = await Order.find({ 'status.state': req.query.status || undefined })
             .populate('user')
             .populate({
                 path: 'orderDetails',
@@ -1000,6 +1000,38 @@ router.get('/customer', verifyTokenAndAuthorization, async (req, res) => {
             return item.user._id.toString() == req.user.id;
         });
         res.status(200).json({ data: { orders: rs, total: rs.length }, message: 'success', status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
+// GET SUMMARY ORDER
+router.get('/summary', verifyTokenAndAuthorization, async (req, res) => {
+    try {
+        const orderList = await Order.find()
+            .populate('user')
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
+            .populate('promotion')
+            .sort({ dateOrdered: -1 })
+            .exec();
+        const rs = orderList.filter(item => {
+            return item.user._id.toString() == req.user.id;
+        });
+        const summary = rs.reduce((acc, item) => {
+            if (item.status.state.toLowerCase() in acc) {
+                acc[item.status.state.toLowerCase()] += 1;
+            } else {
+                acc[item.status.state.toLowerCase()] = 1;
+            }
+            return acc;
+        }, {});
+        res.status(200).json({ data: { summary: { ...summary, all: rs.length } }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });
@@ -1075,25 +1107,25 @@ router.get('/income', verifyTokenAndAdmin, async (req, res) => {
 
 // GET MONTHLY ORDERS INCOME
 router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
-    const year = req.query.year
-    const month = req.query.month
+    const year = req.query.year;
+    const month = req.query.month;
 
     try {
         const income = await Order.aggregate([
             {
                 $match: {
-                dateOrdered: {
-                    $gte: new Date(year, month - 1, 1),
-                    $lt: new Date(year, month, 1)
-                }
-                }
+                    dateOrdered: {
+                        $gte: new Date(year, month - 1, 1),
+                        $lt: new Date(year, month, 1),
+                    },
+                },
             },
             {
                 $group: {
-                _id: null,
-                total: { $sum: "$finalPrice" }
-                }
-            }
+                    _id: null,
+                    total: { $sum: '$finalPrice' },
+                },
+            },
         ]);
 
         res.status(200).json({ data: { income: income }, message: 'success', status: 200 });
@@ -1104,8 +1136,8 @@ router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
 
 // GET MONTHLY ORDERS QUANTITIES
 router.get('/incomequantity', verifyTokenAndAdmin, async (req, res) => {
-    const year = req.query.year
-    const month = req.query.month
+    const year = req.query.year;
+    const month = req.query.month;
 
     try {
         const income = await Order.aggregate([
@@ -1124,9 +1156,9 @@ router.get('/incomequantity', verifyTokenAndAdmin, async (req, res) => {
                 $match: {
                     dateOrdered: {
                         $gte: new Date(year, month - 1, 1),
-                        $lt: new Date(year, month, 1)
-                    }
-                }
+                        $lt: new Date(year, month, 1),
+                    },
+                },
             },
             {
                 $project: {

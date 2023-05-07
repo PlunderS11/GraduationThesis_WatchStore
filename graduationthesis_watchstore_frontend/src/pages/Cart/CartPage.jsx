@@ -43,16 +43,16 @@ const CartPage = () => {
         );
     };
 
-    const handleUpdateCart = async id => {
-        dispatch(
-            updateCartItem({
-                product: id,
-                quantity: input,
-                type: 'quantity',
-            })
-        );
-        dispatch(fetchEstimate());
-    };
+    // const handleUpdateCart = async id => {
+    //     dispatch(
+    //         updateCartItem({
+    //             product: id,
+    //             quantity: input,
+    //             type: 'quantity',
+    //         })
+    //     );
+    //     dispatch(fetchEstimate());
+    // };
 
     const handleIncrease = async id => {
         dispatch(
@@ -243,6 +243,7 @@ const CartPage = () => {
                                         className="modal-style"
                                         open={isModalOpen}
                                         onCancel={handleCancel}
+                                        width={550}
                                         footer={null}
                                     >
                                         <div className={cx('modal__body')}>
@@ -294,8 +295,8 @@ const CartPage = () => {
                                 <div>
                                     <div className={cx('checkout')}>
                                         <div className={cx('checkout-button')}>
-                                            <Button to="/hebec-shop">Tiếp tục mua sắm</Button>
-                                            <Button onclick={handleUpdateCart}>Cập nhật giỏ hàng</Button>
+                                            <Button to="/">{t('button.keepShopping')}</Button>
+                                            <Button to="/account/orders">{t('button.gotoOrderHistory')}</Button>
                                         </div>
                                         <div className={cx('checkout-form')}>
                                             <div className={cx('checkout-form-body')}>

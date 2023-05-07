@@ -19,11 +19,11 @@ router.get('/', async (req, res) => {
             name: req.query.name ? req.query.name : undefined,
             brand: req.query.brand ? req.query.brand : undefined,
             stock: req.query.stock ? { $gte: 0 } : undefined,
-            price:
+            finalPrice:
                 req.query.minValue && req.query.maxValue
                     ? {
                           $gte: req.query.minValue,
-                          $lte: req.body.maxValue,
+                          $lt: req.query.maxValue,
                       }
                     : undefined,
         };

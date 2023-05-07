@@ -8,9 +8,10 @@
         "order": "Order",
         "buy": "buy now",
         "addToCart": "add to cart",
+        "keepShopping": "Keep Shopping",
         "gotoCart": "Go to Cart",
         "goHome": "Go to the homepage",
-        "gotoOrderHistory": "Go to the order history",
+        "gotoOrderHistory": "The order history",
         "contactStore": "Contact store",
         "orderCancel": "Cancel order",
         "loadMore": "Load More",
@@ -38,9 +39,10 @@
         "note": "Note",
         "notePlace": "Please note about add or time to receive order, v.v...",
         "status": {
+            "all": "All",
             "pending": "Pending",
-            "completed": "Completed",
-            "canceled": "Canceled",
+            "complete": "Completed",
+            "cancel": "Canceled",
             "package": "Package",
             "delivering": "Delivering"
         },
@@ -245,6 +247,7 @@
         "used": "Used",
         "startDate": "Start date",
         "endDate": "End date",
+        "forever": "Forever",
         "value": "Value"
     },
     "table": {
@@ -258,7 +261,7 @@
     },
     "antd": {
         "popconfirm": {
-            "title": "Are you sure to delete this task?",
+            "title": "Are you sure you want to do it?",
             "description": "Delete the task",
             "okText": "Yes",
             "cancelText": "No"

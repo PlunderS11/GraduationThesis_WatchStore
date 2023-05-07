@@ -26,12 +26,14 @@ const ProductCategory = () => {
         collectionName: undefined,
         brand: undefined,
         stock: undefined,
-        price: undefined,
+        minValue: undefined,
+        maxValue: undefined,
         type: params.type === 'accessory' ? 'strap' : 'watch',
         sex: params.type === 'accessory' ? undefined : params.type.split('')[0],
     });
     const [products, setProducts] = useState({});
     useEffect(() => {
+        setQuery({ ...query, sex: params.type.split('')[0] });
         dispatch(changeProgress(95));
         let url;
         switch (params.type) {
@@ -112,21 +114,49 @@ const ProductCategory = () => {
                                     defaultValue={0}
                                     style={{ width: 190 }}
                                     options={[
-                                        { value: 0, label: `Dưới ${NumberWithCommas(500000)}` },
+                                        { value: 0, label: '--' },
+                                        { value: 1, label: `Dưới ${NumberWithCommas(500000)}` },
                                         {
-                                            value: 1,
+                                            value: 2,
                                             label: `${NumberWithCommas(500000)} - ${NumberWithCommas(1000000)}`,
                                         },
                                         {
-                                            value: 2,
+                                            value: 3,
                                             label: `${NumberWithCommas(1000000)} - ${NumberWithCommas(5000000)}`,
                                         },
                                         {
-                                            value: 3,
+                                            value: 4,
                                             label: `${NumberWithCommas(5000000)} - ${NumberWithCommas(10000000)}`,
                                         },
+                                        {
+                                            value: 5,
+                                            label: `Trên ${NumberWithCommas(10000000)}`,
+                                        },
                                     ]}
-                                    onChange={e => setQuery({ ...query, price: e })}
+                                    onChange={e => {
+                                        switch (e) {
+                                            case 0:
+                                                setQuery({ ...query, minValue: undefined, maxValue: undefined });
+                                                break;
+                                            case 1:
+                                                setQuery({ ...query, minValue: 0, maxValue: 500000 });
+                                                break;
+                                            case 2:
+                                                setQuery({ ...query, minValue: 500000, maxValue: 1000000 });
+                                                break;
+                                            case 3:
+                                                setQuery({ ...query, minValue: 1000000, maxValue: 5000000 });
+                                                break;
+                                            case 4:
+                                                setQuery({ ...query, minValue: 5000000, maxValue: 10000000 });
+                                                break;
+                                            case 5:
+                                                setQuery({ ...query, minValue: 10000000, maxValue: 999999999999 });
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }}
                                 ></Select>
                             </Descriptions.Item>
                             <Descriptions.Item>

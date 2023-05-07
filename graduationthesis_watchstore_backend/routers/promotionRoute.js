@@ -118,18 +118,6 @@ router.get('/', verifyTokenAndAuthorization, async (req, res) => {
     }
 });
 
-// GET PROMOTION BY CODE
-// CUSTOMER
-router.get('/detail/:code', verifyTokenAndAuthorization, async (req, res) => {
-    try {
-        const promotion = await Promotion.findOne({ code: req.params.code }).exec();
-        res.status(200).json({ data: { promotion }, message: 'success', status: 200 });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ data: {}, message: error.message, status: 500 });
-    }
-});
-
 // GET PROMOTION BY IDUser
 // CUSTOMER
 router.get('/myPromotion', verifyTokenAndAuthorization, async (req, res) => {

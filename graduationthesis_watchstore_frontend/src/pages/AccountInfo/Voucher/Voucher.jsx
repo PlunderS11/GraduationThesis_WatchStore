@@ -43,72 +43,99 @@ const Voucher = () => {
                     <h4 style={{ fontWeight: '700', fontSize: '20px' }}>{t('accountInfo.myVoucher')}</h4>
                 </div>
                 <div style={{ border: '2px solid #f0f0f0', padding: '10px' }}>
-                    <Tabs defaultActiveKey="1">
-                        <Tabs.TabPane tab={t('accountInfo.noused')} key={1}>
-                            <Card>
-                                {promotionAvailable.map(item => (
-                                    <Card.Grid className={cx('card')}>
-                                        <Card
-                                            bordered={false}
-                                            title={
-                                                <Space style={{ fontSize: 20 }}>
-                                                    <FontAwesomeIcon icon={faTicket} />
-                                                    {item.code}
-                                                </Space>
-                                            }
-                                        >
-                                            <Descriptions column={1} labelStyle={{ fontWeight: 600 }}>
-                                                <Descriptions.Item label={t('accountInfo.promotionName')}>
-                                                    {item[`title${i18n.language}`]}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label={t('accountInfo.startDate')}>
-                                                    {item.startDate}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label={t('accountInfo.endDate')}>
-                                                    {item.endDate}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label={t('accountInfo.value')}>
-                                                    {item.value}%
-                                                </Descriptions.Item>
-                                            </Descriptions>
-                                        </Card>
-                                    </Card.Grid>
-                                ))}
-                            </Card>
-                        </Tabs.TabPane>
-                        <Tabs.TabPane tab={t('accountInfo.used')} key={2}>
-                            <Card>
-                                {promotionUsed?.map(item => (
-                                    <Card.Grid className={cx('card')}>
-                                        <Card
-                                            bordered={false}
-                                            title={
-                                                <Space style={{ fontSize: 20 }}>
-                                                    <FontAwesomeIcon icon={faTicket} />
-                                                    {item.code}
-                                                </Space>
-                                            }
-                                        >
-                                            <Descriptions column={1} labelStyle={{ fontWeight: 600 }}>
-                                                <Descriptions.Item label={t('accountInfo.promotionName')}>
-                                                    {item[`title${i18n.language}`]}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label={t('accountInfo.startDate')}>
-                                                    {item.startDate}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label={t('accountInfo.endDate')}>
-                                                    {item.endDate}
-                                                </Descriptions.Item>
-                                                <Descriptions.Item label={t('accountInfo.value')}>
-                                                    {item.value}%
-                                                </Descriptions.Item>
-                                            </Descriptions>
-                                        </Card>
-                                    </Card.Grid>
-                                ))}
-                            </Card>
-                        </Tabs.TabPane>
-                    </Tabs>
+                    <Tabs
+                        defaultActiveKey="1"
+                        items={[
+                            {
+                                key: 1,
+                                label: <span>{t('accountInfo.noused')}</span>,
+                                children: (
+                                    <Card>
+                                        {promotionAvailable.map(item => (
+                                            <Card.Grid key={item._id} className={cx('card')}>
+                                                <Card
+                                                    bordered={false}
+                                                    title={
+                                                        <Space style={{ fontSize: 20 }}>
+                                                            <FontAwesomeIcon icon={faTicket} />
+                                                            {item.code}
+                                                        </Space>
+                                                    }
+                                                >
+                                                    <Descriptions column={1} labelStyle={{ fontWeight: 600 }}>
+                                                        <Descriptions.Item label={t('accountInfo.promotionName')}>
+                                                            {item[`title${i18n.language}`]}
+                                                        </Descriptions.Item>
+                                                        {item.type === 'normal' ? (
+                                                            <>
+                                                                <Descriptions.Item label={t('accountInfo.startDate')}>
+                                                                    {item.startDate}
+                                                                </Descriptions.Item>
+                                                                <Descriptions.Item label={t('accountInfo.endDate')}>
+                                                                    {item.endDate}
+                                                                </Descriptions.Item>
+                                                            </>
+                                                        ) : (
+                                                            <Descriptions.Item label={t('accountInfo.endDate')}>
+                                                                {t('accountInfo.forever')}
+                                                            </Descriptions.Item>
+                                                        )}
+                                                        <Descriptions.Item label={t('accountInfo.value')}>
+                                                            {item.value}%
+                                                        </Descriptions.Item>
+                                                    </Descriptions>
+                                                </Card>
+                                            </Card.Grid>
+                                        ))}
+                                    </Card>
+                                ),
+                            },
+                            {
+                                key: 2,
+                                label: <span>{t('accountInfo.used')}</span>,
+                                children: (
+                                    <Card>
+                                        {promotionUsed.map(item => (
+                                            <Card.Grid key={item._id} className={cx('card')}>
+                                                <Card
+                                                    bordered={false}
+                                                    title={
+                                                        <Space style={{ fontSize: 20 }}>
+                                                            <FontAwesomeIcon icon={faTicket} />
+                                                            {item.code}
+                                                        </Space>
+                                                    }
+                                                >
+                                                    <Descriptions column={1} labelStyle={{ fontWeight: 600 }}>
+                                                        <Descriptions.Item label={t('accountInfo.promotionName')}>
+                                                            {item[`title${i18n.language}`]}
+                                                        </Descriptions.Item>
+                                                        {item.type === 'normal' ? (
+                                                            <>
+                                                                <Descriptions.Item label={t('accountInfo.startDate')}>
+                                                                    {item.startDate}
+                                                                </Descriptions.Item>
+                                                                <Descriptions.Item label={t('accountInfo.endDate')}>
+                                                                    {item.endDate}
+                                                                </Descriptions.Item>
+                                                            </>
+                                                        ) : (
+                                                            <Descriptions.Item label={t('accountInfo.endDate')}>
+                                                                {t('accountInfo.forever')}
+                                                            </Descriptions.Item>
+                                                        )}
+                                                        <Descriptions.Item label={t('accountInfo.value')}>
+                                                            {item.value}%
+                                                        </Descriptions.Item>
+                                                    </Descriptions>
+                                                </Card>
+                                            </Card.Grid>
+                                        ))}
+                                    </Card>
+                                ),
+                            },
+                        ]}
+                    />
                     <div style={{ textAlign: 'center' }}>
                         <Button onclick={handleLoadmore}>{t('button.loadMore')}</Button>
                     </div>

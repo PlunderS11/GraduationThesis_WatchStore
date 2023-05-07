@@ -8,9 +8,9 @@
         "order": "Đặt hàng",
         "buy": "Mua hàng",
         "addToCart": "Thêm vào giỏ hàng",
-        "gotoCart": "Đến giỏ hàng",
+        "keepShopping": "Tiếp tục mua sắm",
         "goHome": "Về trang chủ",
-        "gotoOrderHistory": "Đến lịch sử đơn hàng",
+        "gotoOrderHistory": "Lịch sử đơn hàng",
         "contactStore": "Liên hệ cửa hàng",
         "orderCancel": "Hủy đơn",
         "loadMore": "Xem thêm",
@@ -38,9 +38,10 @@
         "note": "Ghi chú",
         "notePlace": "Hãy ghi chú cho đơn hàng về chi tiết địa chỉ giao, hoặc thời gian có thể nhận hàng, v.v...",
         "status": {
-            "pending": "Đang xử lý...",
-            "completed": "Đã hoàn thành",
-            "canceled": "Đã hủy",
+            "all": "Tất cả",
+            "pending": "Đang xử lý",
+            "complete": "Đã hoàn thành",
+            "cancele": "Đã hủy",
             "package": "Đóng gói",
             "delivering": "Đang gửi hàng"
         },
@@ -245,6 +246,7 @@
         "used": "Đã dùng",
         "startDate": "Ngày bắt đầu",
         "endDate": "Ngày kết thúc",
+        "forever": "Vĩnh viển",
         "value": "Giá trị"
     },
     "table": {
@@ -258,7 +260,7 @@
     },
     "antd": {
         "popconfirm": {
-            "title": "Bạn có chắc chắn muốn xóa mục này?",
+            "title": "Bạn có chắc chắn muốn thực hiện?",
             "description": "Xóa mục này",
             "okText": "Có",
             "cancelText": "Không"
