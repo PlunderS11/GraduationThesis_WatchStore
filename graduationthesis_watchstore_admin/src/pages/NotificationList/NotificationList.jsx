@@ -60,10 +60,9 @@ export default function NotificationList() {
                 await axiosClient.put('notification/seen/' + n._id);
             });
 
-            setLoading(false);
-
             // await Promise.all();
             navigate('/notifications');
+            setLoading(false);
             toast.success('Đánh dấu tất cả đã xem thành công');
         } catch (error) {
             console.log(error);

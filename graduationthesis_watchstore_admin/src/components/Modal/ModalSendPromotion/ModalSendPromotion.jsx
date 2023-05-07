@@ -1,17 +1,11 @@
 import { Modal, Select } from 'antd';
-// import { useState } from 'react';
 
 import classNames from 'classnames/bind';
-
-import InputField from '~/components/InputField/InputField';
 import styles from './ModalSendPromotion.module.scss';
 import axiosClient from '~/api/axiosClient';
 import { useEffect, useState } from 'react';
-
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+
 import Button from '~/components/Button/Button';
 
 const cx = classNames.bind(styles);
@@ -57,6 +51,9 @@ const ModalSendPromotion = (props) => {
             const res = await axiosClient.post('promotion/sendEmailToUser', {
                 rankId: rankId,
                 promotionId: promotionId,
+            });
+            await axiosClient.put('promotion/forrank/' + promotionId, {
+                rank: rankId,
             });
             if (res) {
                 toast.success('Gửi email thông báo khuyến mãi thành công');

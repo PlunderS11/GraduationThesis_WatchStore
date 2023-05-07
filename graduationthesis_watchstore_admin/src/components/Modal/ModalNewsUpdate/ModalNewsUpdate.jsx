@@ -52,7 +52,7 @@ const ModalNewsUpdate = (props) => {
         if (id !== '') {
             const getPost = async () => {
                 const res = await axiosClient.get('post/detail/' + id);
-                // setPost(res.data.detailPost);
+                contentRef.current?.setContent(res.data.detailPost.content || '');
                 setPost({
                     title: res.data.detailPost.title,
                     image: res.data.detailPost.image,

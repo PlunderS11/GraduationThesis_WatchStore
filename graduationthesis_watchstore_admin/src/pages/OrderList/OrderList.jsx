@@ -640,8 +640,14 @@ export default function OrderList() {
                                         optionFilterProp="children"
                                         onChange={(e) => {
                                             handleGetAddressDistrict(e);
-
-                                            e === 0 ? (query.ProvinceID = undefined) : (query.ProvinceID = e);
+                                            // e === 0 ? (query.ProvinceID = undefined) : (query.ProvinceID = e);
+                                            if (e === 0 || e === undefined) {
+                                                query.ProvinceID = undefined;
+                                                query.DistrictID = undefined;
+                                                query.WardCode = undefined;
+                                            } else {
+                                                query.ProvinceID = e;
+                                            }
                                             setQuery({ ...query });
                                         }}
                                         // onSearch={onSearch}
@@ -672,14 +678,20 @@ export default function OrderList() {
                                         }
                                         onChange={(e) => {
                                             handleGetAddressWard(e);
-                                            e === 0 ? (query.DistrictID = undefined) : (query.DistrictID = e);
-
+                                            // e === 0 ? (query.DistrictID = undefined) : (query.DistrictID = e);
+                                            if (e === 0 || e === undefined) {
+                                                query.DistrictID = undefined;
+                                                query.WardCode = undefined;
+                                            } else {
+                                                query.DistrictID = e;
+                                            }
                                             setQuery({ ...query });
                                         }}
                                         options={district.map((item) => ({
                                             value: item.DistrictID,
                                             label: item.DistrictName,
                                         }))}
+                                        disabled={query.ProvinceID ? false : true}
                                     />
                                 </Form.Item>
                                 <Form.Item
@@ -693,7 +705,9 @@ export default function OrderList() {
                                         placeholder="Phường xã"
                                         optionFilterProp="children"
                                         onChange={(e) => {
-                                            e === 0 ? (query.WardCode = undefined) : (query.WardCode = e);
+                                            e === 0 || e === undefined
+                                                ? (query.WardCode = undefined)
+                                                : (query.WardCode = e);
                                             setQuery({ ...query });
                                         }}
                                         // onSearch={onSearch}
@@ -704,6 +718,7 @@ export default function OrderList() {
                                             value: item.WardCode,
                                             label: item.WardName,
                                         }))}
+                                        disabled={query.ProvinceID && query.DistrictID ? false : true}
                                     />
                                 </Form.Item>
                             </Form>
