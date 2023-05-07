@@ -17,6 +17,7 @@ const s3 = new AWS.S3({
 const { verifyTokenAndAdmin, verifyTokenAndAuthorization } = require('../middleware/verifyToken');
 
 const Rank = require('../models/rankModel');
+const Promotion = require('../models/promotionModel');
 
 const storage = multer.memoryStorage({
     destination(req, file, callback) {
@@ -58,6 +59,20 @@ router.post('/', verifyTokenAndAdmin, upload.single('icon'), async (req, res) =>
         });
 
         const rank = await newRank.save();
+
+        const newPromotion = new Promotion({
+            titlevi:"Voucher rank "+rank.namevi.toLowerCase(),
+            titleen:"Voucher rank "+rank.nameen.toLowerCase(),
+            type: "special",
+            forRank: rank._id,
+            code:"voucher"+rank.nameen.toLowerCase(),
+            value:10,
+            startDate: new Date('2000-01-01T14:51:19.447+00:00'),
+            endDate:new Date('3000-04-30T14:51:19.447+00:00'),
+            users: [],
+            isDelete: false
+        })
+        await newPromotion.save();
 
         res.status(200).json({ data: { rank }, message: 'success', status: 200 });
     } catch (error) {
