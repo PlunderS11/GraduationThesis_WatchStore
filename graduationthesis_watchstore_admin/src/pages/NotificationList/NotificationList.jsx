@@ -7,6 +7,8 @@ import axiosClient from '~/api/axiosClient';
 import { useState, useEffect } from 'react';
 import Grid from '~/components/Grid/Grid';
 import ModalNotification from '~/components/Modal/ModalNotification/ModalNotification';
+import Button from '~/components/Button/Button';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
@@ -43,6 +45,26 @@ export default function NotificationList() {
     const handleSeen = async (id) => {
         try {
             await axiosClient.put('notification/seen/' + id);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleSeenAll = async () => {
+        try {
+            setLoading(true);
+
+            const notification_notseen = await axiosClient.get('notification/admin/notseen');
+            // console.log(notification_notseen.data.notifications);
+            notification_notseen.data.notifications.map(async (n) => {
+                await axiosClient.put('notification/seen/' + n._id);
+            });
+
+            setLoading(false);
+
+            // await Promise.all();
+            navigate('/notifications');
+            toast.success('Đánh dấu tất cả đã xem thành công');
         } catch (error) {
             console.log(error);
         }
@@ -142,7 +164,14 @@ export default function NotificationList() {
                 <Spin spinning={loading}>
                     <label className={cx('label')}>DANH SÁCH THÔNG BÁO</label>
                     <div style={{ height: 10 }}></div>
-
+                    <Button
+                        customClass={styles}
+                        onClick={() => {
+                            handleSeenAll();
+                        }}
+                    >
+                        Đánh dấu đã xem tất cả
+                    </Button>
                     <div className={cx('grid')}>
                         <Grid headers={columns} datas={posts} rowHeight={63} pagesize={10} hideToolbar={false} />
                     </div>

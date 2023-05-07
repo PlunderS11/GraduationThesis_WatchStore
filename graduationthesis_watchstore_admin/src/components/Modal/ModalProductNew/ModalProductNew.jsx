@@ -46,6 +46,7 @@ const ModalProductNew = (props) => {
         formik.errors.featuresen = '';
         formik.errors.stock = '';
         formik.errors.note = '';
+        setImage([]);
         setDelImg([]);
         onClose(false);
     };

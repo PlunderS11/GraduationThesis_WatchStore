@@ -31,6 +31,7 @@ const ModalNews = (props) => {
         formik.errors.description = '';
         formik.errors.image = '';
         formik.errors.content = '';
+        setImage([]);
         setDelImg([]);
         onClose(false);
     };

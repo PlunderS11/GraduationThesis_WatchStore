@@ -28,6 +28,7 @@ const ModalPromotion = (props) => {
     //-------------------------------------------------------------
 
     const [promotion, setPromotion] = useState({});
+    const [promotions, setPromotions] = useState([]);
     const navigate = useNavigate();
 
     const [startAt, setStartAt] = useState();
@@ -39,7 +40,7 @@ const ModalPromotion = (props) => {
     const fecthData = async () => {
         if (id !== '') {
             const getPromotion = async () => {
-                const res = await axiosClient.get('promotion/detail/' + String(id));
+                const res = await axiosClient.get('promotion/detailById/' + String(id));
                 if (res) {
                     setPromotion(res.data.detailPromotion);
                     setStartAt(new Date(res.data.detailPromotion.startDate));
@@ -63,6 +64,12 @@ const ModalPromotion = (props) => {
                 }
             };
             getPromotion();
+
+            const getPromotions = async () => {
+                const res = await axiosClient.get('promotion/');
+                setPromotions(res.data.promotions);
+            };
+            getPromotions();
         }
     };
 
@@ -109,7 +116,10 @@ const ModalPromotion = (props) => {
                 .max(99, 'Giá trị khuyến mãi phải nhỏ hơn hoặc bằng 99')
                 .required('Nhập giá trị khuyến mãi(%)'),
             startDate: Yup.date()
-                .min(new Date(), 'Ngày bắt đàu phải lớn hơn ngày hiện tại')
+                .min(
+                    new Date(new Date().getMonth() + 1 + '-' + new Date().getDate() + '-' + new Date().getFullYear()),
+                    'Ngày bắt đàu phải lớn hơn hoặc bằng ngày hiện tại',
+                )
                 .required('Chọn ngày bắt đầu'),
             endDate: Yup.date()
                 .min(Yup.ref('startDate'), 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu')
@@ -119,19 +129,36 @@ const ModalPromotion = (props) => {
             const { titlevi, titleen, code, value, startDate, endDate, isDelete } = values;
             // console.log(values);
             try {
-                const res = await axiosClient.put('promotion/' + id, {
-                    titlevi: titlevi,
-                    titleen: titleen,
-                    code: code,
-                    value: value,
-                    startDate: startDate,
-                    endDate: endDate,
-                    isDelete: isDelete,
+                var used_code = false;
+                var arr = [];
+                promotions.map((item) => {
+                    return arr.push(item.code);
                 });
-                if (res) {
-                    toast.success('Cập nhật thành công!');
-                    handleCancel();
-                    navigate('/promotions');
+
+                const new_arr = arr.filter((item) => item !== promotion.code);
+
+                new_arr.map((p) => {
+                    if (p === code) {
+                        used_code = true;
+                    }
+                });
+                if (used_code) {
+                    toast.error('Mã khuyến mãi này đã được sử dụng');
+                } else {
+                    const res = await axiosClient.put('promotion/' + id, {
+                        titlevi: titlevi,
+                        titleen: titleen,
+                        code: code,
+                        value: value,
+                        startDate: startDate,
+                        endDate: endDate,
+                        isDelete: isDelete,
+                    });
+                    if (res) {
+                        toast.success('Cập nhật thành công!');
+                        handleCancel();
+                        navigate('/promotions');
+                    }
                 }
             } catch (error) {
                 toast.error(error);

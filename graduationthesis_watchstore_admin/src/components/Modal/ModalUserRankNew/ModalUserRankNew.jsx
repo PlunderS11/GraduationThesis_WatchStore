@@ -19,6 +19,7 @@ const ModalUserRankNew = (props) => {
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
+        setImage([]);
         setDelImg([]);
         formik.values.namevi = '';
         formik.values.nameen = '';
