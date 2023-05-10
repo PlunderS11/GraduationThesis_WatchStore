@@ -115,6 +115,8 @@ const ModalPromotionNew = (props) => {
                         titlevi: titlevi,
                         titleen: titleen,
                         code: code,
+                        type: 'normal',
+                        forRank: 'unrank',
                         value: value,
                         startDate: startDate,
                         endDate: endDate,

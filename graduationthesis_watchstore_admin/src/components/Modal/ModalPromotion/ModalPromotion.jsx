@@ -117,7 +117,11 @@ const ModalPromotion = (props) => {
                 .required('Nhập giá trị khuyến mãi(%)'),
             startDate: Yup.date()
                 .min(
-                    new Date(new Date().getMonth() + 1 + '-' + new Date().getDate() + '-' + new Date().getFullYear()),
+                    promotion.type === 'normal'
+                        ? new Date(
+                              new Date().getMonth() + 1 + '-' + new Date().getDate() + '-' + new Date().getFullYear(),
+                          )
+                        : new Date('1-1-2000'),
                     'Ngày bắt đàu phải lớn hơn hoặc bằng ngày hiện tại',
                 )
                 .required('Chọn ngày bắt đầu'),
@@ -178,37 +182,42 @@ const ModalPromotion = (props) => {
             >
                 <div className={cx('new-promotion')}>
                     <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
-                        <div className={cx('add-promotion-item')}>
-                            <label>Ngày bắt đầu</label>
-                            {start !== undefined && (
-                                <DatePicker
-                                    defaultValue={dayjs(start, 'DD/MM/YYYY')}
-                                    placeholder="Chọn ngày bắt đầu"
-                                    className={cx('date-picker')}
-                                    onChange={onChangeStartDate}
-                                    format="DD/MM/YYYY"
-                                />
-                            )}
-                            {formik.errors.startDate && (
-                                <div className={cx('input-feedback')}>{formik.errors.startDate}</div>
-                            )}
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <label>Ngày kết thúc</label>
-                            {end !== undefined && (
-                                <DatePicker
-                                    defaultValue={dayjs(end, 'DD/MM/YYYY')}
-                                    placeholder="Chọn ngày kết thúc"
-                                    className={cx('date-picker')}
-                                    onChange={onChangeEndDate}
-                                    format="DD/MM/YYYY"
-                                />
-                            )}
+                        {promotion.type === 'normal' && (
+                            <>
+                                <div className={cx('add-promotion-item')}>
+                                    <label>Ngày bắt đầu</label>
+                                    {start !== undefined && (
+                                        <DatePicker
+                                            defaultValue={dayjs(start, 'DD/MM/YYYY')}
+                                            placeholder="Chọn ngày bắt đầu"
+                                            className={cx('date-picker')}
+                                            onChange={onChangeStartDate}
+                                            format="DD/MM/YYYY"
+                                        />
+                                    )}
+                                    {formik.errors.startDate && (
+                                        <div className={cx('input-feedback')}>{formik.errors.startDate}</div>
+                                    )}
+                                </div>
+                                <div className={cx('add-promotion-item')}>
+                                    <label>Ngày kết thúc</label>
+                                    {end !== undefined && (
+                                        <DatePicker
+                                            defaultValue={dayjs(end, 'DD/MM/YYYY')}
+                                            placeholder="Chọn ngày kết thúc"
+                                            className={cx('date-picker')}
+                                            onChange={onChangeEndDate}
+                                            format="DD/MM/YYYY"
+                                        />
+                                    )}
 
-                            {formik.errors.endDate && (
-                                <div className={cx('input-feedback')}>{formik.errors.endDate}</div>
-                            )}
-                        </div>
+                                    {formik.errors.endDate && (
+                                        <div className={cx('input-feedback')}>{formik.errors.endDate}</div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+
                         <div className={cx('add-promotion-item')}>
                             <label>Thông tin khuyến mãi</label>
                         </div>

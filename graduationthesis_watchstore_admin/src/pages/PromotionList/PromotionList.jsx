@@ -13,7 +13,6 @@ import Grid from '~/components/Grid/Grid';
 import * as moment from 'moment';
 import ModalPromotion from '~/components/Modal/ModalPromotion/ModalPromotion';
 import ModalPromotionNew from '~/components/Modal/ModalPromotionNew/ModalPromotionNew';
-import ModalSendPromotion from '~/components/Modal/ModalSendPromotion/ModalSendPromotion';
 
 const cx = classNames.bind(styles);
 
@@ -23,13 +22,13 @@ export default function PromotionList() {
     const { confirm } = Modal;
     const [promotionsDeleted, setPromotionsDeleted] = useState([]);
     const [promotionsUneleted, setPromotionsUneleted] = useState([]);
+    const [promotionsSpecial, setPromotionsSpecial] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [key, setKey] = useState(false);
+    const [key, setKey] = useState(1);
 
     const [id, setId] = useState('');
     const [open, setOpen] = useState(false);
     const [openNew, setOpenNew] = useState(false);
-    const [openSend, setOpenSend] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
@@ -46,6 +45,20 @@ export default function PromotionList() {
         };
         getPromotions_undeleted();
 
+        const getPromotions_special = async () => {
+            var promotionsSpecial = [];
+            const res = await axiosClient.get('promotion/special/');
+            if (res) {
+                promotionsSpecial = res.data.promotions_special;
+                for (let i = 0; i < promotionsSpecial.length; i++) {
+                    const res_rank = await axiosClient.get('rank/detail/' + String(promotionsSpecial[i].forRank));
+                    promotionsSpecial[i].namevi = res_rank.data.detailRank.namevi;
+                }
+            }
+            setPromotionsSpecial(promotionsSpecial);
+        };
+        getPromotions_special();
+
         setLoading(false);
     };
 
@@ -57,6 +70,7 @@ export default function PromotionList() {
             setLoading(false);
         }
     }, [location]);
+    console.log(promotionsSpecial);
 
     const handleDelete = async (id) => {
         setLoading(true);
@@ -299,8 +313,7 @@ export default function PromotionList() {
                                     <button
                                         className={cx('promotion-list-restore-button')}
                                         onClick={() => {
-                                            setOpenSend(true);
-                                            setId(params.row._id);
+                                            showSendEmailConfirm(params.row._id);
                                         }}
                                     >
                                         Gửi
@@ -338,6 +351,76 @@ export default function PromotionList() {
         },
     ];
 
+    const columns_special = [
+        {
+            field: 'namevi',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Dành cho hạng',
+            width: 170,
+        },
+        {
+            field: 'titlevi',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên tiếng Việt',
+            width: 300,
+        },
+        {
+            field: 'titleen',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Tên tiếng Anh',
+            width: 300,
+        },
+        {
+            field: 'code',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Mã khuyến mãi',
+            width: 250,
+        },
+        {
+            field: 'value',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Giá trị',
+            width: 100,
+            type: 'number',
+            renderCell: (params) => {
+                return <div className={cx('promotion-list-item')}>{params.row.value}%</div>;
+            },
+        },
+        {
+            field: 'action',
+            align: 'center',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            headerName: 'Hành động',
+            width: 150,
+            filterable: false,
+            renderCell: (params) => {
+                return (
+                    <>
+                        <ul>
+                            <li>
+                                <button
+                                    className={cx('promotion-list-edit')}
+                                    onClick={() => {
+                                        setId(params.row._id);
+                                        setOpen(true);
+                                    }}
+                                >
+                                    Chỉnh sửa
+                                </button>
+                            </li>
+                        </ul>
+                    </>
+                );
+            },
+        },
+    ];
+
     const items = [
         {
             key: '1',
@@ -349,13 +432,49 @@ export default function PromotionList() {
             label: `Đã xóa`,
             children: ``,
         },
+        {
+            key: '3',
+            label: `Khuyến mãi cố định`,
+            children: ``,
+        },
     ];
 
     const tabItemClick = (key) => {
         if (key === '1') {
-            setKey(false);
+            setKey(1);
         } else if (key === '2') {
-            setKey(true);
+            setKey(2);
+        } else if (key === '3') {
+            setKey(3);
+        }
+    };
+
+    const showSendEmailConfirm = (id) => {
+        confirm({
+            title: 'GỬI KHUYẾN MÃI',
+            icon: <ExclamationCircleFilled />,
+            content: 'Bạn chắc chắn muốn gửi khuyển mãi?',
+            okText: 'Gửi',
+            okType: 'primary',
+            cancelText: 'Trở lại',
+            onOk() {
+                handleSendEmail(id);
+            },
+            onCancel() {},
+        });
+    };
+
+    const handleSendEmail = async (promotionId) => {
+        try {
+            const res = await axiosClient.post('promotion/sendEmailToUser', {
+                rankId: '',
+                promotionId: promotionId,
+            });
+            if (res) {
+                toast.success('Gửi email thông báo khuyến mãi thành công');
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -377,7 +496,7 @@ export default function PromotionList() {
                     {/* </Link> */}
                     <div className={cx('grid')}>
                         <Tabs type="card" defaultActiveKey="1" items={items} onChange={tabItemClick} />
-                        {key === false ? (
+                        {key === 1 && (
                             <Grid
                                 headers={columns_undeleted}
                                 datas={promotionsUneleted}
@@ -385,10 +504,20 @@ export default function PromotionList() {
                                 pagesize={10}
                                 hideToolbar={false}
                             />
-                        ) : (
+                        )}
+                        {key === 2 && (
                             <Grid
                                 headers={columns_deleted}
                                 datas={promotionsDeleted}
+                                rowHeight={100}
+                                pagesize={10}
+                                hideToolbar={false}
+                            />
+                        )}
+                        {key === 3 && (
+                            <Grid
+                                headers={columns_special}
+                                datas={promotionsSpecial}
                                 rowHeight={100}
                                 pagesize={10}
                                 hideToolbar={false}
@@ -407,7 +536,7 @@ export default function PromotionList() {
                     }}
                 ></ModalPromotion>
             )}
-            {id !== '' && (
+            {/* {id !== '' && (
                 <ModalSendPromotion
                     open={openSend}
                     onClose={() => setOpenSend(false)}
@@ -416,7 +545,7 @@ export default function PromotionList() {
                         setId('');
                     }}
                 ></ModalSendPromotion>
-            )}
+            )} */}
             <ModalPromotionNew open={openNew} onClose={() => setOpenNew(false)}></ModalPromotionNew>
         </>
     );
