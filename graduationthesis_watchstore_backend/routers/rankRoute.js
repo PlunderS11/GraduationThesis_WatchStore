@@ -61,17 +61,17 @@ router.post('/', verifyTokenAndAdmin, upload.single('icon'), async (req, res) =>
         const rank = await newRank.save();
 
         const newPromotion = new Promotion({
-            titlevi:"Voucher rank "+rank.namevi.toLowerCase(),
-            titleen:"Voucher rank "+rank.nameen.toLowerCase(),
-            type: "special",
+            titlevi: 'Voucher rank ' + rank.namevi.toLowerCase(),
+            titleen: 'Voucher rank ' + rank.nameen.toLowerCase(),
+            type: 'special',
             forRank: rank._id,
-            code:"voucher"+rank.nameen.toLowerCase(),
-            value:10,
+            code: 'voucher' + rank.nameen.toLowerCase(),
+            value: 10,
             startDate: new Date('2000-01-01T14:51:19.447+00:00'),
-            endDate:new Date('3000-04-30T14:51:19.447+00:00'),
+            endDate: new Date('3000-04-30T14:51:19.447+00:00'),
             users: [],
-            isDelete: false
-        })
+            isDelete: false,
+        });
         await newPromotion.save();
 
         res.status(200).json({ data: { rank }, message: 'success', status: 200 });
@@ -82,9 +82,9 @@ router.post('/', verifyTokenAndAdmin, upload.single('icon'), async (req, res) =>
 });
 
 // UPDATE
-router.put('/:id',upload.single('icon'), verifyTokenAndAdmin, async (req, res) => {
-    const image = req.file
-    if (image!==undefined) {
+router.put('/:id', upload.single('icon'), verifyTokenAndAdmin, async (req, res) => {
+    const image = req.file;
+    if (image !== undefined) {
         var icon = '';
         const image = req.file.mimetype;
         const fileType = image.split('/')[1];
@@ -104,11 +104,11 @@ router.put('/:id',upload.single('icon'), verifyTokenAndAdmin, async (req, res) =
             const rank = await Rank.findByIdAndUpdate(
                 req.params.id,
                 {
-                    $set: {...req.body, icon: icon},
+                    $set: { ...req.body, icon: icon },
                 },
                 { new: true, omitUndefined: true }
             );
-    
+
             res.status(200).json({ data: { rank }, message: 'success', status: 200 });
         } catch (error) {
             console.log(error);
@@ -123,14 +123,13 @@ router.put('/:id',upload.single('icon'), verifyTokenAndAdmin, async (req, res) =
                 },
                 { new: true, omitUndefined: true }
             );
-    
+
             res.status(200).json({ data: { rank }, message: 'success', status: 200 });
         } catch (error) {
             console.log(error);
             res.status(500).json({ data: {}, message: error.message, status: 500 });
         }
     }
-    
 });
 
 // DELETE
@@ -172,10 +171,11 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
 //GET ALL PROMOTION
 router.get('/', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        const Rank = await Rank.find();
+        const rank = await Rank.find().sort({ minValue: 1 });
 
-        res.status(200).json({ data: { rank: Rank }, message: 'success', status: 200 });
+        res.status(200).json({ data: { rank }, message: 'success', status: 200 });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
 });
@@ -195,7 +195,7 @@ router.get('/detail/:id', async (req, res) => {
 //GET PROMOTIONS UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const ranks_undeleted = await Rank.find({ isDelete: false, nameen: {$ne: 'Unrank'} }).exec();
+        const ranks_undeleted = await Rank.find({ isDelete: false, nameen: { $ne: 'Unrank' } }).exec();
 
         res.status(200).json({ data: { ranks_undeleted: ranks_undeleted }, message: 'success', status: 200 });
     } catch (error) {
