@@ -96,7 +96,7 @@ const Address = () => {
                 },
                 phone: value.phone,
             });
-            toast.success('Cập nhật địa chỉ thành công');
+            toast.success(t('accountInfo.updateSuccess'));
             state &&
                 setTimeout(() => {
                     navigate(-1);
@@ -124,7 +124,7 @@ const Address = () => {
                         style={{ width: '100%' }}
                     >
                         <Row>
-                            <Col span={18}>
+                            <Col span={24}>
                                 <Form.Item
                                     style={{ fontSize: '25px', fontWeight: 'bold' }}
                                     label={t('checkout.name')}

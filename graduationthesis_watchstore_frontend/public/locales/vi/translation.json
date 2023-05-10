@@ -79,6 +79,7 @@
             "notification": "Thông báo",
             "addressInfo": "Địa chỉ",
             "voucher": "Kho voucher",
+            "changePassword": "Đổi mật khẩu",
             "logout": "Đăng xuất"
         }
     },
@@ -114,6 +115,14 @@
         "remember": "Nhớ mật khẩu",
         "user": "Email",
         "userError": "Nhập email!"
+    },
+    "changePassword": {
+        "changePassword": "Đổi mật khẩu",
+        "oldPassword": "Mật khẩu cũ",
+        "newPassword": "Mật khẩu mới",
+        "confirmNewPassword": "Xác nhận mật khẩu mới",
+        "errorPassword": "Mật khẩu cũ không chính xác",
+        "errorConfirmPassword": "Mật khẩu không khớp"
     },
     "newsletter": {
         "error": "Có lỗi xảy ra. Vui lòng thử lại sau.",
@@ -247,7 +256,8 @@
         "startDate": "Ngày bắt đầu",
         "endDate": "Ngày kết thúc",
         "forever": "Vĩnh viển",
-        "value": "Giá trị"
+        "value": "Giá trị",
+        "updateSuccess": "Cập nhật thành công"
     },
     "table": {
         "image": "Hình ảnh",
@@ -285,6 +295,7 @@
         "orders": "Đơn hàng",
         "notification": "Thông báo",
         "address": "Địa chỉ",
-        "voucher": "Kho voucher"
+        "voucher": "Kho voucher",
+        "changePassword": "Đổi mật khẩu"
     }
 }

@@ -202,7 +202,11 @@ router.put('/changepassword/:id', async (req, res) => {
         const inputPassword = req.body.password;
 
         if (originalPassword != inputPassword) {
-            res.status(500).json({ data: {}, message: 'Wrong Password', status: 500 });
+            res.status(403).json({
+                data: {},
+                message: req.body.lang === 'vi' ? 'Mật khẩu cũ không chính xác' : 'Old password is incorrect',
+                status: 500,
+            });
         } else {
             const changePassword = await User.findByIdAndUpdate(
                 req.params.id,

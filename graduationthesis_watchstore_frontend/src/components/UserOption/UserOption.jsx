@@ -37,10 +37,14 @@ function UserOption({ user }) {
             label: <Link to={'/account/voucher'}>{t('header.userOption.voucher')}</Link>,
         },
         {
+            key: '6',
+            label: <Link to={'/account/changePassword'}>{t('header.userOption.changePassword')}</Link>,
+        },
+        {
             type: 'divider',
         },
         {
-            key: '6',
+            key: '7',
             label: (
                 <Link to={'/login'} onClick={() => dispatch(logOut())}>
                     {t('header.userOption.logout')}

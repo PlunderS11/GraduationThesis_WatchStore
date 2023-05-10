@@ -80,6 +80,7 @@
             "notification": "Notification",
             "addressInfo": "Address",
             "voucher": "Voucher store",
+            "changePassword": "Change password",
             "logout": "Logout"
         }
     },
@@ -115,6 +116,14 @@
         "remember": "Remember me",
         "user": "Email",
         "userError": "Input email!"
+    },
+    "changePassword": {
+        "changePassword": "Change password",
+        "oldPassword": "Old password",
+        "newPassword": "New password",
+        "confirmNewPassword": "Confirm new password",
+        "errorPassword": "Old password is incorrect",
+        "errorConfirmPassword": "Password incorrect"
     },
     "newsletter": {
         "error": "We get some error. Please try again later.",
@@ -286,6 +295,7 @@
         "orders": "Orders information",
         "notification": "Notification",
         "address": "Address",
-        "voucher": "Voucher store"
+        "voucher": "Voucher store",
+        "changePassword": "Change password"
     }
 }

@@ -14,6 +14,7 @@ const accountOptions = [
     { path: '/account/notification', name: 'notification' },
     { path: '/account/address', name: 'addressInfo' },
     { path: '/account/voucher', name: 'voucher' },
+    { path: '/account/changePassword', name: 'changePassword' },
     { path: '/', name: 'logout' },
 ];
 

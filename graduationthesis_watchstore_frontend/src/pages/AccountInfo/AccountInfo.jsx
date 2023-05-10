@@ -12,6 +12,7 @@ import OrderPage from './Order/OrderPage';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import Notification from './Notification/Notification';
 import Voucher from './Voucher/Voucher';
+import ChangePassword from './ChangePassword/ChangePassword';
 
 const cx = classNames.bind(style);
 
@@ -51,6 +52,7 @@ const AccountInfo = () => {
                             {params.category === 'notification' && <Notification />}
                             {params.category === 'address' && <Address />}
                             {params.category === 'voucher' && <Voucher />}
+                            {params.category === 'changePassword' && <ChangePassword />}
                         </Col>
                     </Row>
                 </div>
