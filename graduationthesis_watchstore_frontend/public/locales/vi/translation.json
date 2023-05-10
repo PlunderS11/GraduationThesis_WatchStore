@@ -41,7 +41,7 @@
             "all": "Tất cả",
             "pending": "Đang xử lý",
             "complete": "Đã hoàn thành",
-            "cancele": "Đã hủy",
+            "cancel": "Đã hủy",
             "package": "Đóng gói",
             "delivering": "Đang gửi hàng"
         },
@@ -139,6 +139,15 @@
     },
     "productCard": {
         "outOfStock": "Hết hàng"
+    },
+    "productCategory": {
+        "name": "Tên",
+        "collection": "Danh mục",
+        "brand": "Hãng",
+        "status": "Trạng thái",
+        "stocking": "Còn hàng",
+        "outOfStock": "Hết hàng",
+        "price": "Giá"
     },
     "productDetail": {
         "buynowFail": "Vui lòng đăng nhập để sử dụng tính năng này",
@@ -297,5 +306,10 @@
         "address": "Địa chỉ",
         "voucher": "Kho voucher",
         "changePassword": "Đổi mật khẩu"
+    },
+    "errorPage": {
+        "title": "Có một ngoài sự cố xảy ra trên website",
+        "fix": "Đội kỹ thuật chúng tôi sẽ khắc phục sớm nhất có thể!",
+        "description": "Mong bạn thông cảm cho sự cố này, cảm ơn bạn rất nhiều"
     }
 }

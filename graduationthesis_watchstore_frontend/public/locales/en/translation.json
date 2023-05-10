@@ -141,6 +141,15 @@
     "productCard": {
         "outOfStock": "Out of stock"
     },
+    "productCategory": {
+        "name": "Name",
+        "collection": "Category",
+        "brand": "Brand",
+        "status": "Status",
+        "stocking": "Stocking",
+        "outOfStock": "Out of stock",
+        "price": "Price"
+    },
     "productDetail": {
         "buynowFail": "Please login to user this feature",
         "addToCart": "Add to cart successfully.",
@@ -297,5 +306,10 @@
         "address": "Address",
         "voucher": "Voucher store",
         "changePassword": "Change password"
+    },
+    "errorPage": {
+        "title": "An unexpected error has occurred on the website",
+        "fix": "Our technical team will fix it as soon as possible!",
+        "description": "We apologize for the inconvenience and thank you very much for your understanding."
     }
 }

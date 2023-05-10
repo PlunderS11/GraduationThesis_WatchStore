@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import style from './ChangePassword.module.scss';
-import { fetchUserInfor } from '../../../features/user';
 import axiosClient from '../../../api/axiosClient';
 import { toast } from 'react-toastify';
 import i18next from 'i18next';
@@ -17,7 +16,6 @@ const ChangePassword = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const user = useSelector(state => state.user);
-    const dispatch = useDispatch();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 

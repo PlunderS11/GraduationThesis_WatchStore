@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
-import { Col, Row, Form, Input, Button, Spin } from 'antd';
+import { Col, Row, Form, Input, Button, Spin, Progress } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import style from './Profile.module.scss';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n';
 import { fetchUserInfor } from '../../../features/user/useThunk';
+import axiosClient from '../../../api/axiosClient';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(style);
 
@@ -34,12 +36,16 @@ const Profile = () => {
         }
     }, [user, t, form]);
     const handleUpdate = async value => {
-        value['birthdate'] = value['birthdate'].format('YYYY-MM-DD');
-        // try {
-        //     await updateAccountInfo(value['username'], value['email'], value['birthdate']);
-        // } catch (error) {
-        //     console.log(error);
-        // }
+        try {
+            await axiosClient.put(`user/${user.user._id}`, {
+                username: value.username,
+                sex: value.gender === 'Nam' ? 'm' : 'w',
+            });
+            dispatch(fetchUserInfor());
+            toast.success(t('accountInfo.updateSuccess'));
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -108,7 +114,7 @@ const Profile = () => {
                                     <Input />
                                 </Form.Item>
                                 <Form.Item style={{ fontSize: '20px', fontWeight: 'bold' }} label="Email" name="email">
-                                    <Input />
+                                    <Input disabled />
                                 </Form.Item>
                             </Col>
                         </Row>

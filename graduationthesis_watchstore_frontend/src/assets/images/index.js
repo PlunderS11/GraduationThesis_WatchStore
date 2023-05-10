@@ -14,6 +14,7 @@ const images = {
     pageNotFound: require('../images/page_not_found.svg'),
     loading: require('../images/loading.gif'),
     loading2: require('../images/loading2.gif'),
+    errorBoundary: require('../images/undraw_bug_fixing_oc7a.png'),
 };
 
 const imagesSlide = {

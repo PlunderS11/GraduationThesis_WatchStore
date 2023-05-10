@@ -80,39 +80,41 @@ const ProductCategory = () => {
                 <div className="container">
                     <MyBreadcrumb urlParams={t(`breadcrumbs.${params.type}`)} detail />
                     <div className={cx('filter')}>
-                        <Descriptions title={t('button.search')}>
-                            <Descriptions.Item label={'Tên'}>
+                        <Descriptions title={t('button.search')} labelStyle={{ width: 80, marginLeft: 20 }}>
+                            <Descriptions.Item label={t('productCategory.name')}>
                                 <Input
-                                    placeholder="afaef"
+                                    placeholder={t('productCategory.name')}
                                     onChange={e => setQuery({ ...query, name: e.target.value })}
                                 />
                             </Descriptions.Item>
-                            <Descriptions.Item label={'Danh muc'}>
+                            <Descriptions.Item label={t('productCategory.collection')}>
                                 <Input
-                                    placeholder="Danh mục"
+                                    placeholder={t('productCategory.collection')}
                                     onChange={e => setQuery({ ...query, collectionName: e.target.value })}
                                 />
                             </Descriptions.Item>
-                            <Descriptions.Item label={'Hãng'}>
+                            <Descriptions.Item label={t('productCategory.brand')}>
                                 <Input
-                                    placeholder="Hãng"
+                                    placeholder={t('productCategory.brand')}
                                     onChange={e => setQuery({ ...query, brand: e.target.value })}
                                 />
                             </Descriptions.Item>
-                            <Descriptions.Item label={'Trạng thái'}>
+                            <Descriptions.Item label={t('productCategory.status')}>
                                 <Select
                                     defaultValue={0}
+                                    style={{ width: '100%' }}
                                     options={[
-                                        { value: 0, label: 'Còn hàng' },
-                                        { value: 1, label: 'Hết hàng' },
+                                        { value: 0, label: '--' },
+                                        { value: 1, label: t('productCategory.stocking') },
+                                        { value: 2, label: t('productCategory.outOfStock') },
                                     ]}
                                     onChange={e => setQuery({ ...query, stock: e })}
                                 ></Select>
                             </Descriptions.Item>
-                            <Descriptions.Item label={'Giá'}>
+                            <Descriptions.Item label={t('productCategory.price')}>
                                 <Select
                                     defaultValue={0}
-                                    style={{ width: 190 }}
+                                    style={{ width: '100%' }}
                                     options={[
                                         { value: 0, label: '--' },
                                         { value: 1, label: `Dưới ${NumberWithCommas(500000)}` },
@@ -159,7 +161,7 @@ const ProductCategory = () => {
                                     }}
                                 ></Select>
                             </Descriptions.Item>
-                            <Descriptions.Item>
+                            <Descriptions.Item contentStyle={{ justifyContent: 'center' }}>
                                 <Button onclick={handleSearch}>{t('button.search')}</Button>
                             </Descriptions.Item>
                         </Descriptions>
