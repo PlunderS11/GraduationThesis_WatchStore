@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 // import { useState } from 'react';
 
 import classNames from 'classnames/bind';
@@ -17,7 +17,7 @@ const cx = classNames.bind(styles);
 
 const ModalOrderUpdate = (props) => {
     const { open, onClose, id, onResetId } = props;
-
+    const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         onResetId('');
         onClose(false);
@@ -30,22 +30,23 @@ const ModalOrderUpdate = (props) => {
     const [recipient, setRecipient] = useState({});
 
     const fecthData = async () => {
-        if (id !== '') {
-            const getOrder = async () => {
+        setLoading(true);
+        try {
+            if (id !== '') {
                 const res = await axiosClient.get('order/admin/' + id);
                 if (res) {
                     setRecipient(res.data.order.recipient);
                 }
-            };
-            getOrder();
+            }
+        } catch (error) {
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
+        fecthData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -65,7 +66,7 @@ const ModalOrderUpdate = (props) => {
         onSubmit: async (values) => {
             const { username, phone } = values;
 
-            // console.log(values);
+            setLoading(true);
             try {
                 const res = await axiosClient.put('order/info/update/' + id, {
                     username: username,
@@ -78,6 +79,8 @@ const ModalOrderUpdate = (props) => {
                 }
             } catch (error) {
                 toast.error(error);
+            } finally {
+                setLoading(false);
             }
         },
     });
@@ -92,73 +95,75 @@ const ModalOrderUpdate = (props) => {
                 centered
                 footer={[]}
             >
-                <form onSubmit={formik.handleSubmit} className={cx('add-orderupdate-form')} spellCheck="false">
-                    <div className={cx('add-orderupdate-item')}>
-                        <label>Thông tin khách hàng</label>
-                    </div>
-                    {JSON.stringify(recipient) !== '{}' && (
+                <Spin spinning={loading}>
+                    <form onSubmit={formik.handleSubmit} className={cx('add-orderupdate-form')} spellCheck="false">
+                        <div className={cx('add-orderupdate-item')}>
+                            <label>Thông tin khách hàng</label>
+                        </div>
+                        {JSON.stringify(recipient) !== '{}' && (
+                            <div className={cx('add-orderupdate-item')}>
+                                <InputField
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="."
+                                    value={formik.values.username}
+                                    label={'Tên khách hàng'}
+                                    require
+                                    touched={formik.touched.username}
+                                    error={formik.errors.username}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                        )}
+
                         <div className={cx('add-orderupdate-item')}>
                             <InputField
                                 type="text"
-                                id="username"
-                                name="username"
+                                id="phone"
+                                name="phone"
                                 placeholder="."
-                                value={formik.values.username}
-                                label={'Tên khách hàng'}
+                                value={formik.values.phone}
+                                label={'Số điện thoại'}
                                 require
-                                touched={formik.touched.username}
-                                error={formik.errors.username}
+                                touched={formik.touched.phone}
+                                error={formik.errors.phone}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                             />
                         </div>
-                    )}
 
-                    <div className={cx('add-orderupdate-item')}>
-                        <InputField
-                            type="text"
-                            id="phone"
-                            name="phone"
-                            placeholder="."
-                            value={formik.values.phone}
-                            label={'Số điện thoại'}
-                            require
-                            touched={formik.touched.phone}
-                            error={formik.errors.phone}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                        />
-                    </div>
+                        {JSON.stringify(recipient) !== '{}' && (
+                            <div className={cx('add-orderupdate-item')}>
+                                <InputField
+                                    customClass={styles}
+                                    type="textarea"
+                                    readonly={true}
+                                    id="address"
+                                    name="address"
+                                    placeholder="."
+                                    value={
+                                        recipient.address +
+                                        ', ' +
+                                        recipient.addressWard.WardName +
+                                        ', ' +
+                                        recipient.addressDistrict.DistrictName +
+                                        ', ' +
+                                        recipient.addressProvince.ProvinceName
+                                    }
+                                    label={'Địa chỉ'}
+                                    require
+                                    onChange={formik.handleChange}
+                                />
+                            </div>
+                        )}
 
-                    {JSON.stringify(recipient) !== '{}' && (
-                        <div className={cx('add-orderupdate-item')}>
-                            <InputField
-                                customClass={styles}
-                                type="textarea"
-                                readonly={true}
-                                id="address"
-                                name="address"
-                                placeholder="."
-                                value={
-                                    recipient.address +
-                                    ', ' +
-                                    recipient.addressWard.WardName +
-                                    ', ' +
-                                    recipient.addressDistrict.DistrictName +
-                                    ', ' +
-                                    recipient.addressProvince.ProvinceName
-                                }
-                                label={'Địa chỉ'}
-                                require
-                                onChange={formik.handleChange}
-                            />
-                        </div>
-                    )}
-
-                    <Button type="submit" customClass={styles}>
-                        Cập nhật
-                    </Button>
-                </form>
+                        <Button type="submit" customClass={styles}>
+                            Cập nhật
+                        </Button>
+                    </form>
+                </Spin>
             </Modal>
         </>
     );

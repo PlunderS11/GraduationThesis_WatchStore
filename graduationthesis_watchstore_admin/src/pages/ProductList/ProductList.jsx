@@ -35,29 +35,20 @@ export default function ProductList() {
 
     const fecthData = async () => {
         setLoading(true);
-        const getProducts_deleted = async () => {
-            const res = await axiosClient.get('product/deleted/');
-
-            setProductsDeleted(res.data.products_deleted);
-        };
-        getProducts_deleted();
-        const getProducts_undeleted = async () => {
-            const res = await axiosClient.get('product/undeleted/');
-            setProductsUneleted(res.data.products_undeleted);
-        };
-        getProducts_undeleted();
-        setLoading(false);
-    };
-
-    // console.log(productsUneleted);
-
-    useEffect(() => {
-        setLoading(true);
         try {
-            fecthData();
+            const res_deleted = await axiosClient.get('product/deleted/');
+            setProductsDeleted(res_deleted.data.products_deleted);
+
+            const res_undeleted = await axiosClient.get('product/undeleted/');
+            setProductsUneleted(res_undeleted.data.products_undeleted);
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        fecthData();
     }, [location]);
 
     const handleDelete = async (id) => {

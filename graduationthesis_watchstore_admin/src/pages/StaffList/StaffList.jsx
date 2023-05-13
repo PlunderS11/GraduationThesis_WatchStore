@@ -29,7 +29,7 @@ export default function StaffList() {
 
     const fecthData = async () => {
         setLoading(true);
-        const getUsers = async () => {
+        try {
             const res = await axiosClient.get('user/staffs/');
             if (res) {
                 var users_undeleted = [];
@@ -44,21 +44,14 @@ export default function StaffList() {
                 setUsers_undeleted(users_undeleted);
                 setUsers_deleted(users_deleted);
             }
-        };
-        getUsers();
-        setLoading(false);
-    };
-    useEffect(() => {
-        setLoading(true);
-        try {
-            fecthData();
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+    useEffect(() => {
+        fecthData();
     }, [location]);
-
-    // console.log(users_undeleted);
-    // console.log(users_deleted);
 
     const handleDelete = async (id) => {
         setLoading(true);
@@ -399,6 +392,7 @@ export default function StaffList() {
                     onClose={() => setOpen(false)}
                     id={id}
                     onResetId={() => setId('')}
+                    type="staffInfo"
                 ></ModalStaffInfo>
             )}
             <ModalStaffNew

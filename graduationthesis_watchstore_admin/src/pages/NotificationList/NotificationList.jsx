@@ -22,24 +22,17 @@ export default function NotificationList() {
 
     const fecthData = async () => {
         setLoading(true);
-        const getPosts = async () => {
-            const res = await axiosClient.get('notification/admin/');
-
-            setPosts(res.data.notifications);
-        };
-        getPosts();
-        setLoading(false);
-    };
-
-    // console.log(productsUneleted);
-
-    useEffect(() => {
-        setLoading(true);
         try {
-            fecthData();
+            const res = await axiosClient.get('notification/admin/');
+            setPosts(res.data.notifications);
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        fecthData();
     }, [location]);
 
     const handleSeen = async (id) => {
@@ -51,21 +44,19 @@ export default function NotificationList() {
     };
 
     const handleSeenAll = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
-
             const notification_notseen = await axiosClient.get('notification/admin/notseen');
-            // console.log(notification_notseen.data.notifications);
             notification_notseen.data.notifications.map(async (n) => {
                 await axiosClient.put('notification/seen/' + n._id);
             });
 
-            // await Promise.all();
             navigate('/notifications');
-            setLoading(false);
             toast.success('Đánh dấu tất cả đã xem thành công');
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -77,20 +68,6 @@ export default function NotificationList() {
             headerName: 'Thông báo',
             width: 500,
         },
-        // {
-        //     field: 'order.code',
-        //     headerAlign: 'center',
-        //     headerClassName: 'super-app-theme--header',
-        //     headerName: 'Mã đơn hàng',
-        //     width: 150,
-        //     renderCell: (params) => {
-        //         return (
-        //             <>
-        //                 <div>{params.row.order.code}</div>
-        //             </>
-        //         );
-        //     },
-        // },
         {
             field: 'user.username',
             headerAlign: 'center',

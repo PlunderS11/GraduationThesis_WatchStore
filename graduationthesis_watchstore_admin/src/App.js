@@ -21,6 +21,7 @@ import runOneSignal from './oneSignal';
 import OneSignal from 'react-onesignal';
 import axiosClient from './api/axiosClient';
 import NotificationList from './pages/NotificationList/NotificationList';
+import MyErrorBoundary from './layouts/ErrorBoundary/ErrorBoundary';
 
 function App() {
     const user = useSelector((state) => state.user);
@@ -57,12 +58,37 @@ function App() {
     return (
         <MasterLayout>
             <Router>
-                <Routes>
-                    <Route
-                        exact
-                        path="/"
-                        element={
-                            user.user.role === 'admin' ? (
+                <MyErrorBoundary>
+                    <Routes>
+                        <Route
+                            exact
+                            path="/"
+                            element={
+                                user.user.role === 'admin' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <Home />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/login"
+                            element={user.user.role === 'admin' ? <Navigate to="/" replace /> : <Login />}
+
+                            // element={<Login />}
+                        />
+                        <Route
+                            path="/users"
+                            element={
                                 <>
                                     <Topbar />
                                     <div className="container">
@@ -70,156 +96,133 @@ function App() {
                                             {/* <Sidebar /> */}
                                             <MenuSideBar />
                                         </div>
-                                        <Home />
+                                        <UserList />
                                     </div>
                                 </>
-                            ) : (
-                                <Navigate to="/login" replace />
-                            )
-                        }
-                    />
-                    <Route
-                        path="/login"
-                        element={user.user.role === 'admin' ? <Navigate to="/" replace /> : <Login />}
-
-                        // element={<Login />}
-                    />
-                    <Route
-                        path="/users"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                            }
+                        />
+                        <Route
+                            path="/products"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <ProductList />
                                     </div>
-                                    <UserList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/products"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/collections"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <CollectionList />
                                     </div>
-                                    <ProductList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/collections"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/promotions"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <PromotionList />
                                     </div>
-                                    <CollectionList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/promotions"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/orders"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <OrderList />
                                     </div>
-                                    <PromotionList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/orders"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/ranks"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <UserRankList />
                                     </div>
-                                    <OrderList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/ranks"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/staffs"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <StaffList />
                                     </div>
-                                    <UserRankList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/staffs"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/news"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <NewsList />
                                     </div>
-                                    <StaffList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/news"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/notifications"
+                            element={
+                                <>
+                                    <Topbar />
+                                    <div className="container">
+                                        <div className="sidebar">
+                                            {/* <Sidebar /> */}
+                                            <MenuSideBar />
+                                        </div>
+                                        <NotificationList />
                                     </div>
-                                    <NewsList />
-                                </div>
-                            </>
-                        }
-                    />
-                    <Route
-                        path="/notifications"
-                        element={
-                            <>
-                                <Topbar />
-                                <div className="container">
-                                    <div className="sidebar">
-                                        {/* <Sidebar /> */}
-                                        <MenuSideBar />
-                                    </div>
-                                    <NotificationList />
-                                </div>
-                            </>
-                        }
-                    />
-                </Routes>
+                                </>
+                            }
+                        />
+                    </Routes>
+                </MyErrorBoundary>
             </Router>
         </MasterLayout>
     );

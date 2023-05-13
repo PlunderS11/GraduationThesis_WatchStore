@@ -1,30 +1,27 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { images } from '../../../assets/images';
 import { Divider, Image, Space } from 'antd';
-import Button from '../../../components/Button/Button';
-import { useTranslation } from 'react-i18next';
+import Button from '~/components/Button/Button';
+import img from '~/assets/images/undraw_bug_fixing_oc7a.png';
 import { useNavigate } from 'react-router-dom';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
-    const navigate = useNavigate()
-    const { t } = useTranslation();
     const navigate = useNavigate();
     return (
         <div style={{ textAlign: 'center' }}>
             <Space style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <Image src={images.errorBoundary} width={300} preview={false} />
-                <h2>{t('errorPage.title')}</h2>
-                <div>{t('errorPage.fix')}</div>
-                <span>{t('errorPage.description')}!</span>
+                <Image src={img} width={300} preview={false} />
+                <h2>Có một ngoài sự cố xảy ra trên website</h2>
+                <div>Đội kỹ thuật chúng tôi sẽ khắc phục sớm nhất có thể!</div>
+                <span>Mong bạn thông cảm cho sự cố này, cảm ơn bạn rất nhiều!</span>
                 <Divider />
                 <Button
-                    onclick={() => {
+                    onClick={() => {
                         navigate('/');
                         window.location.reload();
                     }}
                 >
-                    {t('button.goHome')}!
+                    Về trang chủ!
                 </Button>
             </Space>
         </div>

@@ -1,72 +1,46 @@
-// import { useState } from 'react';
-// import ModalNews from '~/components/Modal/ModalNews/ModalNews';
-
-// function NewsList() {
-//     const [open, setOpen] = useState(false);
-
-//     return (
-//         <>
-//             <button onClick={() => setOpen(true)}>Thêm bài viết</button>
-//             <ModalNews open={open} onClose={() => setOpen(false)} />
-//         </>
-//     );
-// }
-
-// export default NewsList;
-
 import classNames from 'classnames/bind';
 import styles from './NewsList.module.scss';
-
-// import { DeleteOutline } from '@material-ui/icons';
 import { useLocation } from 'react-router-dom';
-
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
+import { useState, useEffect } from 'react';
+import * as moment from 'moment';
 
 import Button from '~/components/Button/Button';
 import axiosClient from '~/api/axiosClient';
-import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Grid from '~/components/Grid/Grid';
-
-import * as moment from 'moment';
 import ModalNews from '~/components/Modal/ModalNews/ModalNews';
 import ModalNewsUpdate from '~/components/Modal/ModalNewsUpdate/ModalNewsUpdate';
 
 const cx = classNames.bind(styles);
 
 export default function NewsList() {
-    const location = useLocation();
-    const { confirm } = Modal;
-    const [posts, setPosts] = useState([]);
-
     const [loading, setLoading] = useState(false);
 
-    const [id, setId] = useState('');
+    const location = useLocation();
+    const { confirm } = Modal;
 
+    const [posts, setPosts] = useState([]);
+    const [id, setId] = useState('');
     const [openUpdate, setOpenUpdate] = useState(false);
     const [openNew, setOpenNew] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
-        const getPosts = async () => {
+        try {
             const res = await axiosClient.get('post/');
-
             setPosts(res.data.post);
-        };
-        getPosts();
-        setLoading(false);
+        } catch (error) {
+        } finally {
+            setLoading(false);
+        }
     };
 
     // console.log(productsUneleted);
 
     useEffect(() => {
-        setLoading(true);
-        try {
-            fecthData();
-        } finally {
-            setLoading(false);
-        }
+        fecthData();
     }, [location]);
 
     const handleDelete = async (id) => {

@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import classNames from 'classnames/bind';
 
 // import { productData } from '~/data/dummyData.js';
@@ -11,7 +11,7 @@ const cx = classNames.bind(styles);
 
 const ModalProductSale = (props) => {
     const { open, onClose, id } = props;
-
+    const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         // setPStats(null);
         onClose(false);
@@ -30,41 +30,32 @@ const ModalProductSale = (props) => {
     );
 
     const fecthData = async () => {
-        if (id !== '') {
-            const getProduct = async () => {
-                const res = await axiosClient.get('product/detail/' + id);
-                setProduct(res.data.detailProduct);
-                setImg(res.data.detailProduct.images[0]);
-            };
-            getProduct();
+        setLoading(true);
+        try {
+            if (id !== '') {
+                const res_detailProduct = await axiosClient.get('product/detail/' + id);
+                setProduct(res_detailProduct.data.detailProduct);
+                setImg(res_detailProduct.data.detailProduct.images[0]);
 
-            const getStats = async () => {
-                try {
-                    const res = await axiosClient.get('order/income?pid=' + id);
-                    const list = res.data.income.sort((a, b) => {
-                        return a._id - b._id;
-                    });
-                    // list.map((item) =>
-                    //     setPStats((prev) => [...prev, { name: MONTHS[item._id - 1], Sales: item.total }]),
-                    // );
-                    const rs = list.reduce((acc, cur) => {
-                        acc.push({ name: MONTHS[cur._id - 1], 'Đã bán': cur.total });
-                        return acc;
-                    }, []);
-                    setPStats(rs);
-                } catch (err) {
-                    console.log(err);
-                }
-            };
-            getStats();
+                const res = await axiosClient.get('order/income?pid=' + id);
+                const list = res.data.income.sort((a, b) => {
+                    return a._id - b._id;
+                });
+                const rs = list.reduce((acc, cur) => {
+                    acc.push({ name: MONTHS[cur._id - 1], 'Đã bán': cur.total });
+                    return acc;
+                }, []);
+                setPStats(rs);
+            }
+        } catch (error) {
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
+        fecthData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, MONTHS]);
 
@@ -83,29 +74,31 @@ const ModalProductSale = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('product')}>
-                    <div className={cx('product-top')}>
-                        <div className={cx('product-top-right')}>
-                            <div className={cx('product-info-top')}>
-                                <img src={img} alt="" className={cx('product-info-img')} />
-                                <span className={cx('product-name')}>{product.name}</span>
-                            </div>
-                            <div className={cx('product-info-bottom')}>
-                                <div className={cx('product-info-item')}>
-                                    <span className={cx('product-info-key')}>Đã bán:</span>
-                                    <span className={cx('product-info-value')}>{product.sold}</span>
+                <Spin spinning={loading}>
+                    <div className={cx('product')}>
+                        <div className={cx('product-top')}>
+                            <div className={cx('product-top-right')}>
+                                <div className={cx('product-info-top')}>
+                                    <img src={img} alt="" className={cx('product-info-img')} />
+                                    <span className={cx('product-name')}>{product.name}</span>
                                 </div>
-                                <div className={cx('product-info-item')}>
-                                    <span className={cx('product-info-key')}>Tồn kho:</span>
-                                    <span className={cx('product-info-value')}>{product.stock}</span>
+                                <div className={cx('product-info-bottom')}>
+                                    <div className={cx('product-info-item')}>
+                                        <span className={cx('product-info-key')}>Đã bán:</span>
+                                        <span className={cx('product-info-value')}>{product.sold}</span>
+                                    </div>
+                                    <div className={cx('product-info-item')}>
+                                        <span className={cx('product-info-key')}>Tồn kho:</span>
+                                        <span className={cx('product-info-value')}>{product.stock}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className={cx('product-top-left')}>
-                            <Chart data={pStats} dataKey="Đã bán" title="Hiệu suất bán hàng" />
+                            <div className={cx('product-top-left')}>
+                                <Chart data={pStats} dataKey="Đã bán" title="Hiệu suất bán hàng" />
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Spin>
             </Modal>
         </>
     );

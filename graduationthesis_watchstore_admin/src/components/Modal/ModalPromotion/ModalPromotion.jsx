@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 // import { useState } from 'react';
 
 import classNames from 'classnames/bind';
@@ -19,7 +19,7 @@ const cx = classNames.bind(styles);
 
 const ModalPromotion = (props) => {
     const { open, onClose, id, onResetId } = props;
-
+    const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         onResetId('');
         onClose(false);
@@ -38,8 +38,9 @@ const ModalPromotion = (props) => {
     const [end, setEnd] = useState();
 
     const fecthData = async () => {
-        if (id !== '') {
-            const getPromotion = async () => {
+        setLoading(true);
+        try {
+            if (id !== '') {
                 const res = await axiosClient.get('promotion/detailById/' + String(id));
                 if (res) {
                     setPromotion(res.data.detailPromotion);
@@ -62,14 +63,13 @@ const ModalPromotion = (props) => {
                     if (mm_end < 10) mm_end = '0' + mm_end;
                     setEnd(dd_end + '/' + mm_end + '/' + yyyy_end);
                 }
-            };
-            getPromotion();
 
-            const getPromotions = async () => {
-                const res = await axiosClient.get('promotion/');
-                setPromotions(res.data.promotions);
-            };
-            getPromotions();
+                const res_promotions = await axiosClient.get('promotion/');
+                setPromotions(res_promotions.data.promotions);
+            }
+        } catch (error) {
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -131,7 +131,7 @@ const ModalPromotion = (props) => {
         }),
         onSubmit: async (values) => {
             const { titlevi, titleen, code, value, startDate, endDate, isDelete } = values;
-            // console.log(values);
+            setLoading(true);
             try {
                 var used_code = false;
                 var arr = [];
@@ -166,6 +166,8 @@ const ModalPromotion = (props) => {
                 }
             } catch (error) {
                 toast.error(error);
+            } finally {
+                setLoading(false);
             }
         },
     });
@@ -180,113 +182,115 @@ const ModalPromotion = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-promotion')}>
-                    <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
-                        {promotion.type === 'normal' && (
-                            <>
-                                <div className={cx('add-promotion-item')}>
-                                    <label>Ngày bắt đầu</label>
-                                    {start !== undefined && (
-                                        <DatePicker
-                                            defaultValue={dayjs(start, 'DD/MM/YYYY')}
-                                            placeholder="Chọn ngày bắt đầu"
-                                            className={cx('date-picker')}
-                                            onChange={onChangeStartDate}
-                                            format="DD/MM/YYYY"
-                                        />
-                                    )}
-                                    {formik.errors.startDate && (
-                                        <div className={cx('input-feedback')}>{formik.errors.startDate}</div>
-                                    )}
-                                </div>
-                                <div className={cx('add-promotion-item')}>
-                                    <label>Ngày kết thúc</label>
-                                    {end !== undefined && (
-                                        <DatePicker
-                                            defaultValue={dayjs(end, 'DD/MM/YYYY')}
-                                            placeholder="Chọn ngày kết thúc"
-                                            className={cx('date-picker')}
-                                            onChange={onChangeEndDate}
-                                            format="DD/MM/YYYY"
-                                        />
-                                    )}
+                <Spin spinning={loading}>
+                    <div className={cx('new-promotion')}>
+                        <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
+                            {promotion.type === 'normal' && (
+                                <>
+                                    <div className={cx('add-promotion-item')}>
+                                        <label>Ngày bắt đầu</label>
+                                        {start !== undefined && (
+                                            <DatePicker
+                                                defaultValue={dayjs(start, 'DD/MM/YYYY')}
+                                                placeholder="Chọn ngày bắt đầu"
+                                                className={cx('date-picker')}
+                                                onChange={onChangeStartDate}
+                                                format="DD/MM/YYYY"
+                                            />
+                                        )}
+                                        {formik.errors.startDate && (
+                                            <div className={cx('input-feedback')}>{formik.errors.startDate}</div>
+                                        )}
+                                    </div>
+                                    <div className={cx('add-promotion-item')}>
+                                        <label>Ngày kết thúc</label>
+                                        {end !== undefined && (
+                                            <DatePicker
+                                                defaultValue={dayjs(end, 'DD/MM/YYYY')}
+                                                placeholder="Chọn ngày kết thúc"
+                                                className={cx('date-picker')}
+                                                onChange={onChangeEndDate}
+                                                format="DD/MM/YYYY"
+                                            />
+                                        )}
 
-                                    {formik.errors.endDate && (
-                                        <div className={cx('input-feedback')}>{formik.errors.endDate}</div>
-                                    )}
-                                </div>
-                            </>
-                        )}
+                                        {formik.errors.endDate && (
+                                            <div className={cx('input-feedback')}>{formik.errors.endDate}</div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
 
-                        <div className={cx('add-promotion-item')}>
-                            <label>Thông tin khuyến mãi</label>
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="text"
-                                id="titlevi"
-                                name="titlevi"
-                                placeholder="."
-                                value={formik.values.titlevi}
-                                label={'Tên khuyến mãi tiếng Việt'}
-                                require
-                                touched={formik.touched.titlevi}
-                                error={formik.errors.titlevi}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="text"
-                                id="titleen"
-                                name="titleen"
-                                placeholder="."
-                                value={formik.values.titleen}
-                                label={'Tên khuyến mãi tiếng Anh'}
-                                require
-                                touched={formik.touched.titleen}
-                                error={formik.errors.titleen}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="text"
-                                id="code"
-                                name="code"
-                                placeholder="."
-                                value={formik.values.code}
-                                label={'Mã khuyến mãi'}
-                                require
-                                touched={formik.touched.code}
-                                error={formik.errors.code}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="number"
-                                id="value"
-                                name="value"
-                                placeholder="."
-                                value={String(formik.values.value)}
-                                label={'Giá trị khuyến mãi(%)'}
-                                require
-                                touched={formik.touched.value}
-                                error={formik.errors.value}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
+                            <div className={cx('add-promotion-item')}>
+                                <label>Thông tin khuyến mãi</label>
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="text"
+                                    id="titlevi"
+                                    name="titlevi"
+                                    placeholder="."
+                                    value={formik.values.titlevi}
+                                    label={'Tên khuyến mãi tiếng Việt'}
+                                    require
+                                    touched={formik.touched.titlevi}
+                                    error={formik.errors.titlevi}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="text"
+                                    id="titleen"
+                                    name="titleen"
+                                    placeholder="."
+                                    value={formik.values.titleen}
+                                    label={'Tên khuyến mãi tiếng Anh'}
+                                    require
+                                    touched={formik.touched.titleen}
+                                    error={formik.errors.titleen}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="text"
+                                    id="code"
+                                    name="code"
+                                    placeholder="."
+                                    value={formik.values.code}
+                                    label={'Mã khuyến mãi'}
+                                    require
+                                    touched={formik.touched.code}
+                                    error={formik.errors.code}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="number"
+                                    id="value"
+                                    name="value"
+                                    placeholder="."
+                                    value={String(formik.values.value)}
+                                    label={'Giá trị khuyến mãi(%)'}
+                                    require
+                                    touched={formik.touched.value}
+                                    error={formik.errors.value}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
 
-                        <Button type="submit" customClass={styles}>
-                            Cập nhật
-                        </Button>
-                    </form>
-                </div>
+                            <Button type="submit" customClass={styles}>
+                                Cập nhật
+                            </Button>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );

@@ -28,26 +28,20 @@ export default function CollectionList() {
 
     const fecthData = async () => {
         setLoading(true);
-        const getProducts_undeleted = async () => {
-            const res = await axiosClient.get('collections/undeleted/');
-            setCollectionsUndeleted(res.data.collections_undeleted);
-        };
-        getProducts_undeleted();
-        const getProducts_deleted = async () => {
-            const res = await axiosClient.get('collections/deleted/');
-            setCollectionsDeleted(res.data.collections_deleted);
-        };
-        getProducts_deleted();
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        setLoading(true);
         try {
-            fecthData();
+            const res_undeleted = await axiosClient.get('collections/undeleted/');
+            setCollectionsUndeleted(res_undeleted.data.collections_undeleted);
+
+            const res_deleted = await axiosClient.get('collections/deleted/');
+            setCollectionsDeleted(res_deleted.data.collections_deleted);
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        fecthData();
     }, [location]);
 
     const handleDelete = async (id) => {

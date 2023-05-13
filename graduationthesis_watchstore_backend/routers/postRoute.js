@@ -129,7 +129,7 @@ router.delete('/delete/:id', verifyTokenAndAdmin, async (req, res) => {
 //GET ALL POST
 router.get('/', async (req, res) => {
     try {
-        const post = await Post.find();
+        const post = await Post.find().sort({createdAt: -1});
 
         res.status(200).json({ data: { post: post }, message: 'success', status: 200 });
     } catch (error) {

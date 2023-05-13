@@ -192,256 +192,257 @@ const ModalProductNew = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-product')}>
-                    <form onSubmit={formik.handleSubmit} className={cx('add-product-form')} spellCheck="false">
-                        <div className={cx('add-product-item')}>
-                            <label>Hình ảnh</label>
-                            {/* <input type="file" id="image" /> */}
-                            <label className={cx('input-image')} htmlFor="images">
-                                Chọn hình ảnh
-                            </label>
-                            <input
-                                type="file"
-                                id="images"
-                                name="images"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) => handleMultiFile(e)}
-                                hidden
-                            />
-                            <div className={cx('list-img')}>
-                                {delImg.map((img, i) => (
-                                    <div className={cx('img')} key={i}>
-                                        <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                        <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
-                                            X
-                                        </i>
-                                    </div>
-                                ))}
+                <Spin spinning={loading}>
+                    <div className={cx('new-product')}>
+                        <form onSubmit={formik.handleSubmit} className={cx('add-product-form')} spellCheck="false">
+                            <div className={cx('add-product-item')}>
+                                <label>Hình ảnh</label>
+                                {/* <input type="file" id="image" /> */}
+                                <label className={cx('input-image')} htmlFor="images">
+                                    Chọn hình ảnh
+                                </label>
+                                <input
+                                    type="file"
+                                    id="images"
+                                    name="images"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => handleMultiFile(e)}
+                                    hidden
+                                />
+                                <div className={cx('list-img')}>
+                                    {delImg.map((img, i) => (
+                                        <div className={cx('img')} key={i}>
+                                            <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
+                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                                X
+                                            </i>
+                                        </div>
+                                    ))}
+                                </div>
+                                {formik.errors.images && (
+                                    <div className={cx('input-feedback')}>{formik.errors.images}</div>
+                                )}
                             </div>
-                            {formik.errors.images && <div className={cx('input-feedback')}>{formik.errors.images}</div>}
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <label>Loại</label>
-                            <select
-                                className={cx('select-item')}
-                                id="type"
-                                name="type"
-                                value={formik.values.type}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            >
-                                <option value="" label="--Chọn loại sản phẩm--">
-                                    --Chọn loại sản phẩm--
-                                </option>
-                                <option value="watch" label="Watch">
-                                    Watch
-                                </option>
-                                <option value="strap" label="Strap">
-                                    Strap
-                                </option>
-                                <option value="bracelet" label="Bracelet">
-                                    Bracelet
-                                </option>
-                            </select>
-                            {formik.errors.type && <div className={cx('input-feedback')}>{formik.errors.type}</div>}
-                        </div>
+                            <div className={cx('add-product-item')}>
+                                <label>Loại</label>
+                                <select
+                                    className={cx('select-item')}
+                                    id="type"
+                                    name="type"
+                                    value={formik.values.type}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                >
+                                    <option value="" label="--Chọn loại sản phẩm--">
+                                        --Chọn loại sản phẩm--
+                                    </option>
+                                    <option value="watch" label="Đồng hồ">
+                                        Đồng hồ
+                                    </option>
+                                    <option value="strap" label="Dây đồng hồ">
+                                        Dây đồng hồ
+                                    </option>
+                                    <option value="bracelet" label="Vòng tay">
+                                        Vòng tay
+                                    </option>
+                                </select>
+                                {formik.errors.type && <div className={cx('input-feedback')}>{formik.errors.type}</div>}
+                            </div>
 
-                        <div className={cx('add-product-item')}>
-                            <label>Giới tính</label>
-                            <select
-                                className={cx('select-item')}
-                                id="sex"
-                                name="sex"
-                                value={formik.values.sex}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            >
-                                <option value="" label="--Chọn giới tính--">
-                                    --Chọn giới tính--
-                                </option>
-                                <option value="m" label="Nam">
-                                    {' '}
-                                    Nam
-                                </option>
-                                <option value="w" label="Nữ">
-                                    Nữ
-                                </option>
-                            </select>
-                            {formik.errors.sex && <div className={cx('input-feedback')}>{formik.errors.sex}</div>}
-                        </div>
+                            <div className={cx('add-product-item')}>
+                                <label>Giới tính</label>
+                                <select
+                                    className={cx('select-item')}
+                                    id="sex"
+                                    name="sex"
+                                    value={formik.values.sex}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                >
+                                    <option value="" label="--Chọn giới tính--">
+                                        --Chọn giới tính--
+                                    </option>
+                                    <option value="m" label="Nam">
+                                        {' '}
+                                        Nam
+                                    </option>
+                                    <option value="w" label="Nữ">
+                                        Nữ
+                                    </option>
+                                </select>
+                                {formik.errors.sex && <div className={cx('input-feedback')}>{formik.errors.sex}</div>}
+                            </div>
 
-                        <div className={cx('add-product-item')}>
-                            <label>Danh mục</label>
-                            <select
-                                className={cx('select-item')}
-                                id="collectionId"
-                                name="collectionId"
-                                value={formik.values.collectionId}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            >
-                                <option value="" label="--Chọn danh mục--">
-                                    --Chọn danh mục--
-                                </option>
-                                {collections.map((col, index) => {
-                                    return (
-                                        <option key={index} value={col._id} label={col.name}>
-                                            {col.name}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                            {formik.errors.collectionId && (
-                                <div className={cx('input-feedback')}>{formik.errors.collectionId}</div>
-                            )}
-                        </div>
+                            <div className={cx('add-product-item')}>
+                                <label>Danh mục</label>
+                                <select
+                                    className={cx('select-item')}
+                                    id="collectionId"
+                                    name="collectionId"
+                                    value={formik.values.collectionId}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                >
+                                    <option value="" label="--Chọn danh mục--">
+                                        --Chọn danh mục--
+                                    </option>
+                                    {collections.map((col, index) => {
+                                        return (
+                                            <option key={index} value={col._id} label={col.name}>
+                                                {col.name}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                                {formik.errors.collectionId && (
+                                    <div className={cx('input-feedback')}>{formik.errors.collectionId}</div>
+                                )}
+                            </div>
 
-                        <div className={cx('add-product-item')}>
-                            <label>Thông tin sản phẩm</label>
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="text"
-                                id="name"
-                                name="name"
-                                placeholder="."
-                                value={formik.values.name}
-                                label={'Tên sản phẩm'}
-                                require
-                                touched={formik.touched.name}
-                                error={formik.errors.name}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="text"
-                                id="brand"
-                                name="brand"
-                                placeholder="."
-                                value={formik.values.brand}
-                                label={'Hãng'}
-                                require
-                                touched={formik.touched.brand}
-                                error={formik.errors.brand}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="number"
-                                id="originalPrice"
-                                name="originalPrice"
-                                placeholder="."
-                                value={formik.values.originalPrice}
-                                label={'Giá'}
-                                require
-                                touched={formik.touched.originalPrice}
-                                error={formik.errors.originalPrice}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="number"
-                                id="stock"
-                                name="stock"
-                                placeholder="."
-                                value={formik.values.stock}
-                                label={'Tồn kho'}
-                                require
-                                touched={formik.touched.stock}
-                                error={formik.errors.stock}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="textarea"
-                                id="descriptionen"
-                                name="descriptionen"
-                                placeholder="."
-                                value={formik.values.descriptionen}
-                                label={'Mô tả tiếng Anh'}
-                                require
-                                touched={formik.touched.descriptionen}
-                                error={formik.errors.descriptionen}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="textarea"
-                                id="descriptionvi"
-                                name="descriptionvi"
-                                placeholder="."
-                                value={formik.values.descriptionvi}
-                                label={'Mô tả tiếng Việt'}
-                                require
-                                touched={formik.touched.descriptionvi}
-                                error={formik.errors.descriptionvi}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="textarea"
-                                id="featuresen"
-                                name="featuresen"
-                                placeholder="."
-                                value={formik.values.featuresen}
-                                label={'Tính năng tiếng Anh'}
-                                require
-                                touched={formik.touched.featuresen}
-                                error={formik.errors.featuresen}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="textarea"
-                                id="featuresvi"
-                                name="featuresvi"
-                                placeholder="."
-                                value={formik.values.featuresvi}
-                                label={'Tính năng tiếng Việt'}
-                                require
-                                touched={formik.touched.featuresvi}
-                                error={formik.errors.featuresvi}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-product-item')}>
-                            <InputField
-                                type="textarea"
-                                id="note"
-                                name="note"
-                                placeholder="."
-                                value={formik.values.note}
-                                label={'Ghi chú'}
-                                require
-                                touched={formik.touched.note}
-                                error={formik.errors.note}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <Spin spinning={loading}>
+                            <div className={cx('add-product-item')}>
+                                <label>Thông tin sản phẩm</label>
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="."
+                                    value={formik.values.name}
+                                    label={'Tên sản phẩm'}
+                                    require
+                                    touched={formik.touched.name}
+                                    error={formik.errors.name}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="text"
+                                    id="brand"
+                                    name="brand"
+                                    placeholder="."
+                                    value={formik.values.brand}
+                                    label={'Hãng'}
+                                    require
+                                    touched={formik.touched.brand}
+                                    error={formik.errors.brand}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="number"
+                                    id="originalPrice"
+                                    name="originalPrice"
+                                    placeholder="."
+                                    value={formik.values.originalPrice}
+                                    label={'Giá'}
+                                    require
+                                    touched={formik.touched.originalPrice}
+                                    error={formik.errors.originalPrice}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="number"
+                                    id="stock"
+                                    name="stock"
+                                    placeholder="."
+                                    value={formik.values.stock}
+                                    label={'Tồn kho'}
+                                    require
+                                    touched={formik.touched.stock}
+                                    error={formik.errors.stock}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="descriptionen"
+                                    name="descriptionen"
+                                    placeholder="."
+                                    value={formik.values.descriptionen}
+                                    label={'Mô tả tiếng Anh'}
+                                    require
+                                    touched={formik.touched.descriptionen}
+                                    error={formik.errors.descriptionen}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="descriptionvi"
+                                    name="descriptionvi"
+                                    placeholder="."
+                                    value={formik.values.descriptionvi}
+                                    label={'Mô tả tiếng Việt'}
+                                    require
+                                    touched={formik.touched.descriptionvi}
+                                    error={formik.errors.descriptionvi}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="featuresen"
+                                    name="featuresen"
+                                    placeholder="."
+                                    value={formik.values.featuresen}
+                                    label={'Tính năng tiếng Anh'}
+                                    require
+                                    touched={formik.touched.featuresen}
+                                    error={formik.errors.featuresen}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="featuresvi"
+                                    name="featuresvi"
+                                    placeholder="."
+                                    value={formik.values.featuresvi}
+                                    label={'Tính năng tiếng Việt'}
+                                    require
+                                    touched={formik.touched.featuresvi}
+                                    error={formik.errors.featuresvi}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-product-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="note"
+                                    name="note"
+                                    placeholder="."
+                                    value={formik.values.note}
+                                    label={'Ghi chú'}
+                                    touched={formik.touched.note}
+                                    error={formik.errors.note}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
                             <Button type="submit" customClass={styles}>
                                 Thêm
                             </Button>
-                        </Spin>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );

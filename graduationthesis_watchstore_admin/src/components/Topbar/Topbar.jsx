@@ -83,7 +83,13 @@ export default function Topbar() {
                     </Popover>
                 </div>
             </div>
-            <ModalStaffInfo open={openInfo} onClose={() => setOpenInfo(false)} id={user.user.id} onResetId={() => {}} />
+            <ModalStaffInfo
+                open={openInfo}
+                onClose={() => setOpenInfo(false)}
+                id={user.user.id}
+                onResetId={() => {}}
+                type="myInfo"
+            />
             <ModalChangePassword open={openChangePass} onClose={() => setOpenChangePass(false)} />
         </div>
     );

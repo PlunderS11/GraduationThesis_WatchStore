@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
@@ -16,6 +16,7 @@ const cx = classNames.bind(styles);
 
 const ModalPromotionNew = (props) => {
     const { open, onClose } = props;
+    const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         formik.values.titlevi = '';
         formik.values.titleen = '';
@@ -100,7 +101,7 @@ const ModalPromotionNew = (props) => {
         onSubmit: async (values) => {
             const { titlevi, titleen, code, value, startDate, endDate, isDelete } = values;
             // console.log(values);
-
+            setLoading(true);
             try {
                 var used_code = false;
                 promotions.map((p) => {
@@ -130,6 +131,8 @@ const ModalPromotionNew = (props) => {
                 }
             } catch (error) {
                 toast.error(error);
+            } finally {
+                setLoading(false);
             }
         },
     });
@@ -145,101 +148,103 @@ const ModalPromotionNew = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-promotion')}>
-                    <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
-                        <div className={cx('add-promotion-item')}>
-                            <label>Ngày bắt đầu</label>
-                            <DatePicker
-                                placeholder="Chọn ngày bắt đầu"
-                                className={cx('date-picker')}
-                                onChange={onChangeStartDate}
-                                format="DD/MM/YYYY"
-                            />
-                            {formik.errors.startDate && (
-                                <div className={cx('input-feedback')}>{formik.errors.startDate}</div>
-                            )}
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <label>Ngày kết thúc</label>
-                            <DatePicker
-                                placeholder="Chọn ngày kết thúc"
-                                className={cx('date-picker')}
-                                onChange={onChangeEndDate}
-                                format="DD/MM/YYYY"
-                            />
-                            {formik.errors.endDate && (
-                                <div className={cx('input-feedback')}>{formik.errors.endDate}</div>
-                            )}
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <label>Thông tin khuyến mãi</label>
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="text"
-                                id="titlevi"
-                                name="titlevi"
-                                placeholder="."
-                                value={formik.values.titlevi}
-                                label={'Tên khuyến mãi tiếng Việt'}
-                                require
-                                touched={formik.touched.titlevi}
-                                error={formik.errors.titlevi}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="text"
-                                id="titleen"
-                                name="titleen"
-                                placeholder="."
-                                value={formik.values.titleen}
-                                label={'Tên khuyến mãi tiếng Anh'}
-                                require
-                                touched={formik.touched.titleen}
-                                error={formik.errors.titleen}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="text"
-                                id="code"
-                                name="code"
-                                placeholder="."
-                                value={formik.values.code}
-                                label={'Mã khuyến mãi'}
-                                require
-                                touched={formik.touched.code}
-                                error={formik.errors.code}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-promotion-item')}>
-                            <InputField
-                                type="number"
-                                id="value"
-                                name="value"
-                                placeholder="."
-                                value={formik.values.value}
-                                label={'Giá trị khuyến mãi(%)'}
-                                require
-                                touched={formik.touched.value}
-                                error={formik.errors.value}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
+                <Spin spinning={loading}>
+                    <div className={cx('new-promotion')}>
+                        <form onSubmit={formik.handleSubmit} className={cx('add-promotion-form')} spellCheck="false">
+                            <div className={cx('add-promotion-item')}>
+                                <label>Ngày bắt đầu</label>
+                                <DatePicker
+                                    placeholder="Chọn ngày bắt đầu"
+                                    className={cx('date-picker')}
+                                    onChange={onChangeStartDate}
+                                    format="DD/MM/YYYY"
+                                />
+                                {formik.errors.startDate && (
+                                    <div className={cx('input-feedback')}>{formik.errors.startDate}</div>
+                                )}
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <label>Ngày kết thúc</label>
+                                <DatePicker
+                                    placeholder="Chọn ngày kết thúc"
+                                    className={cx('date-picker')}
+                                    onChange={onChangeEndDate}
+                                    format="DD/MM/YYYY"
+                                />
+                                {formik.errors.endDate && (
+                                    <div className={cx('input-feedback')}>{formik.errors.endDate}</div>
+                                )}
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <label>Thông tin khuyến mãi</label>
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="text"
+                                    id="titlevi"
+                                    name="titlevi"
+                                    placeholder="."
+                                    value={formik.values.titlevi}
+                                    label={'Tên khuyến mãi tiếng Việt'}
+                                    require
+                                    touched={formik.touched.titlevi}
+                                    error={formik.errors.titlevi}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="text"
+                                    id="titleen"
+                                    name="titleen"
+                                    placeholder="."
+                                    value={formik.values.titleen}
+                                    label={'Tên khuyến mãi tiếng Anh'}
+                                    require
+                                    touched={formik.touched.titleen}
+                                    error={formik.errors.titleen}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="text"
+                                    id="code"
+                                    name="code"
+                                    placeholder="."
+                                    value={formik.values.code}
+                                    label={'Mã khuyến mãi'}
+                                    require
+                                    touched={formik.touched.code}
+                                    error={formik.errors.code}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-promotion-item')}>
+                                <InputField
+                                    type="number"
+                                    id="value"
+                                    name="value"
+                                    placeholder="."
+                                    value={formik.values.value}
+                                    label={'Giá trị khuyến mãi(%)'}
+                                    require
+                                    touched={formik.touched.value}
+                                    error={formik.errors.value}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
 
-                        <Button type="submit" customClass={styles}>
-                            Thêm
-                        </Button>
-                    </form>
-                </div>
+                            <Button type="submit" customClass={styles}>
+                                Thêm
+                            </Button>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );
