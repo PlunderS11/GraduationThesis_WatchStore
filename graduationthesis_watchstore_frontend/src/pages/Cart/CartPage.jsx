@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Popconfirm, Spin, Table } from 'antd';
+import React from 'react';
+import { Popconfirm, Spin, Table } from 'antd';
 import ImageCustom from '../../components/ImageCustom/ImageCustom';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
@@ -11,9 +11,10 @@ import style from './Cart.module.scss';
 import Button from '../../components/Button/Button';
 import { NumberWithCommas } from '../../functions';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchEstimate, removeItem, selectCartItems, selectTotalItems, updateCartItem } from '../../features/cart';
+import { removeItem, selectCartItems, selectTotalItems, selectTotalPrice, updateCartItem } from '../../features/cart';
 import { useTranslation } from 'react-i18next';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(style);
 
@@ -24,16 +25,8 @@ const CartPage = () => {
     const dispatch = useDispatch();
     const products = useSelector(selectCartItems);
     const totalItems = useSelector(selectTotalItems);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [coupon, setCoupon] = useState('');
-    const estimate = useSelector(state => state.cart.estimate);
+    const price = useSelector(selectTotalPrice);
     const loading = useSelector(state => state.cart.isLoadingCart);
-    const [input, setInput] = useState('');
-
-    useEffect(() => {
-        user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     const handleRemoveCart = async e => {
         dispatch(
@@ -43,17 +36,6 @@ const CartPage = () => {
         );
     };
 
-    // const handleUpdateCart = async id => {
-    //     dispatch(
-    //         updateCartItem({
-    //             product: id,
-    //             quantity: input,
-    //             type: 'quantity',
-    //         })
-    //     );
-    //     dispatch(fetchEstimate());
-    // };
-
     const handleIncrease = async id => {
         dispatch(
             updateCartItem({
@@ -61,7 +43,6 @@ const CartPage = () => {
                 type: 'increase',
             })
         );
-        dispatch(fetchEstimate());
     };
 
     const handleDecrease = async id => {
@@ -71,21 +52,6 @@ const CartPage = () => {
                 type: 'decrease',
             })
         );
-        dispatch(fetchEstimate());
-    };
-
-    // Apply discount code
-    const handleOk = async () => {
-        dispatch(fetchEstimate(coupon));
-        setIsModalOpen(false);
-    };
-
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCancel = () => {
-        setIsModalOpen(false);
     };
 
     return (
@@ -165,7 +131,6 @@ const CartPage = () => {
                                                         type="text"
                                                         className={cx('btnCount-input')}
                                                         value={text}
-                                                        onChange={e => setInput(e.target.value)}
                                                     />
                                                     <div
                                                         className={cx('btnCount-btnAdd')}
@@ -212,87 +177,6 @@ const CartPage = () => {
                             </div>
                             <div className={cx('actions')}>
                                 <div>
-                                    <div className={cx('address')}>
-                                        <div className={cx('change')}>
-                                            <span style={{ fontWeight: 600 }}>{t('cart.toAddress')}</span>
-                                            <div
-                                                className={cx('change-a')}
-                                                onClick={() => navigate('/account/address', { state: true })}
-                                            >
-                                                {t('cart.changeAddress')}
-                                            </div>
-                                        </div>
-                                        <div className={cx('add')}>
-                                            {user.user.address?.address ? (
-                                                <>
-                                                    <div
-                                                        className={cx('address-add-phone')}
-                                                    >{`${user.user.address?.name} | ${user.user.address?.phone}`}</div>
-                                                    <div className={cx('address-add-address')}>
-                                                        {`${user.user.address?.address}, ${user.user.address?.ward.WardName}, ${user.user.address?.district.DistrictName}, ${user.user.address?.province.NameExtension[1]}`}
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <Link to={'/account/addresses'}>+ {t('cart.addAddress')}</Link>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* Modal coupon */}
-                                    <Modal
-                                        title={t('cart.storePromotion')}
-                                        className="modal-style"
-                                        open={isModalOpen}
-                                        onCancel={handleCancel}
-                                        width={550}
-                                        footer={null}
-                                    >
-                                        <div className={cx('modal__body')}>
-                                            <div className={cx('modal__box')}>
-                                                <input
-                                                    type="text"
-                                                    className={cx('modal__input')}
-                                                    placeholder="Nhập Mã Khuyến Mãi"
-                                                    value={coupon}
-                                                    onChange={e => setCoupon(e.target.value)}
-                                                />
-                                                <Button onclick={handleOk}>Áp dụng</Button>
-                                            </div>
-                                            <div className={cx('modal__text')}>
-                                                <div className={cx('modal__label')}>{t('cart.promotionCode')}</div>
-                                                {estimate?.discountPrice > 0 ? (
-                                                    <span>
-                                                        {t('cart.promotioPrice')}&nbsp;
-                                                        {NumberWithCommas(estimate?.discountPrice)} &nbsp;₫
-                                                    </span>
-                                                ) : (
-                                                    <span>{t('cart.promotioNull')}</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </Modal>
-                                    <div className={cx('coupon')}>
-                                        <span>{t('cart.storePromotion')}</span>
-
-                                        <div className={cx('coupon-chonse')} onClick={showModal}>
-                                            {estimate?.discountPrice > 0 ? (
-                                                <>
-                                                    {t('cart.promotioPrice')}&nbsp;
-                                                    {NumberWithCommas(estimate?.discountPrice)} &nbsp;₫
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <img
-                                                        src="https://hebec.vn/images/coupon_icon.svg"
-                                                        alt=""
-                                                        style={{ marginRight: '4px' }}
-                                                    />
-                                                    {t('cart.chocePromotion')}
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
                                     <div className={cx('checkout')}>
                                         <div className={cx('checkout-button')}>
                                             <Button to="/">{t('button.keepShopping')}</Button>
@@ -306,32 +190,7 @@ const CartPage = () => {
                                                             {t('cart.estimate')}
                                                         </span>
                                                         <p>
-                                                            {estimate.totalPrice
-                                                                ? NumberWithCommas(estimate?.totalPrice)
-                                                                : 0}
-                                                            &nbsp;₫
-                                                        </p>
-                                                    </div>
-                                                    <div className={cx('checkout-form-calculate-title')}>
-                                                        <span className={cx('form-calculate-title-text')}>
-                                                            {t('cart.distancePrice')}
-                                                        </span>
-                                                        <p>
-                                                            {estimate.distancePrice
-                                                                ? NumberWithCommas(estimate?.distancePrice)
-                                                                : 0}
-                                                            &nbsp;₫
-                                                        </p>
-                                                    </div>
-                                                    <div className={cx('checkout-form-calculate-title')}>
-                                                        <span className={cx('form-calculate-title-text')}>
-                                                            {t('cart.discountPrice')}
-                                                        </span>
-                                                        <p style={{ color: '#47991f' }}>
-                                                            -
-                                                            {estimate.discountPrice
-                                                                ? NumberWithCommas(estimate?.discountPrice)
-                                                                : 0}
+                                                            {NumberWithCommas(price)}
                                                             &nbsp;₫
                                                         </p>
                                                     </div>
@@ -339,14 +198,21 @@ const CartPage = () => {
                                                 <div className={cx('checkout-form-total')}>
                                                     <h2>{t('cart.totalPrice')}:&nbsp;</h2>
                                                     <h2 style={{ color: '#ff424e' }}>
-                                                        {estimate.finalPrice
-                                                            ? NumberWithCommas(estimate.finalPrice)
-                                                            : 0}
+                                                        {NumberWithCommas(price)}
                                                         &nbsp;₫
                                                     </h2>
                                                 </div>
                                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                                    <Button to="/checkout" loading={loading}>
+                                                    <Button
+                                                        onclick={() => {
+                                                            if (user.isLogin) {
+                                                                navigate('/checkout');
+                                                            } else {
+                                                                toast.info(t('productDetail.buynowFail'));
+                                                            }
+                                                        }}
+                                                        loading={loading}
+                                                    >
                                                         {t('cart.checkout')}
                                                     </Button>
                                                 </div>

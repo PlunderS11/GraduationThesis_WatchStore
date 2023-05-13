@@ -4,9 +4,11 @@ import { images } from '../../../assets/images';
 import { Divider, Image, Space } from 'antd';
 import Button from '../../../components/Button/Button';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     return (
         <div style={{ textAlign: 'center' }}>
             <Space style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -15,7 +17,14 @@ function ErrorFallback({ error, resetErrorBoundary }) {
                 <div>{t('errorPage.fix')}</div>
                 <span>{t('errorPage.description')}!</span>
                 <Divider />
-                <Button to="/">{t('button.goHome')}!</Button>
+                <Button
+                    onclick={() => {
+                        navigate('/');
+                        window.location.reload();
+                    }}
+                >
+                    {t('button.goHome')}!
+                </Button>
             </Space>
         </div>
     );

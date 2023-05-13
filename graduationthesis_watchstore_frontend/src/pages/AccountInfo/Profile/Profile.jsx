@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames/bind';
-import { Col, Row, Form, Input, Button, Spin, Progress } from 'antd';
+import { Col, Row, Form, Input, Button, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import style from './Profile.module.scss';
