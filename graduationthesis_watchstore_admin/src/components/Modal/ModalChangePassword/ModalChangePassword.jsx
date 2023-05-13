@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, Spin } from 'antd';
 // import { useState } from 'react';
 
 import classNames from 'classnames/bind';
@@ -11,12 +11,14 @@ import styles from './ModalChangePassword.module.scss';
 import { toast } from 'react-toastify';
 import axiosClient from '~/api/axiosClient';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const ModalChangePassword = (props) => {
     const { open, onClose } = props;
+    const [loading, setLoading] = useState(false);
     const user = useSelector((state) => state.user);
     // const [key, setKey] = useState();
     // setKey(seed);
@@ -52,10 +54,12 @@ const ModalChangePassword = (props) => {
             const { oldPassword, newPasswordAgain } = values;
 
             try {
+                setLoading(true);
                 const res = await axiosClient.put('auth/changepassword/' + user.user.id, {
                     password: oldPassword,
                     newPassword: newPasswordAgain,
                 });
+                setLoading(false);
                 if (res) {
                     toast.success('Đổi mật khẩu thành công!');
                     handleCancel();
@@ -76,59 +80,61 @@ const ModalChangePassword = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-pass')}>
-                    <form onSubmit={formik.handleSubmit} className={cx('add-pass-form')} spellCheck="false">
-                        <div className={cx('add-pass-item')}>
-                            <InputField
-                                type="password"
-                                id="oldPassword"
-                                name="oldPassword"
-                                placeholder="."
-                                value={formik.values.oldPassword}
-                                label={'Mật khẩu cũ'}
-                                require
-                                touched={formik.touched.oldPassword}
-                                error={formik.errors.oldPassword}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-pass-item')}>
-                            <InputField
-                                type="password"
-                                id="newPassword"
-                                name="newPassword"
-                                placeholder="."
-                                value={formik.values.newPassword}
-                                label={'Mật khẩu mới'}
-                                require
-                                touched={formik.touched.newPassword}
-                                error={formik.errors.newPassword}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-pass-item')}>
-                            <InputField
-                                type="password"
-                                id="newPasswordAgain"
-                                name="newPasswordAgain"
-                                placeholder="."
-                                value={formik.values.newPasswordAgain}
-                                label={'Xác nhận mật khẩu mới'}
-                                require
-                                touched={formik.touched.newPasswordAgain}
-                                error={formik.errors.newPasswordAgain}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
+                <Spin spinning={loading}>
+                    <div className={cx('new-pass')}>
+                        <form onSubmit={formik.handleSubmit} className={cx('add-pass-form')} spellCheck="false">
+                            <div className={cx('add-pass-item')}>
+                                <InputField
+                                    type="password"
+                                    id="oldPassword"
+                                    name="oldPassword"
+                                    placeholder="."
+                                    value={formik.values.oldPassword}
+                                    label={'Mật khẩu cũ'}
+                                    require
+                                    touched={formik.touched.oldPassword}
+                                    error={formik.errors.oldPassword}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-pass-item')}>
+                                <InputField
+                                    type="password"
+                                    id="newPassword"
+                                    name="newPassword"
+                                    placeholder="."
+                                    value={formik.values.newPassword}
+                                    label={'Mật khẩu mới'}
+                                    require
+                                    touched={formik.touched.newPassword}
+                                    error={formik.errors.newPassword}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-pass-item')}>
+                                <InputField
+                                    type="password"
+                                    id="newPasswordAgain"
+                                    name="newPasswordAgain"
+                                    placeholder="."
+                                    value={formik.values.newPasswordAgain}
+                                    label={'Xác nhận mật khẩu mới'}
+                                    require
+                                    touched={formik.touched.newPasswordAgain}
+                                    error={formik.errors.newPasswordAgain}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
 
-                        <Button type="submit" customClass={styles}>
-                            Đổi mật khẩu
-                        </Button>
-                    </form>
-                </div>
+                            <Button type="submit" customClass={styles}>
+                                Đổi mật khẩu
+                            </Button>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );

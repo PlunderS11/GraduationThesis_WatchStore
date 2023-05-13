@@ -7,6 +7,7 @@ import InputField from '~/components/InputField/InputField';
 import styles from './ModalStaffInfo.module.scss';
 import axiosClient from '~/api/axiosClient';
 import { useEffect, useState } from 'react';
+import { Spin } from 'antd';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -18,7 +19,7 @@ const cx = classNames.bind(styles);
 
 const ModalStaffInfo = (props) => {
     const { open, onClose, id, onResetId } = props;
-
+    const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         onResetId('');
         onClose(false);
@@ -30,6 +31,7 @@ const ModalStaffInfo = (props) => {
 
     const fecthData = async () => {
         // console.log(id);
+        setLoading(true);
         if (id !== undefined) {
             const getUser = async () => {
                 const res = await axiosClient.get('user/find/' + String(id));
@@ -37,6 +39,7 @@ const ModalStaffInfo = (props) => {
             };
             getUser();
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -68,11 +71,13 @@ const ModalStaffInfo = (props) => {
             const { username, phone, sex } = values;
 
             try {
+                setLoading(true);
                 const res = await axiosClient.put('user/update/' + id, {
                     username: username,
                     phone: phone,
                     sex: sex,
                 });
+                setLoading(false);
                 if (res) {
                     toast.success('Cập nhật thành công!');
                     handleCancel();
@@ -94,96 +99,98 @@ const ModalStaffInfo = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-user')}>
-                    {/* <h1 className={cx('add-product-title')}>Cập nhật danh mục</h1> */}
-                    <form onSubmit={formik.handleSubmit} className={cx('add-user-form')} spellCheck="false">
-                        <div className={cx('add-user-item')}>
-                            <label>Thông tin nhân viên</label>
-                        </div>
-                        <div className={cx('add-user-item')}>
-                            <InputField
-                                type="text"
-                                id="username"
-                                name="username"
-                                placeholder="."
-                                value={formik.values.username}
-                                label={'Tên nhân viên'}
-                                require
-                                touched={formik.touched.username}
-                                error={formik.errors.username}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-user-item')}>
-                            <InputField
-                                customClass={styles}
-                                readonly={true}
-                                type="text"
-                                id="email"
-                                name="email"
-                                value={String(user.email)}
-                                placeholder="."
-                                label={'Email'}
-                                require
-                            />
-                        </div>
-                        <div className={cx('add-user-item')}>
-                            <InputField
-                                type="text"
-                                id="phone"
-                                name="phone"
-                                placeholder="."
-                                value={formik.values.phone}
-                                label={'Số điện thoại nhân viên'}
-                                require
-                                touched={formik.touched.phone}
-                                error={formik.errors.phone}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-user-item')}>
-                            <InputField
-                                customClass={styles}
-                                readonly={true}
-                                type="text"
-                                id="created_at"
-                                name="created_at"
-                                placeholder="."
-                                value={String(new Date(user.createdAt).toLocaleString())}
-                                label={'Ngày tạo'}
-                                require
-                            />
-                        </div>
-                        <div className={cx('add-user-item')}>
-                            <label>Giới tính</label>
-                            <select
-                                className={cx('select-item')}
-                                id="sex"
-                                name="sex"
-                                value={formik.values.sex}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            >
-                                <option value="" label="--Chọn giới tính--">
-                                    --Chọn giới tính--
-                                </option>
-                                <option value="m" label="Nam">
-                                    {' '}
-                                    Nam
-                                </option>
-                                <option value="w" label="Nữ">
-                                    Nữ
-                                </option>
-                            </select>
-                            {formik.errors.sex && <div className={cx('input-feedback')}>{formik.errors.sex}</div>}
-                        </div>
-                        <Button type="submit" customClass={styles}>
-                            Cập nhật
-                        </Button>
-                    </form>
-                </div>
+                <Spin spinning={loading}>
+                    <div className={cx('new-user')}>
+                        {/* <h1 className={cx('add-product-title')}>Cập nhật danh mục</h1> */}
+                        <form onSubmit={formik.handleSubmit} className={cx('add-user-form')} spellCheck="false">
+                            <div className={cx('add-user-item')}>
+                                <label>Thông tin nhân viên</label>
+                            </div>
+                            <div className={cx('add-user-item')}>
+                                <InputField
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="."
+                                    value={formik.values.username}
+                                    label={'Tên nhân viên'}
+                                    require
+                                    touched={formik.touched.username}
+                                    error={formik.errors.username}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-user-item')}>
+                                <InputField
+                                    customClass={styles}
+                                    readonly={true}
+                                    type="text"
+                                    id="email"
+                                    name="email"
+                                    value={String(user.email)}
+                                    placeholder="."
+                                    label={'Email'}
+                                    require
+                                />
+                            </div>
+                            <div className={cx('add-user-item')}>
+                                <InputField
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="."
+                                    value={formik.values.phone}
+                                    label={'Số điện thoại nhân viên'}
+                                    require
+                                    touched={formik.touched.phone}
+                                    error={formik.errors.phone}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-user-item')}>
+                                <InputField
+                                    customClass={styles}
+                                    readonly={true}
+                                    type="text"
+                                    id="created_at"
+                                    name="created_at"
+                                    placeholder="."
+                                    value={String(new Date(user.createdAt).toLocaleString())}
+                                    label={'Ngày tạo'}
+                                    require
+                                />
+                            </div>
+                            <div className={cx('add-user-item')}>
+                                <label>Giới tính</label>
+                                <select
+                                    className={cx('select-item')}
+                                    id="sex"
+                                    name="sex"
+                                    value={formik.values.sex}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                >
+                                    <option value="" label="--Chọn giới tính--">
+                                        --Chọn giới tính--
+                                    </option>
+                                    <option value="m" label="Nam">
+                                        {' '}
+                                        Nam
+                                    </option>
+                                    <option value="w" label="Nữ">
+                                        Nữ
+                                    </option>
+                                </select>
+                                {formik.errors.sex && <div className={cx('input-feedback')}>{formik.errors.sex}</div>}
+                            </div>
+                            <Button type="submit" customClass={styles}>
+                                Cập nhật
+                            </Button>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );

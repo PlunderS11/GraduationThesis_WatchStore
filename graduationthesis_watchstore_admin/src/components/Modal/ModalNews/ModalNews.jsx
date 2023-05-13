@@ -80,7 +80,6 @@ const ModalNews = (props) => {
             formData.append('description', description);
             formData.append('content', content);
             // formData.append('isDelete', isDelete);
-            console.log(formData);
 
             setLoading(true);
             try {

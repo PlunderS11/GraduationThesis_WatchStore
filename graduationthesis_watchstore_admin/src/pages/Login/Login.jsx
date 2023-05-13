@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import { Spin } from 'antd';
 
 import Button from '~/components/Button/Button';
 import InputField from '~/components/InputField/InputField';
@@ -17,6 +18,7 @@ import logo from '~/assets/images/logo-black-removebg-preview.png';
 const cx = classNames.bind(style);
 
 const Login = () => {
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -35,6 +37,7 @@ const Login = () => {
         onSubmit: async (values) => {
             const { email, password } = values;
             try {
+                setLoading(true);
                 const res = await axiosClient.post('auth/login', {
                     email: email,
                     password: password,
@@ -43,6 +46,7 @@ const Login = () => {
                 toast.success('Đăng nhập thành công!');
                 localStorage.setItem('mynhbake_token', res.data.token);
                 dispatch(setCurrentUser(res.data.token));
+                setLoading(false);
                 navigate('/');
             } catch (error) {
                 toast.error('Tên đăng nhập hoặc mật khẩu không chính xác');
@@ -92,9 +96,11 @@ const Login = () => {
                 {/* <div className={cx('forgot')}>
                     {'Quên mật khẩu'}? <a>{'Bấm vào đây'}</a>
                 </div> */}
-                <Button type="submit" customClass={style}>
-                    Đăng nhập
-                </Button>
+                <Spin spinning={loading}>
+                    <Button type="submit" customClass={style}>
+                        Đăng nhập
+                    </Button>
+                </Spin>
             </form>
         </div>
     );
