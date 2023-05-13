@@ -7,9 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
-    const navigate = useNavigate()
-    const { t } = useTranslation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     return (
         <div style={{ textAlign: 'center' }}>
             <Space style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
