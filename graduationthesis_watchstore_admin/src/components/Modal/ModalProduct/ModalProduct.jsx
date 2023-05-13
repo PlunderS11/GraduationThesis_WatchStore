@@ -19,7 +19,6 @@ const ModalProduct = (props) => {
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
-        setDelImg([]);
         onResetId('');
         onClose(false);
     };
@@ -29,6 +28,8 @@ const ModalProduct = (props) => {
     // const [order, setOrder] = useState({});
     const navigate = useNavigate();
     const [product, setProduct] = useState({});
+    const [collectionObj, setcollectionObj] = useState({});
+    const [collections, setCollections] = useState([]);
 
     const fecthData = async () => {
         setLoading(true);
@@ -53,25 +54,6 @@ const ModalProduct = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    //input img
-    //-----------------------------------------------------------
-    const [image, setImage] = useState([]);
-    const [delImg, setDelImg] = useState([]);
-    const [collectionObj, setcollectionObj] = useState({});
-    const [collections, setCollections] = useState([]);
-
-    const handleMultiFile = (e) => {
-        setImage(e.target.files);
-        setDelImg(Array.from(e.target.files));
-    };
-
-    const handleDelImg = (i) => {
-        delImg.splice(i, 1);
-        setDelImg([...delImg]);
-        setImage([...delImg]);
-    };
-    //-----------------------------------------------------------
-
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -81,7 +63,7 @@ const ModalProduct = (props) => {
             originalPrice: product.originalPrice,
             finalPrice: product.finalPrice,
             sex: product.sex + '',
-            images: Array.prototype.slice.call(image),
+            images: [],
             collectionObj: collectionObj._id + '',
             descriptionvi: product.descriptionvi + '',
             descriptionen: product.descriptionen + '',
@@ -210,15 +192,28 @@ const ModalProduct = (props) => {
                                     name="images"
                                     accept="image/*"
                                     multiple
-                                    onChange={(e) => handleMultiFile(e)}
+                                    onChange={(e) =>
+                                        formik.setFieldValue(
+                                            'images',
+                                            Array.prototype.slice.call(e.currentTarget.files),
+                                        )
+                                    }
+                                    onClick={(e) => (e.target.value = null)}
                                     hidden
                                 />
 
                                 <div className={cx('list-img')}>
-                                    {delImg.map((img, i) => (
+                                    {formik.values?.images?.map((img, i) => (
                                         <div className={cx('img')} key={i}>
                                             <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                            <i
+                                                className={cx('btn-x')}
+                                                onClick={() => {
+                                                    const imgs = [...formik.values.images];
+                                                    imgs.splice(i, 1);
+                                                    formik.setFieldValue('images', imgs);
+                                                }}
+                                            >
                                                 X
                                             </i>
                                         </div>

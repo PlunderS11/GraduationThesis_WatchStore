@@ -44,7 +44,7 @@ const Login = () => {
                 });
 
                 toast.success('Đăng nhập thành công!');
-                localStorage.setItem('mynhbake_token', res.data.token);
+                sessionStorage.setItem('mynhbake_token', res.data.token);
                 dispatch(setCurrentUser(res.data.token));
                 navigate('/');
             } catch (error) {

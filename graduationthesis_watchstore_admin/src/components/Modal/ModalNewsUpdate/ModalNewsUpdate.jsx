@@ -18,18 +18,11 @@ const cx = classNames.bind(styles);
 const ModalNewsUpdate = (props) => {
     const { open, onClose, id, onResetId } = props;
     const [loading, setLoading] = useState(false);
-    const [post, setPost] = useState({
-        title: '',
-        content: '',
-        image: '',
-        description: '',
-    });
+    const [post, setPost] = useState({});
 
     const contentRef = useRef();
 
     const handleCancel = () => {
-        setImage([]);
-        setDelImg([]);
         onResetId('');
         onClose(false);
     };
@@ -44,12 +37,7 @@ const ModalNewsUpdate = (props) => {
             if (id !== '') {
                 const res = await axiosClient.get('post/detail/' + id);
                 contentRef.current?.setContent(res.data.detailPost.content || '');
-                setPost({
-                    title: res.data.detailPost.title,
-                    image: res.data.detailPost.image,
-                    description: res.data.detailPost.description,
-                    content: res.data.detailPost.content,
-                });
+                setPost(res.data.detailPost);
             }
         } catch (error) {
         } finally {
@@ -63,40 +51,22 @@ const ModalNewsUpdate = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    //input img
-    //-----------------------------------------------------------
-    const [image, setImage] = useState([]);
-    const [delImg, setDelImg] = useState([]);
-
-    const handleMultiFile = (e) => {
-        setImage(e.target.files);
-        setDelImg(Array.from(e.target.files));
-    };
-
-    const handleDelImg = (i) => {
-        delImg.splice(i, 1);
-        setDelImg([...delImg]);
-        setImage([...delImg]);
-    };
-    //-----------------------------------------------------------
-
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
             title: post.title + '',
-            image: Array.prototype.slice.call(image),
+            image: [],
             description: post.description + '',
-            content: post.content,
+            content: post.content + '',
         },
         validationSchema: Yup.object().shape({
             title: Yup.string().required('Nhập tiêu đề bài viết'),
             // image: Yup.array().min(1, 'Chọn hình ảnh bài viết'),
             description: Yup.string().required('Nhập tóm tắt'),
-            // content: Yup.string().required('Nhập nội dung'),
+            content: Yup.string().required('Nhập nội dung'),
         }),
         onSubmit: async (values) => {
             const { title, image, description, content } = values;
-            // console.log(values);
             const formData = new FormData();
             if (image[0] !== undefined) {
                 formData.append('image', image[0]);
@@ -104,8 +74,6 @@ const ModalNewsUpdate = (props) => {
             formData.append('title', title);
             formData.append('description', description);
             formData.append('content', content);
-            // formData.append('isDelete', isDelete);
-            // console.log(formData);
 
             setLoading(true);
             try {
@@ -120,7 +88,6 @@ const ModalNewsUpdate = (props) => {
             }
         },
     });
-    // console.log(content.nd);
     return (
         <>
             <Modal
@@ -155,14 +122,24 @@ const ModalNewsUpdate = (props) => {
                                     id="images"
                                     name="images"
                                     accept="image/*"
-                                    onChange={(e) => handleMultiFile(e)}
+                                    onChange={(e) =>
+                                        formik.setFieldValue('image', Array.prototype.slice.call(e.currentTarget.files))
+                                    }
+                                    onClick={(e) => (e.target.value = null)}
                                     hidden
                                 />
                                 <div className={cx('list-img')}>
-                                    {delImg.map((img, i) => (
+                                    {formik.values?.image?.map((img, i) => (
                                         <div className={cx('img')} key={i}>
                                             <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                            <i
+                                                className={cx('btn-x')}
+                                                onClick={() => {
+                                                    const imgs = [...formik.values.image];
+                                                    imgs.splice(i, 1);
+                                                    formik.setFieldValue('image', imgs);
+                                                }}
+                                            >
                                                 X
                                             </i>
                                         </div>
@@ -209,19 +186,9 @@ const ModalNewsUpdate = (props) => {
                                 <RichTextEditor
                                     ref={contentRef}
                                     onInit={() => {
-                                        console.log(post.content);
                                         contentRef.current?.setContent(post.content || '');
                                     }}
-                                    onChange={(e) => {
-                                        // post.content = e;
-                                        // post.content = e;
-                                        setPost({
-                                            ...post,
-                                            title: formik.values.title,
-                                            description: formik.values.description,
-                                            content: e,
-                                        });
-                                    }}
+                                    onChange={(e) => formik.setFieldValue('content', e)}
                                 />
                                 {formik.errors.content && (
                                     <div className={cx('input-feedback')}>{formik.errors.content}</div>

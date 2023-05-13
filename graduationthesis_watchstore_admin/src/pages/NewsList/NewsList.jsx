@@ -83,8 +83,8 @@ export default function NewsList() {
 
             renderCell: (params) => {
                 return (
-                    <div className={cx('product-list-item')}>
-                        <img src={params.row.image} className={cx('product-list-img')} alt="img" />
+                    <div className={cx('new-list-item')}>
+                        <img src={params.row.image} className={cx('new-list-img')} alt="img" />
                     </div>
                 );
             },

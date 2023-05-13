@@ -21,7 +21,6 @@ const ModalUserRank = (props) => {
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
-        setDelImg([]);
         onResetId('');
         onClose(false);
     };
@@ -50,29 +49,12 @@ const ModalUserRank = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    //input img
-    //-----------------------------------------------------------
-    const [image, setImage] = useState([]);
-    const [delImg, setDelImg] = useState([]);
-
-    const handleMultiFile = (e) => {
-        setImage(e.target.files);
-        setDelImg(Array.from(e.target.files));
-    };
-
-    const handleDelImg = (i) => {
-        delImg.splice(i, 1);
-        setDelImg([...delImg]);
-        setImage([...delImg]);
-    };
-    //-----------------------------------------------------------
-
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
             namevi: rank.namevi + '',
             nameen: rank.nameen + '',
-            icon: Array.prototype.slice.call(image),
+            icon: [],
             minValue: rank.minValue,
             maxValue: rank.maxValue,
             descriptionvi: rank.descriptionvi + '',
@@ -143,31 +125,39 @@ const ModalUserRank = (props) => {
                                 <label className={cx('lable-update')}>Cập nhật hình ảnh thứ hạng</label>
                                 {/* <input type="file" id="image" /> */}
                                 <br />
-                                <label className={cx('input-image')} htmlFor="images">
+                                <label className={cx('input-image')} htmlFor="icon">
                                     Chọn hình ảnh
                                 </label>
                                 <input
                                     type="file"
-                                    id="images"
-                                    name="images"
+                                    id="icon"
+                                    name="icon"
                                     accept="image/*"
-                                    onChange={(e) => handleMultiFile(e)}
+                                    onChange={(e) =>
+                                        formik.setFieldValue('icon', Array.prototype.slice.call(e.currentTarget.files))
+                                    }
+                                    onClick={(e) => (e.target.value = null)}
                                     hidden
                                 />
 
                                 <div className={cx('list-img')}>
-                                    {delImg.map((img, i) => (
+                                    {formik.values?.icon?.map((img, i) => (
                                         <div className={cx('img')} key={i}>
                                             <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                            <i
+                                                className={cx('btn-x')}
+                                                onClick={() => {
+                                                    const imgs = [...formik.values.icon];
+                                                    imgs.splice(i, 1);
+                                                    formik.setFieldValue('icon', imgs);
+                                                }}
+                                            >
                                                 X
                                             </i>
                                         </div>
                                     ))}
                                 </div>
-                                {formik.errors.images && (
-                                    <div className={cx('input-feedback')}>{formik.errors.images}</div>
-                                )}
+                                {formik.errors.icon && <div className={cx('input-feedback')}>{formik.errors.icon}</div>}
                             </div>
                             <label className={cx('lable-update')}>Thông tin thứ hạng</label>
 

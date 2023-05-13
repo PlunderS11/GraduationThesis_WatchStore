@@ -37,9 +37,27 @@ export default function ProductList() {
         setLoading(true);
         try {
             const res_deleted = await axiosClient.get('product/deleted/');
+            for (let i = 0; i < res_deleted.data.products_deleted.length; i++) {
+                if (res_deleted.data.products_deleted[i].type === 'watch') {
+                    res_deleted.data.products_deleted[i].type_vi = 'Đồng hồ';
+                } else if (res_deleted.data.products_deleted[i].type === 'strap') {
+                    res_deleted.data.products_deleted[i].type_vi = 'Dây đồng hồ';
+                } else if (res_deleted.data.products_deleted[i].type === 'bracelet') {
+                    res_deleted.data.products_deleted[i].type_vi = 'Vòng tay';
+                }
+            }
             setProductsDeleted(res_deleted.data.products_deleted);
 
             const res_undeleted = await axiosClient.get('product/undeleted/');
+            for (let i = 0; i < res_undeleted.data.products_undeleted.length; i++) {
+                if (res_undeleted.data.products_undeleted[i].type === 'watch') {
+                    res_undeleted.data.products_undeleted[i].type_vi = 'Đồng hồ';
+                } else if (res_undeleted.data.products_undeleted[i].type === 'strap') {
+                    res_undeleted.data.products_undeleted[i].type_vi = 'Dây đồng hồ';
+                } else if (res_undeleted.data.products_undeleted[i].type === 'bracelet') {
+                    res_undeleted.data.products_undeleted[i].type_vi = 'Vòng tay';
+                }
+            }
             setProductsUneleted(res_undeleted.data.products_undeleted);
         } catch (error) {
         } finally {
@@ -132,14 +150,14 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên sản phẩm',
-            width: 250,
+            width: 240,
         },
         {
-            field: 'type',
+            field: 'type_vi',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Loại',
-            width: 100,
+            width: 110,
         },
         {
             field: 'produts_collectionName',
@@ -277,14 +295,14 @@ export default function ProductList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Tên sản phẩm',
-            width: 250,
+            width: 240,
         },
         {
-            field: 'type',
+            field: 'type_vi',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Loại',
-            width: 100,
+            width: 110,
         },
         {
             field: 'produts_collectionName',

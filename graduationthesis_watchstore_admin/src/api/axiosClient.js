@@ -9,7 +9,7 @@ const axiosClient = axios.create({
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Origin, X-Auth-Token, Authorization',
-        token: `Bearer ${localStorage.getItem('mynhbake_token')}`,
+        token: `Bearer ${sessionStorage.getItem('mynhbake_token')}`,
     },
     paramsSerializer: {
         encode: parse,
@@ -19,7 +19,7 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
     async (config) => {
-        const token = localStorage.getItem('mynhbake_token');
+        const token = sessionStorage.getItem('mynhbake_token');
         if (token) {
             config.headers['token'] = `Bearer ${token}`;
         }

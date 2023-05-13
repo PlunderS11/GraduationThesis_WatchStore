@@ -19,8 +19,6 @@ const ModalUserRankNew = (props) => {
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
-        setImage([]);
-        setDelImg([]);
         formik.values.namevi = '';
         formik.values.nameen = '';
         formik.values.minValue = '';
@@ -43,29 +41,12 @@ const ModalUserRankNew = (props) => {
 
     const navigate = useNavigate();
 
-    //input img
-    //-----------------------------------------------------------
-    const [image, setImage] = useState([]);
-    const [delImg, setDelImg] = useState([]);
-
-    const handleMultiFile = (e) => {
-        setImage(e.target.files);
-        setDelImg(Array.from(e.target.files));
-    };
-
-    const handleDelImg = (i) => {
-        delImg.splice(i, 1);
-        setDelImg([...delImg]);
-        setImage([...delImg]);
-    };
-    //-----------------------------------------------------------
-
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
             namevi: '',
             nameen: '',
-            icon: Array.prototype.slice.call(image),
+            icon: [],
             minValue: '',
             maxValue: '',
             descriptionvi: '',
@@ -140,15 +121,25 @@ const ModalUserRankNew = (props) => {
                                     id="icon"
                                     name="icon"
                                     accept="image/*"
-                                    onChange={(e) => handleMultiFile(e)}
+                                    onChange={(e) =>
+                                        formik.setFieldValue('icon', Array.prototype.slice.call(e.currentTarget.files))
+                                    }
+                                    onClick={(e) => (e.target.value = null)}
                                     hidden
                                 />
 
                                 <div className={cx('list-img')}>
-                                    {delImg.map((img, i) => (
+                                    {formik.values?.icon?.map((img, i) => (
                                         <div className={cx('img')} key={i}>
                                             <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                            <i
+                                                className={cx('btn-x')}
+                                                onClick={() => {
+                                                    const imgs = [...formik.values.icon];
+                                                    imgs.splice(i, 1);
+                                                    formik.setFieldValue('icon', imgs);
+                                                }}
+                                            >
                                                 X
                                             </i>
                                         </div>

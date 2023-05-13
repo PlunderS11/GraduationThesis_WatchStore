@@ -35,7 +35,7 @@ const userSlice = createSlice({
                 state.error = '';
             },
             prepare(temp) {
-                localStorage.removeItem('mynhbake_token');
+                sessionStorage.removeItem('mynhbake_token');
 
                 return {
                     payload: { id: temp.id, role: temp.role },

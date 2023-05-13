@@ -18,7 +18,6 @@ const cx = classNames.bind(styles);
 const ModalNews = (props) => {
     const { open, onClose } = props;
     const [loading, setLoading] = useState(false);
-    const [content, setContent] = useState({ nd: '' });
     const contentRef = useRef();
 
     const handleCancel = () => {
@@ -31,8 +30,6 @@ const ModalNews = (props) => {
         formik.errors.description = '';
         formik.errors.image = '';
         formik.errors.content = '';
-        setImage([]);
-        setDelImg([]);
         onClose(false);
     };
 
@@ -40,36 +37,18 @@ const ModalNews = (props) => {
 
     const navigate = useNavigate();
 
-    //input img
-    //-----------------------------------------------------------
-    const [image, setImage] = useState([]);
-    const [delImg, setDelImg] = useState([]);
-
-    const handleMultiFile = (e) => {
-        setImage(e.target.files);
-        setDelImg(Array.from(e.target.files));
-    };
-
-    const handleDelImg = (i) => {
-        delImg.splice(i, 1);
-        setDelImg([...delImg]);
-        setImage([...delImg]);
-    };
-    //-----------------------------------------------------------
-
     const formik = useFormik({
-        enableReinitialize: true,
         initialValues: {
             title: '',
-            image: Array.prototype.slice.call(image),
+            image: [],
             description: '',
-            content: content.nd,
+            content: '',
         },
         validationSchema: Yup.object().shape({
             title: Yup.string().required('Nhập tiêu đề bài viết'),
             image: Yup.array().min(1, 'Chọn hình ảnh bài viết'),
             description: Yup.string().required('Nhập tóm tắt'),
-            // content: Yup.string().required('Nhập nội dung'),
+            content: Yup.string().required('Nhập nội dung'),
         }),
         onSubmit: async (values) => {
             const { title, image, description, content } = values;
@@ -79,7 +58,6 @@ const ModalNews = (props) => {
             formData.append('title', title);
             formData.append('description', description);
             formData.append('content', content);
-            // formData.append('isDelete', isDelete);
 
             setLoading(true);
             try {
@@ -112,22 +90,32 @@ const ModalNews = (props) => {
                             <div className={cx('add-news-item')}>
                                 <label>Hình ảnh</label>
                                 {/* <input type="file" id="image" /> */}
-                                <label className={cx('input-image')} htmlFor="images">
+                                <label className={cx('input-image')} htmlFor="image">
                                     Chọn hình ảnh
                                 </label>
                                 <input
                                     type="file"
-                                    id="images"
-                                    name="images"
+                                    id="image"
+                                    name="image"
                                     accept="image/*"
-                                    onChange={(e) => handleMultiFile(e)}
+                                    onChange={(e) =>
+                                        formik.setFieldValue('image', Array.prototype.slice.call(e.currentTarget.files))
+                                    }
+                                    onClick={(e) => (e.target.value = null)}
                                     hidden
                                 />
                                 <div className={cx('list-img')}>
-                                    {delImg.map((img, i) => (
+                                    {formik.values?.image?.map((img, i) => (
                                         <div className={cx('img')} key={i}>
                                             <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                            <i
+                                                className={cx('btn-x')}
+                                                onClick={() => {
+                                                    const imgs = [...formik.values.image];
+                                                    imgs.splice(i, 1);
+                                                    formik.setFieldValue('image', imgs);
+                                                }}
+                                            >
                                                 X
                                             </i>
                                         </div>
@@ -174,12 +162,7 @@ const ModalNews = (props) => {
                             </div>
 
                             <div className={cx('add-news-item')}>
-                                <RichTextEditor
-                                    ref={contentRef}
-                                    onChange={(e) => {
-                                        content.nd = e;
-                                    }}
-                                />
+                                <RichTextEditor ref={contentRef} onChange={(e) => formik.setFieldValue('content', e)} />
                                 {formik.errors.content && (
                                     <div className={cx('input-feedback')}>{formik.errors.content}</div>
                                 )}

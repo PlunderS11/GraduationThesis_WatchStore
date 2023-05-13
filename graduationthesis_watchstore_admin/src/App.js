@@ -26,7 +26,7 @@ import MyErrorBoundary from './layouts/ErrorBoundary/ErrorBoundary';
 function App() {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
-    const accessToken = localStorage.getItem('mynhbake_token');
+    const accessToken = sessionStorage.getItem('mynhbake_token');
 
     useEffect(() => {
         if (accessToken) {
