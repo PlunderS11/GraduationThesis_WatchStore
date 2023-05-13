@@ -107,7 +107,7 @@ router.get('/users/', verifyTokenAndAdmin, async (req, res) => {
 //GET USERS ROLE STAFF
 router.get('/staffs/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const users = await User.find({ role: 'staff' });
+        const users = await User.find({ role: 'staff' }).sort({createdAt: -1});
         res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
     } catch (err) {
         console.log(err);

@@ -156,7 +156,7 @@ router.get('/detailById/:id', async (req, res) => {
 //GET PROMOTIONS UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const promotions_undeleted = await Promotion.find({ isDelete: false, type: 'normal' }).exec();
+        const promotions_undeleted = await Promotion.find({ isDelete: false, type: 'normal' }).sort({createdAt: -1}).exec();
 
         res.status(200).json({ data: { promotions_undeleted: promotions_undeleted }, message: 'success', status: 200 });
     } catch (error) {
@@ -168,7 +168,7 @@ router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
 //GET PROMOTIONS DELETED
 router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const promotions_deleted = await Promotion.find({ isDelete: true, type: 'normal' }).exec();
+        const promotions_deleted = await Promotion.find({ isDelete: true, type: 'normal' }).sort({createdAt: -1}).exec();
 
         res.status(200).json({ data: { promotions_deleted: promotions_deleted }, message: 'success', status: 200 });
     } catch (error) {
