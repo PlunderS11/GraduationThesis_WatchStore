@@ -28,26 +28,20 @@ export default function UserRankList() {
 
     const fecthData = async () => {
         setLoading(true);
-        const getProducts_undeleted = async () => {
-            const res = await axiosClient.get('rank/undeleted/');
-            setRanksUndeleted(res.data.ranks_undeleted);
-        };
-        getProducts_undeleted();
-        const getProducts_deleted = async () => {
-            const res = await axiosClient.get('rank/deleted/');
-            setRanksDeleted(res.data.ranks_deleted);
-        };
-        getProducts_deleted();
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        setLoading(true);
         try {
-            fecthData();
+            const res_undeleted = await axiosClient.get('rank/undeleted/');
+            setRanksUndeleted(res_undeleted.data.ranks_undeleted);
+
+            const res_deleted = await axiosClient.get('rank/deleted/');
+            setRanksDeleted(res_deleted.data.ranks_deleted);
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        fecthData();
     }, [location]);
 
     const handleDelete = async (id) => {

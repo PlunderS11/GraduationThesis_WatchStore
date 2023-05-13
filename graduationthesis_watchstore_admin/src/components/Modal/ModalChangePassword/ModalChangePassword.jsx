@@ -53,19 +53,20 @@ const ModalChangePassword = (props) => {
         onSubmit: async (values) => {
             const { oldPassword, newPasswordAgain } = values;
 
+            setLoading(true);
             try {
-                setLoading(true);
                 const res = await axiosClient.put('auth/changepassword/' + user.user.id, {
                     password: oldPassword,
                     newPassword: newPasswordAgain,
                 });
-                setLoading(false);
                 if (res) {
                     toast.success('Đổi mật khẩu thành công!');
                     handleCancel();
                 }
             } catch (error) {
                 toast.warn('Nhập mật khẩu cũ không chính xác!');
+            } finally {
+                setLoading(false);
             }
         },
     });

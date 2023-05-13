@@ -36,8 +36,8 @@ const Login = () => {
         validateOnBlur: false,
         onSubmit: async (values) => {
             const { email, password } = values;
+            setLoading(true);
             try {
-                setLoading(true);
                 const res = await axiosClient.post('auth/login', {
                     email: email,
                     password: password,
@@ -46,10 +46,11 @@ const Login = () => {
                 toast.success('Đăng nhập thành công!');
                 localStorage.setItem('mynhbake_token', res.data.token);
                 dispatch(setCurrentUser(res.data.token));
-                setLoading(false);
                 navigate('/');
             } catch (error) {
                 toast.error('Tên đăng nhập hoặc mật khẩu không chính xác');
+            } finally {
+                setLoading(false);
             }
         },
     });

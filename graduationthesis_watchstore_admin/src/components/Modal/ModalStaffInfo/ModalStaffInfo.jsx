@@ -18,7 +18,7 @@ import Button from '~/components/Button/Button';
 const cx = classNames.bind(styles);
 
 const ModalStaffInfo = (props) => {
-    const { open, onClose, id, onResetId } = props;
+    const { open, onClose, id, onResetId, type } = props;
     const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         onResetId('');
@@ -30,23 +30,21 @@ const ModalStaffInfo = (props) => {
     const [user, setUser] = useState({});
 
     const fecthData = async () => {
-        // console.log(id);
         setLoading(true);
-        if (id !== undefined) {
-            const getUser = async () => {
+        try {
+            if (id !== undefined) {
                 const res = await axiosClient.get('user/find/' + String(id));
                 setUser(res.data);
-            };
-            getUser();
+            }
+        } catch (error) {
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
+        fecthData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -70,21 +68,27 @@ const ModalStaffInfo = (props) => {
         onSubmit: async (values) => {
             const { username, phone, sex } = values;
 
+            setLoading(true);
             try {
-                setLoading(true);
                 const res = await axiosClient.put('user/update/' + id, {
                     username: username,
                     phone: phone,
                     sex: sex,
                 });
-                setLoading(false);
                 if (res) {
-                    toast.success('Cập nhật thành công!');
-                    handleCancel();
-                    navigate('/staffs');
+                    if (type === 'myInfo') {
+                        toast.success('Cập nhật thành công!');
+                        handleCancel();
+                    } else if (type === 'staffInfo') {
+                        toast.success('Cập nhật thành công!');
+                        handleCancel();
+                        navigate('/staffs');
+                    }
                 }
             } catch (error) {
                 toast.error(error);
+            } finally {
+                setLoading(false);
             }
         },
     });

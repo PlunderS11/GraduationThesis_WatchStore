@@ -1,6 +1,4 @@
-import { Modal } from 'antd';
-// import { useState } from 'react';
-
+import { Modal, Spin } from 'antd';
 import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -17,7 +15,7 @@ const cx = classNames.bind(styles);
 
 const ModalCollecion = (props) => {
     const { open, onClose, id, onResetId } = props;
-
+    const [loading, setLoading] = useState(false);
     const handleCancel = () => {
         onResetId('');
         onClose(false);
@@ -29,20 +27,24 @@ const ModalCollecion = (props) => {
     const navigation = useNavigate();
 
     const fecthData = async () => {
-        if (id !== '') {
-            const getProduct = async () => {
-                const res = await axiosClient.get('collections/detail/' + String(id));
-                setCollection(res.data.detailCollection);
-            };
-            getProduct();
+        setLoading(true);
+        try {
+            if (id !== '') {
+                const getProduct = async () => {
+                    const res = await axiosClient.get('collections/detail/' + String(id));
+                    setCollection(res.data.detailCollection);
+                };
+                getProduct();
+            }
+        } catch (error) {
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
+        fecthData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -60,7 +62,7 @@ const ModalCollecion = (props) => {
         }),
         onSubmit: async (values) => {
             const { name, descriptionen, descriptionvi } = values;
-            // console.log(values);
+            setLoading(true);
             try {
                 const res = await axiosClient.put('collections/update/' + id, {
                     name: name,
@@ -74,6 +76,8 @@ const ModalCollecion = (props) => {
                 }
             } catch (error) {
                 toast.error(error);
+            } finally {
+                setLoading(false);
             }
         },
     });
@@ -88,65 +92,67 @@ const ModalCollecion = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-collection')}>
-                    {/* <h1 className={cx('add-collection-title')}>Cập nhật danh mục</h1> */}
-                    <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
-                        <div className={cx('add-collection-item')}>
-                            <label>Thông tin danh mục</label>
-                        </div>
+                <Spin spinning={loading}>
+                    <div className={cx('new-collection')}>
+                        {/* <h1 className={cx('add-collection-title')}>Cập nhật danh mục</h1> */}
+                        <form onSubmit={formik.handleSubmit} className={cx('add-collection-form')} spellCheck="false">
+                            <div className={cx('add-collection-item')}>
+                                <label>Thông tin danh mục</label>
+                            </div>
 
-                        <div className={cx('add-collection-item')}>
-                            <InputField
-                                type="text"
-                                id="name"
-                                name="name"
-                                placeholder="."
-                                value={formik.values.name}
-                                label={'Tên danh mục'}
-                                require
-                                touched={formik.touched.name}
-                                error={formik.errors.name}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
+                            <div className={cx('add-collection-item')}>
+                                <InputField
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="."
+                                    value={formik.values.name}
+                                    label={'Tên danh mục'}
+                                    require
+                                    touched={formik.touched.name}
+                                    error={formik.errors.name}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
 
-                        <div className={cx('add-collection-item')}>
-                            <InputField
-                                type="textarea"
-                                id="descriptionen"
-                                name="descriptionen"
-                                placeholder="."
-                                value={formik.values.descriptionen}
-                                label={'Mô tả tiếng Anh'}
-                                require
-                                touched={formik.touched.descriptionen}
-                                error={formik.errors.descriptionen}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-collection-item')}>
-                            <InputField
-                                type="textarea"
-                                id="descriptionvi"
-                                name="descriptionvi"
-                                placeholder="."
-                                value={formik.values.descriptionvi}
-                                label={'Mô tả tiếng Việt'}
-                                require
-                                touched={formik.touched.descriptionvi}
-                                error={formik.errors.descriptionvi}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
+                            <div className={cx('add-collection-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="descriptionen"
+                                    name="descriptionen"
+                                    placeholder="."
+                                    value={formik.values.descriptionen}
+                                    label={'Mô tả tiếng Anh'}
+                                    require
+                                    touched={formik.touched.descriptionen}
+                                    error={formik.errors.descriptionen}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-collection-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="descriptionvi"
+                                    name="descriptionvi"
+                                    placeholder="."
+                                    value={formik.values.descriptionvi}
+                                    label={'Mô tả tiếng Việt'}
+                                    require
+                                    touched={formik.touched.descriptionvi}
+                                    error={formik.errors.descriptionvi}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
 
-                        <Button type="submit" customClass={styles}>
-                            Cập nhật
-                        </Button>
-                    </form>
-                </div>
+                            <Button type="submit" customClass={styles}>
+                                Cập nhật
+                            </Button>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );

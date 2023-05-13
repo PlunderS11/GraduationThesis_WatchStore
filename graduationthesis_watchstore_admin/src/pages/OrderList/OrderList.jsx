@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import * as moment from 'moment';
-import { DatePicker, Form, Select } from 'antd';
+import { DatePicker, Form, Select, Spin } from 'antd';
 import { toast } from 'react-toastify';
 import { CSVLink } from 'react-csv';
 
@@ -22,6 +22,7 @@ const { RangePicker } = DatePicker;
 
 export default function OrderList() {
     const location = useLocation();
+    const [loading, setLoading] = useState(false);
     const [orders, setOrders] = useState([]);
     const [rerender, setRerender] = useState(false);
 
@@ -44,8 +45,9 @@ export default function OrderList() {
         endDate: undefined,
     });
 
-    useEffect(() => {
-        const getProducts = async () => {
+    const getProducts = async () => {
+        setLoading(true);
+        try {
             const res = await axiosClient.get('order/admin');
             setOrders(res.data.orderList);
             if (res) {
@@ -79,19 +81,21 @@ export default function OrderList() {
                 }
                 setOrders(oders_list);
             }
-        };
+        } catch (error) {
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleGetAddressProvince = async () => {
+        const resP = await GHN.post('master-data/province');
+        setProvince([{ ProvinceID: 0, NameExtension: ['', 'Tất cả'] }, ...resP.data]);
+    };
+
+    useEffect(() => {
         getProducts();
-        const handleGetAddressProvince = async () => {
-            const resP = await GHN.post('master-data/province');
-            setProvince([{ ProvinceID: 0, NameExtension: ['', 'Tất cả'] }, ...resP.data]);
-        };
         handleGetAddressProvince();
     }, [rerender, location]);
 
-    // value: item.WardCode,
-    // label: item.WardName,
-    // value: item.ProvinceID,
-    // label: item.NameExtension[1],
     //--------------------------------------------------------------------------------
 
     const handleGetAddressDistrict = async (value) => {
@@ -159,7 +163,7 @@ export default function OrderList() {
     };
 
     const handleChangeOrderStatus = async (value, code) => {
-        // console.log(`selected ${value} ${code}`);
+        setLoading(true);
         try {
             const res = await axiosClient.put('order/status/update/' + code, {
                 status: value,
@@ -171,11 +175,13 @@ export default function OrderList() {
             }
         } catch (error) {
             toast.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleChangeOrderStatusPayment = async (value, code) => {
-        // console.log(`selected ${value} ${code}`);
+        setLoading(true);
         try {
             const res = await axiosClient.put('order/statusPayment/update/' + code, {
                 status: value,
@@ -187,6 +193,8 @@ export default function OrderList() {
             }
         } catch (error) {
             toast.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -477,6 +485,7 @@ export default function OrderList() {
     };
 
     const handleSearch = async () => {
+        setLoading(true);
         try {
             const res = await axiosClient.get('order/admin', { params: query });
             if (res) {
@@ -484,24 +493,10 @@ export default function OrderList() {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
-
-    // const handleStatus = (status) => {
-    //     var title = '';
-    //     if (status === 'PENDING') {
-    //         title = 'Chờ xác nhận';
-    //     } else if (status === 'PACKAGE') {
-    //         title = 'Đóng gói';
-    //     } else if (status === 'DELIVERING') {
-    //         title = 'Đang vận chuyển';
-    //     } else if (status === 'COMPLETE') {
-    //         title = 'Đã giao';
-    //     } else if (status === 'CANCEL') {
-    //         title = 'Đã hủy';
-    //     }
-    //     return title;
-    // };
 
     const headers = [
         { label: 'Mã đơn', key: 'code' },
@@ -558,14 +553,6 @@ export default function OrderList() {
             key: 'orderDate_vi',
         },
     ];
-
-    // const cellRenderer = (cell, key) => {
-    //     if (key === 'code') {
-    //         return <a href={cell}>{cell}</a>; // Render a link for the "Website" cell
-    //     } else {
-    //         return cell;
-    //     }
-    // };
 
     return (
         <>
@@ -724,27 +711,29 @@ export default function OrderList() {
                             </Form>
                             <div className={cx('div_btn')}>
                                 <Button customClass={styles} onClick={handleSearch}>
-                                    Tiềm kiếm
+                                    Tìm kiếm
                                 </Button>
-                                {/* <Button customClass={styles}> */}
+
                                 <CSVLink
                                     filename={'list-orders.csv'}
                                     className={cx('export')}
                                     data={orders}
                                     headers={headers}
                                     target="_blank"
+                                    onClick={() => toast.success('Xuất file CSV thành công!')}
                                 >
                                     Xuất CSV
                                 </CSVLink>
-                                {/* </Button> */}
                             </div>
                         </li>
                     </ul>
                 </div>
 
-                <div className={cx('grid')}>
-                    <Grid datas={orders} headers={columns} rowHeight={150} pagesize={10} hideToolbar={true} />
-                </div>
+                <Spin spinning={loading}>
+                    <div className={cx('grid')}>
+                        <Grid datas={orders} headers={columns} rowHeight={150} pagesize={10} hideToolbar={true} />
+                    </div>
+                </Spin>
             </div>
             {id !== '' && (
                 <ModalOrderUpdate

@@ -32,20 +32,13 @@ export default function PromotionList() {
 
     const fecthData = async () => {
         setLoading(true);
+        try {
+            const res_deleted = await axiosClient.get('promotion/deleted/');
+            setPromotionsDeleted(res_deleted.data.promotions_deleted);
 
-        const getPromotions_deleted = async () => {
-            const res = await axiosClient.get('promotion/deleted/');
-            setPromotionsDeleted(res.data.promotions_deleted);
-        };
-        getPromotions_deleted();
+            const res_undeleted = await axiosClient.get('promotion/undeleted/');
+            setPromotionsUneleted(res_undeleted.data.promotions_undeleted);
 
-        const getPromotions_undeleted = async () => {
-            const res = await axiosClient.get('promotion/undeleted/');
-            setPromotionsUneleted(res.data.promotions_undeleted);
-        };
-        getPromotions_undeleted();
-
-        const getPromotions_special = async () => {
             var promotionsSpecial = [];
             const res = await axiosClient.get('promotion/special/');
             if (res) {
@@ -56,21 +49,15 @@ export default function PromotionList() {
                 }
             }
             setPromotionsSpecial(promotionsSpecial);
-        };
-        getPromotions_special();
-
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        setLoading(true);
-        try {
-            fecthData();
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        fecthData();
     }, [location]);
-    console.log(promotionsSpecial);
 
     const handleDelete = async (id) => {
         setLoading(true);

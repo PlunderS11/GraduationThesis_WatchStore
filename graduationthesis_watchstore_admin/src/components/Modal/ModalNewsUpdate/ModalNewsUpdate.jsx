@@ -25,19 +25,9 @@ const ModalNewsUpdate = (props) => {
         description: '',
     });
 
-    // const [content, setContent] = useState({ nd: '' });
     const contentRef = useRef();
 
     const handleCancel = () => {
-        // formik.values.title = '';
-        // formik.values.description = '';
-        // formik.values.image = [];
-        // formik.values.content = '';
-
-        // formik.errors.title = '';
-        // formik.errors.description = '';
-        // formik.errors.image = '';
-        // formik.errors.content = '';
         setImage([]);
         setDelImg([]);
         onResetId('');
@@ -49,8 +39,9 @@ const ModalNewsUpdate = (props) => {
     const navigate = useNavigate();
 
     const fecthData = async () => {
-        if (id !== '') {
-            const getPost = async () => {
+        setLoading(true);
+        try {
+            if (id !== '') {
                 const res = await axiosClient.get('post/detail/' + id);
                 contentRef.current?.setContent(res.data.detailPost.content || '');
                 setPost({
@@ -59,16 +50,16 @@ const ModalNewsUpdate = (props) => {
                     description: res.data.detailPost.description,
                     content: res.data.detailPost.content,
                 });
-            };
-            getPost();
+            }
+        } catch (error) {
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        try {
-            fecthData();
-        } finally {
-        }
+        fecthData();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -141,105 +132,107 @@ const ModalNewsUpdate = (props) => {
                 centered
                 footer={[]}
             >
-                <div className={cx('new-news')}>
-                    <form onSubmit={formik.handleSubmit} className={cx('add-news-form')} spellCheck="false">
-                        <div className={cx('add-news-item')}>
-                            <label>Hình ảnh hiện tại bài viết</label>
+                <Spin spinning={loading}>
+                    <div className={cx('new-news')}>
+                        <form onSubmit={formik.handleSubmit} className={cx('add-news-form')} spellCheck="false">
+                            <div className={cx('add-news-item')}>
+                                <label>Hình ảnh hiện tại bài viết</label>
 
-                            <div className={cx('list-img')}>
-                                <div className={cx('img')}>
-                                    <img className={cx('item-img')} src={post.image} alt="" />
+                                <div className={cx('list-img')}>
+                                    <div className={cx('img')}>
+                                        <img className={cx('item-img')} src={post.image} alt="" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className={cx('add-news-item')}>
-                            <label>Chọn hình ảnh cập nhật</label>
-                            {/* <input type="file" id="image" /> */}
-                            <label className={cx('input-image')} htmlFor="images">
-                                Chọn hình ảnh
-                            </label>
-                            <input
-                                type="file"
-                                id="images"
-                                name="images"
-                                accept="image/*"
-                                onChange={(e) => handleMultiFile(e)}
-                                hidden
-                            />
-                            <div className={cx('list-img')}>
-                                {delImg.map((img, i) => (
-                                    <div className={cx('img')} key={i}>
-                                        <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
-                                        <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
-                                            X
-                                        </i>
-                                    </div>
-                                ))}
+                            <div className={cx('add-news-item')}>
+                                <label>Chọn hình ảnh cập nhật</label>
+                                {/* <input type="file" id="image" /> */}
+                                <label className={cx('input-image')} htmlFor="images">
+                                    Chọn hình ảnh
+                                </label>
+                                <input
+                                    type="file"
+                                    id="images"
+                                    name="images"
+                                    accept="image/*"
+                                    onChange={(e) => handleMultiFile(e)}
+                                    hidden
+                                />
+                                <div className={cx('list-img')}>
+                                    {delImg.map((img, i) => (
+                                        <div className={cx('img')} key={i}>
+                                            <img className={cx('item-img')} src={URL.createObjectURL(img)} alt="" />
+                                            <i className={cx('btn-x')} onClick={() => handleDelImg(i)}>
+                                                X
+                                            </i>
+                                        </div>
+                                    ))}
+                                </div>
+                                {formik.errors.image && (
+                                    <div className={cx('input-feedback')}>{formik.errors.image}</div>
+                                )}
                             </div>
-                            {formik.errors.image && <div className={cx('input-feedback')}>{formik.errors.image}</div>}
-                        </div>
-                        <div className={cx('add-news-item')}>
-                            <label>Thông tin bài viết</label>
-                        </div>
-                        <div className={cx('add-news-item')}>
-                            <InputField
-                                type="text"
-                                id="title"
-                                name="title"
-                                placeholder="."
-                                value={formik.values.title}
-                                label={'Tiêu đề'}
-                                require
-                                touched={formik.touched.title}
-                                error={formik.errors.title}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>
-                        <div className={cx('add-news-item')}>
-                            <InputField
-                                type="textarea"
-                                id="description"
-                                name="description"
-                                placeholder="."
-                                value={formik.values.description}
-                                label={'Tóm tắt'}
-                                require
-                                touched={formik.touched.description}
-                                error={formik.errors.description}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                        </div>{' '}
-                        <div className={cx('add-news-item')}>
-                            <RichTextEditor
-                                ref={contentRef}
-                                onInit={() => {
-                                    console.log(post.content);
-                                    contentRef.current?.setContent(post.content || '');
-                                }}
-                                onChange={(e) => {
-                                    // post.content = e;
-                                    // post.content = e;
-                                    setPost({
-                                        ...post,
-                                        title: formik.values.title,
-                                        description: formik.values.description,
-                                        content: e,
-                                    });
-                                }}
-                            />
-                            {formik.errors.content && (
-                                <div className={cx('input-feedback')}>{formik.errors.content}</div>
-                            )}
-                        </div>
-                        <Spin spinning={loading}>
+                            <div className={cx('add-news-item')}>
+                                <label>Thông tin bài viết</label>
+                            </div>
+                            <div className={cx('add-news-item')}>
+                                <InputField
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    placeholder="."
+                                    value={formik.values.title}
+                                    label={'Tiêu đề'}
+                                    require
+                                    touched={formik.touched.title}
+                                    error={formik.errors.title}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>
+                            <div className={cx('add-news-item')}>
+                                <InputField
+                                    type="textarea"
+                                    id="description"
+                                    name="description"
+                                    placeholder="."
+                                    value={formik.values.description}
+                                    label={'Tóm tắt'}
+                                    require
+                                    touched={formik.touched.description}
+                                    error={formik.errors.description}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </div>{' '}
+                            <div className={cx('add-news-item')}>
+                                <RichTextEditor
+                                    ref={contentRef}
+                                    onInit={() => {
+                                        console.log(post.content);
+                                        contentRef.current?.setContent(post.content || '');
+                                    }}
+                                    onChange={(e) => {
+                                        // post.content = e;
+                                        // post.content = e;
+                                        setPost({
+                                            ...post,
+                                            title: formik.values.title,
+                                            description: formik.values.description,
+                                            content: e,
+                                        });
+                                    }}
+                                />
+                                {formik.errors.content && (
+                                    <div className={cx('input-feedback')}>{formik.errors.content}</div>
+                                )}
+                            </div>
                             <Button type="submit" customClass={styles}>
                                 Cập nhật
                             </Button>
-                        </Spin>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                </Spin>
             </Modal>
         </>
     );

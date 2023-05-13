@@ -27,7 +27,7 @@ export default function UserList() {
 
     const fecthData = async () => {
         setLoading(true);
-        const getUsers = async () => {
+        try {
             const res = await axiosClient.get('user/users/');
             if (res) {
                 var users_undeleted = [];
@@ -42,17 +42,13 @@ export default function UserList() {
                 setUsers_undeleted(users_undeleted);
                 setUsers_deleted(users_deleted);
             }
-        };
-        getUsers();
-        setLoading(false);
-    };
-    useEffect(() => {
-        setLoading(true);
-        try {
-            fecthData();
+        } catch (error) {
         } finally {
             setLoading(false);
         }
+    };
+    useEffect(() => {
+        fecthData();
     }, [location]);
 
     // console.log(users_undeleted);
