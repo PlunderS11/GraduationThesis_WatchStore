@@ -2,7 +2,6 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import 'swiper/css/bundle';
 import './GlobalStyles.scss';
 import { ConfigProvider } from 'antd';
-import 'antd/dist/antd.less';
 import viVN from 'antd/lib/locale/vi_VN';
 
 function GlobalStyles({ children }) {
