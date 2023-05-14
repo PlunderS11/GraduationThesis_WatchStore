@@ -38,6 +38,8 @@ export default function ProductList() {
         try {
             const res_deleted = await axiosClient.get('product/deleted/');
             for (let i = 0; i < res_deleted.data.products_deleted.length; i++) {
+                res_deleted.data.products_undeleted[i].colName =
+                    res_deleted.data.products_undeleted[i].collectionObj.name;
                 if (res_deleted.data.products_deleted[i].type === 'watch') {
                     res_deleted.data.products_deleted[i].type_vi = 'Đồng hồ';
                 } else if (res_deleted.data.products_deleted[i].type === 'strap') {
@@ -50,6 +52,8 @@ export default function ProductList() {
 
             const res_undeleted = await axiosClient.get('product/undeleted/');
             for (let i = 0; i < res_undeleted.data.products_undeleted.length; i++) {
+                res_undeleted.data.products_undeleted[i].colName =
+                    res_undeleted.data.products_undeleted[i].collectionObj.name;
                 if (res_undeleted.data.products_undeleted[i].type === 'watch') {
                     res_undeleted.data.products_undeleted[i].type_vi = 'Đồng hồ';
                 } else if (res_undeleted.data.products_undeleted[i].type === 'strap') {
@@ -160,18 +164,18 @@ export default function ProductList() {
             width: 110,
         },
         {
-            field: 'produts_collectionName',
+            field: 'colName',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Danh mục',
             width: 175,
-            renderCell: (params) => {
-                return (
-                    <>
-                        <div>{params.row.collectionObj.name}</div>
-                    </>
-                );
-            },
+            // renderCell: (params) => {
+            //     return (
+            //         <>
+            //             <div>{params.row.collectionObj.name}</div>
+            //         </>
+            //     );
+            // },
         },
         {
             field: 'stock',
@@ -305,18 +309,18 @@ export default function ProductList() {
             width: 110,
         },
         {
-            field: 'produts_collectionName',
+            field: 'colName',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Danh mục',
             width: 175,
-            renderCell: (params) => {
-                return (
-                    <>
-                        <div>{params.row.collectionObj.name}</div>
-                    </>
-                );
-            },
+            // renderCell: (params) => {
+            //     return (
+            //         <>
+            //             <div>{params.row.collectionObj.name}</div>
+            //         </>
+            //     );
+            // },
         },
         {
             field: 'stock',
@@ -327,7 +331,7 @@ export default function ProductList() {
             type: 'number',
         },
         {
-            field: 'produts_price',
+            field: 'finalPrice',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Giá',

@@ -39,16 +39,17 @@ export default function PromotionList() {
             const res_undeleted = await axiosClient.get('promotion/undeleted/');
             setPromotionsUneleted(res_undeleted.data.promotions_undeleted);
 
-            var promotionsSpecial = [];
-            const res = await axiosClient.get('promotion/special/');
-            if (res) {
-                promotionsSpecial = res.data.promotions_special;
-                for (let i = 0; i < promotionsSpecial.length; i++) {
-                    const res_rank = await axiosClient.get('rank/detail/' + String(promotionsSpecial[i].forRank));
-                    promotionsSpecial[i].namevi = res_rank.data.detailRank.namevi;
+            const res_special = await axiosClient.get('promotion/special/');
+
+            const res_ranks = await axiosClient.get('rank/');
+            for (let i = 0; i < res_special.data.promotions_special.length; i++) {
+                for (let j = 0; j < res_ranks.data.rank.length; j++) {
+                    if (res_special.data.promotions_special[i].forRank === res_ranks.data.rank[j]._id) {
+                        res_special.data.promotions_special[i].namevi = res_ranks.data.rank[j].namevi;
+                    }
                 }
             }
-            setPromotionsSpecial(promotionsSpecial);
+            setPromotionsSpecial(res_special.data.promotions_special);
         } catch (error) {
         } finally {
             setLoading(false);
@@ -57,6 +58,7 @@ export default function PromotionList() {
 
     useEffect(() => {
         fecthData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);
 
     const handleDelete = async (id) => {

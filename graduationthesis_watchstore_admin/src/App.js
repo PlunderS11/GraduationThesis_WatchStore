@@ -64,7 +64,7 @@ function App() {
                             exact
                             path="/"
                             element={
-                                user.user.role === 'admin' ? (
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
                                     <>
                                         <Topbar />
                                         <div className="container">
@@ -82,143 +82,183 @@ function App() {
                         />
                         <Route
                             path="/login"
-                            element={user.user.role === 'admin' ? <Navigate to="/" replace /> : <Login />}
-
-                            // element={<Login />}
+                            element={
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <Navigate to="/" replace />
+                                ) : (
+                                    <Login />
+                                )
+                            }
                         />
                         <Route
                             path="/users"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <UserList />
                                         </div>
-                                        <UserList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/products"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <ProductList />
                                         </div>
-                                        <ProductList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/collections"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <CollectionList />
                                         </div>
-                                        <CollectionList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/promotions"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <PromotionList />
                                         </div>
-                                        <PromotionList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/orders"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <OrderList />
                                         </div>
-                                        <OrderList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/ranks"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <UserRankList />
                                         </div>
-                                        <UserRankList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/staffs"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <StaffList />
                                         </div>
-                                        <StaffList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/news"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <NewsList />
                                         </div>
-                                        <NewsList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                         <Route
                             path="/notifications"
                             element={
-                                <>
-                                    <Topbar />
-                                    <div className="container">
-                                        <div className="sidebar">
-                                            {/* <Sidebar /> */}
-                                            <MenuSideBar />
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <NotificationList />
                                         </div>
-                                        <NotificationList />
-                                    </div>
-                                </>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
                             }
                         />
                     </Routes>
