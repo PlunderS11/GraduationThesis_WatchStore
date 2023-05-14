@@ -266,7 +266,8 @@
         "startDate": "Start date",
         "endDate": "End date",
         "forever": "Forever",
-        "value": "Value"
+        "value": "Value",
+        "updateSuccess": "Update successful"
     },
     "table": {
         "image": "Image",
@@ -305,6 +306,7 @@
         "notification": "Notification",
         "address": "Address",
         "voucher": "Voucher store",
+        "search":"Search Results",
         "changePassword": "Change password"
     },
     "errorPage": {

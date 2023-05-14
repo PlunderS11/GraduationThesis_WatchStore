@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -151,19 +149,7 @@ const Login = () => {
                                 {t('login.login')}
                             </Button>
                         </form>
-                        <div className={cx('login-with')}>
-                            <span>{t('login.orLogin')}</span>
-                        </div>
-                        <div className={cx('login-with-buttons')}>
-                            <Button customClass={style}>
-                                <FontAwesomeIcon icon={faFacebookF} className={cx('icon')} />
-                                <span className={cx('text')}>Facebook</span>
-                            </Button>
-                            <Button customClass={style}>
-                                <FontAwesomeIcon icon={faGoogle} className={cx('icon')} />
-                                <span className={cx('text')}>Google</span>
-                            </Button>
-                        </div>
+                        
                         <div className={cx('register')}>
                             <span>{t('login.dontHaveAccount')}</span>{' '}
                             <Link to={'/register'}>{t('register.register')}</Link>

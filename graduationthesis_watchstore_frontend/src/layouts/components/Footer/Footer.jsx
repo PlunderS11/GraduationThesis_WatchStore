@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import i18n from '../../../i18n';
 import { menuFooter, showrooms } from '../../../assets/datas';
 import style from './Footer.module.scss';
-import NewsLetter from '../../../components/NewsLetter/NewsLetter';
+// import NewsLetter from '../../../components/NewsLetter/NewsLetter';
 
 const cx = classNames.bind(style);
 
@@ -14,7 +14,7 @@ const Footer = () => {
     return (
         <div className={cx('footer')}>
             <div className={cx('container')}>
-                <NewsLetter />
+                {/* <NewsLetter /> */}
                 <div className={cx('menu')}>
                     {menuFooter.map((menu, index) => (
                         <div className={cx('block')} key={index}>

@@ -214,7 +214,7 @@ const Checkout = () => {
                                                     </div>
                                                 </>
                                             ) : (
-                                                <Link to={'/account/addresses'}>+ {t('cart.addAddress')}</Link>
+                                                <Link to={'/account/address'}>+ {t('cart.addAddress')}</Link>
                                             )}
                                         </div>
                                     </div>

@@ -306,6 +306,7 @@
         "notification": "Thông báo",
         "address": "Địa chỉ",
         "voucher": "Kho voucher",
+        "search":"Kết quả tìm kiếm",
         "changePassword": "Đổi mật khẩu"
     },
     "errorPage": {
