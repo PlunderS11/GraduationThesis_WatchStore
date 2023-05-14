@@ -714,7 +714,13 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
 // UPDATE STATUS ORDER
 router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findById(req.params.id).populate({
+            path: 'orderDetails',
+            populate: {
+                path: 'product',
+            },
+        })
+        .exec();
         var status = {};
         let title = '',
             body = '';
@@ -788,6 +794,15 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 },
                 { new: true }
             );
+            for (let i = 0; i < order.orderDetails.length; i++) {
+                const element = order.orderDetails[i];
+                await Product.findByIdAndUpdate(element.product._id, {
+                    $set: {
+                        sold: element.product.sold - element.quantity,
+                        stock: element.product.stock + element.quantity,
+                    },
+                });
+            }
         } else if (req.body.status === 'CANCEL' && order.paymentType === 'ONLINE') {
             await Order.findByIdAndUpdate(
                 req.params.id,
@@ -798,6 +813,15 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 },
                 { new: true }
             );
+            for (let i = 0; i < order.orderDetails.length; i++) {
+                const element = order.orderDetails[i];
+                await Product.findByIdAndUpdate(element.product._id, {
+                    $set: {
+                        sold: element.product.sold - element.quantity,
+                        stock: element.product.stock + element.quantity,
+                    },
+                });
+            }
         }
         //-----------------------------------------------------------
         const oneSignal = await OneSignal.aggregate([
@@ -857,7 +881,13 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
 // UPDATE STATUS PAYMENTS
 router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findById(req.params.id).populate({
+            path: 'orderDetails',
+            populate: {
+                path: 'product',
+            },
+        })
+        .exec();;
         const orderUpdate = await Order.findByIdAndUpdate(
             req.params.id,
             {
@@ -881,6 +911,15 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
                 },
                 { new: true }
             );
+            for (let i = 0; i < order.orderDetails.length; i++) {
+                const element = order.orderDetails[i];
+                await Product.findByIdAndUpdate(element.product._id, {
+                    $set: {
+                        sold: element.product.sold - element.quantity,
+                        stock: element.product.stock + element.quantity,
+                    },
+                });
+            }
         }
         if (req.body.status === 'COMPLETE') {
             await Order.findByIdAndUpdate(

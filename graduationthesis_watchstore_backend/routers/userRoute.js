@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/userModel');
 const Rank = require('../models/rankModel');
-const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
+const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin, verifyTokenAndAdminOnly } = require('../middleware/verifyToken');
 const OTP = require('../models/otpModel');
 
 const dotenv = require('dotenv');
@@ -105,7 +105,7 @@ router.get('/users/', verifyTokenAndAdmin, async (req, res) => {
 });
 
 //GET USERS ROLE STAFF
-router.get('/staffs/', verifyTokenAndAdmin, async (req, res) => {
+router.get('/staffs/', verifyTokenAndAdminOnly, async (req, res) => {
     try {
         const users = await User.find({ role: 'staff' }).sort({createdAt: -1});
         res.status(200).json({ data: { users: users }, message: 'success', status: 200 });
@@ -153,7 +153,7 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
 
 // ADD ACCOUNT STAFF
 // ADMIN
-router.post('/addStaff', verifyTokenAndAdmin, async (req, res) => {
+router.post('/addStaff', verifyTokenAndAdminOnly, async (req, res) => {
     try {
         const rank = await Rank.findOne({ nameen: 'Unrank' }).exec();
         const newUser = new User({
@@ -165,6 +165,7 @@ router.post('/addStaff', verifyTokenAndAdmin, async (req, res) => {
             rank,
             role: 'staff',
             isDelete: false,
+            verified: true,
         });
 
         const user = await newUser.save();
@@ -203,7 +204,7 @@ router.put('/update/:id', verifyTokenAndAdmin, async (req, res) => {
 });
 
 // UPDATE
-router.put('/resetpassword/:id', verifyTokenAndAdmin, async (req, res) => {
+router.put('/resetpassword/:id', verifyTokenAndAdminOnly, async (req, res) => {
     try {
         const resetPassword = await User.findByIdAndUpdate(
             req.params.id,
