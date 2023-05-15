@@ -80,7 +80,7 @@ export default function NewsList() {
             headerName: 'Hình ảnh',
             width: 150,
             filterable: false,
-
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <div className={cx('new-list-item')}>
@@ -138,6 +138,7 @@ export default function NewsList() {
             headerName: 'Hành động',
             width: 150,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>

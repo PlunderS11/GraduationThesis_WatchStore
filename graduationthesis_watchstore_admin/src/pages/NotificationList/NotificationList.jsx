@@ -24,6 +24,9 @@ export default function NotificationList() {
         setLoading(true);
         try {
             const res = await axiosClient.get('notification/admin/');
+            for (let i = 0; i < res.data.notifications.length; i++) {
+                res.data.notifications[i].fromUser = res.data.notifications[i].user.username;
+            }
             setPosts(res.data.notifications);
         } catch (error) {
         } finally {
@@ -69,18 +72,18 @@ export default function NotificationList() {
             width: 500,
         },
         {
-            field: 'user.username',
+            field: 'fromUser',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Từ khách hàng',
             width: 300,
-            renderCell: (params) => {
-                return (
-                    <>
-                        <div>{params.row.user.username}</div>
-                    </>
-                );
-            },
+            // renderCell: (params) => {
+            //     return (
+            //         <>
+            //             <div>{params.row.user.username}</div>
+            //         </>
+            //     );
+            // },
         },
         {
             field: 'createdAt',
@@ -111,6 +114,7 @@ export default function NotificationList() {
             headerName: 'Hành động',
             width: 150,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>

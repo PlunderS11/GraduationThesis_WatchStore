@@ -107,7 +107,7 @@ export default function UserRankList() {
             headerName: 'Hình ảnh',
             width: 125,
             filterable: false,
-
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <div className={cx('rank-list-item')}>
@@ -159,6 +159,7 @@ export default function UserRankList() {
             headerName: 'Hành động',
             width: 200,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>
@@ -193,7 +194,7 @@ export default function UserRankList() {
             headerName: 'Hình ảnh',
             width: 125,
             filterable: false,
-
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <div className={cx('rank-list-item')}>
@@ -245,6 +246,7 @@ export default function UserRankList() {
             headerName: 'Hành động',
             width: 201,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>

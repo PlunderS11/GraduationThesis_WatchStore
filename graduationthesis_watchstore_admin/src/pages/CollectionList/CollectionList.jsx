@@ -127,6 +127,7 @@ export default function CollectionList() {
             headerName: 'Hành động',
             width: 200,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>
@@ -184,6 +185,7 @@ export default function CollectionList() {
             headerName: 'Hành động',
             width: 200,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>

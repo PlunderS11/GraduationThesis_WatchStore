@@ -199,6 +199,7 @@ export default function StaffList() {
             headerName: 'Hành động',
             width: 195,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>
@@ -292,6 +293,7 @@ export default function StaffList() {
             headerName: 'Hành động',
             width: 195,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>

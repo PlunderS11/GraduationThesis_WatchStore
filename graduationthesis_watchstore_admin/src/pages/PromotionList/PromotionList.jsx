@@ -185,6 +185,7 @@ export default function PromotionList() {
             headerName: 'Hành động',
             width: 150,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>
@@ -285,6 +286,7 @@ export default function PromotionList() {
             headerName: 'Hành động',
             width: 150,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 var showSend = true;
 
@@ -388,6 +390,7 @@ export default function PromotionList() {
             headerName: 'Hành động',
             width: 150,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>

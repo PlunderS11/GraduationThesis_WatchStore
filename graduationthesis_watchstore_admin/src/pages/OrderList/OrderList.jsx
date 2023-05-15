@@ -49,7 +49,7 @@ export default function OrderList() {
         setLoading(true);
         try {
             const res = await axiosClient.get('order/admin');
-            setOrders(res.data.orderList);
+            // setOrders(res.data.orderList);
             if (res) {
                 const oders_list = res.data.orderList;
 
@@ -489,7 +489,37 @@ export default function OrderList() {
         try {
             const res = await axiosClient.get('order/admin', { params: query });
             if (res) {
-                setOrders(res.data.orderList);
+                const oders_list = res.data.orderList;
+
+                for (let i = 0; i < oders_list.length; i++) {
+                    var total_amount = 0;
+                    var oderdetails_list = oders_list[i].orderDetails;
+                    for (let j = 0; j < oderdetails_list.length; j++) {
+                        total_amount += oderdetails_list[j].quantity;
+                    }
+                    oders_list[i].total_amount = total_amount;
+
+                    var title = '';
+                    if (oders_list[i].status.state === 'PENDING') {
+                        title = 'Chờ xác nhận';
+                    } else if (oders_list[i].status.state === 'PACKAGE') {
+                        title = 'Đóng gói';
+                    } else if (oders_list[i].status.state === 'DELIVERING') {
+                        title = 'Đang vận chuyển';
+                    } else if (oders_list[i].status.state === 'COMPLETE') {
+                        title = 'Đã giao';
+                    } else if (oders_list[i].status.state === 'CANCEL') {
+                        title = 'Đã hủy';
+                    }
+                    oders_list[i].status_vi = title;
+
+                    // moment(params.value).format('DD/MM/YYYY')
+
+                    oders_list[i].orderDate_vi = new Date(oders_list[i].dateOrdered).toLocaleString();
+                }
+                setOrders(oders_list);
+
+                // setOrders(res.data.orderList);
             }
         } catch (error) {
             console.log(error);

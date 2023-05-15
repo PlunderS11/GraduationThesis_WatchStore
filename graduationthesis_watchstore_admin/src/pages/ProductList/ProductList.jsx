@@ -140,7 +140,7 @@ export default function ProductList() {
             headerName: 'Hình ảnh',
             width: 125,
             filterable: false,
-
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <div className={cx('product-list-item')}>
@@ -236,6 +236,7 @@ export default function ProductList() {
             headerName: 'Hành động',
             width: 130,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>
@@ -285,7 +286,7 @@ export default function ProductList() {
             headerName: 'Hình ảnh',
             width: 125,
             filterable: false,
-
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <div className={cx('product-list-item')}>
@@ -382,6 +383,7 @@ export default function ProductList() {
             headerName: 'Hành động',
             width: 130,
             filterable: false,
+            disableExport: true,
             renderCell: (params) => {
                 return (
                     <>
