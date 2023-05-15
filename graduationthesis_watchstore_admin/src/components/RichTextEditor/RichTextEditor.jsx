@@ -34,7 +34,8 @@ export const RichTextEditor = React.forwardRef(({ onChange, onInit, inputHeight 
             </div> */}
 
             <Editor
-                apiKey="qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc"
+                // apiKey="qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc"
+                apiKey="tv0oqxnll9j8nbiqw57qecc1em1vc3v0pza5o3q9a0k7mben"
                 onInit={(evt, editor) => {
                     editorRef = editor;
                     onInit?.();
