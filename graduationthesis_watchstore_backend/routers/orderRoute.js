@@ -1158,6 +1158,7 @@ router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
                         $gte: new Date(year, month - 1, 1),
                         $lt: new Date(year, month, 1),
                     },
+                    'status.state': {$eq:'COMPLETE'},
                 },
             },
             {
@@ -1198,6 +1199,7 @@ router.get('/incomequantity', verifyTokenAndAdmin, async (req, res) => {
                         $gte: new Date(year, month - 1, 1),
                         $lt: new Date(year, month, 1),
                     },
+                    'status.state': {$eq:'COMPLETE'},
                 },
             },
             {
