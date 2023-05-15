@@ -199,12 +199,6 @@ const OrderHistoryPage = () => {
                                             </Col>
                                             <Col span={14}>
                                                 <div className={cx('body__info-body-process')}>
-                                                    {cancel || order?.status === 'CANCEL' || (
-                                                        <div className={cx('body__info-body-process-title')}>
-                                                            {t('checkout.leadTime')}&nbsp;
-                                                            {moment(order.leadtime).format('hh:mm, DD/MM/YYYY')}
-                                                        </div>
-                                                    )}
                                                     <div className={cx('body__info-body-process-step')}>
                                                         <Steps
                                                             progressDot

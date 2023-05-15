@@ -11,7 +11,7 @@
 }
 
 .cart-product {
-    @include flex(center, center);
+    @include flex(unset, center);
 }
 
 .cart-product-image {

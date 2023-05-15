@@ -13,7 +13,7 @@ import InputField from '../../components/InputField/InputField';
 import Button from '../../components/Button/Button';
 import { setTokenUser } from '../../features/user/userSlice';
 import style from './Login.module.scss';
-import { Input, Modal, Spin } from 'antd';
+import { Input, Modal, Space, Spin } from 'antd';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
@@ -174,8 +174,7 @@ const Login = () => {
                         <div className={cx('login-with')}>
                             <span>{t('login.orLogin')}</span>
                         </div>
-                        <Button customClass={style}>
-                            <FontAwesomeIcon icon={faFacebookF} className={cx('icon')} />{' '}
+                        <div style={{ textAlign: 'center' }}>
                             <FacebookLogin
                                 appId="1223201481633693"
                                 onFail={error => {
@@ -186,15 +185,22 @@ const Login = () => {
                                 }}
                                 style={{
                                     color: '#fff',
-                                    backgroundColor: '#000',
+                                    backgroundColor: 'transparent',
                                     fontSize: '16px',
                                     padding: '12px 24px',
                                     border: 'none',
                                     borderRadius: '4px',
                                 }}
-                                children="Facebook"
+                                children={
+                                    <Button customClass={style}>
+                                        <Space>
+                                            <FontAwesomeIcon icon={faFacebookF} className={cx('icon')} />
+                                            <span className={cx('text')}>Facebook</span>
+                                        </Space>
+                                    </Button>
+                                }
                             />
-                        </Button>
+                        </div>
                         {/* <Button customClass={style}>
                                 <FontAwesomeIcon icon={faGoogle} className={cx('icon')} />
                                 <span className={cx('text')}>Google</span>

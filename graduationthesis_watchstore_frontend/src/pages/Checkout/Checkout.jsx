@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
-import StripeCheckout from 'react-stripe-checkout';
 import { toast } from 'react-toastify';
 import { Col, Divider, Modal, Row, Spin } from 'antd';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from './PaymentForm';
+import { loadStripe } from '@stripe/stripe-js';
 
 import { clearCart, fetchEstimate, selectCartItems, selectTotalItems } from '../../features/cart';
 import { NumberWithCommas } from '../../functions';
@@ -14,10 +16,11 @@ import styles from './Checkout.module.scss';
 import TextArea from 'antd/es/input/TextArea';
 import axiosClient from '../../api/axiosClient';
 import { fetchUserInfor } from '../../features/user';
-import { images } from '../../assets/images';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import i18n from '../../i18n';
 import { clearPromotionCode } from '../../features/cart/cartSlice';
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE);
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +29,8 @@ const Checkout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [check, setCheck] = useState('CASH');
+    const [open, setOpen] = useState(false);
+
     const [note, setNote] = useState('');
     const [coupon, setCoupon] = useState('');
     const user = useSelector(state => state.user);
@@ -35,7 +40,20 @@ const Checkout = () => {
     const totalItems = useSelector(selectTotalItems);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingBuy, setIsLoadingBuy] = useState(false);
-    const [stripeToken, setStripeToken] = useState(null);
+    const [clientSecret, setClientSecret] = useState('');
+
+    const getSecretClientPayment = async () => {
+        const { data } = await axiosClient.post('order/payment-intent', {
+            amount: 100000,
+        });
+        return data.clientSecret;
+    };
+
+    const handleShowPaymentForm = async () => {
+        const clientSecretData = await getSecretClientPayment();
+        setClientSecret(clientSecretData);
+        setOpen(true);
+    };
 
     const payment = [
         {
@@ -63,10 +81,6 @@ const Checkout = () => {
         setCheck(type);
     };
 
-    const onToken = token => {
-        setStripeToken(token);
-    };
-
     const handleBuy = async () => {
         if (user.user.address?.address === undefined) {
             toast.info(t('checkout.noAddress'));
@@ -75,10 +89,11 @@ const Checkout = () => {
             setIsLoadingBuy(true);
             try {
                 const resUser = await axiosClient.get('user/userInfo');
-                const res = await axiosClient.post('order', {
+                await axiosClient.post('order', {
                     province: resUser.data.address.province,
                     district: resUser.data.address.district,
                     ward: resUser.data.address.ward,
+                    distancePrice: estimate.distancePrice,
                     promotionCode: coupon,
                     note,
                     products: cart.reduce((acc, cur) => {
@@ -106,7 +121,7 @@ const Checkout = () => {
     };
 
     const handleBuyOnline = async () => {
-        if (user.user.address?.address) {
+        if (user.user.address?.address === undefined) {
             toast.info(t('checkout.noAddress'));
             navigate('/account/address', { state: true });
         } else {
@@ -114,13 +129,10 @@ const Checkout = () => {
             try {
                 const resUser = await axiosClient.get('user/userInfo');
                 await axiosClient.post('order/stripePayment', {
-                    stripe: {
-                        tokenId: stripeToken.id,
-                        amount: estimate.finalPrice,
-                    },
                     province: resUser.data.address.province,
                     district: resUser.data.address.district,
                     ward: resUser.data.address.ward,
+                    distancePrice: estimate.distancePrice,
                     promotionCode: coupon,
                     note,
                     products: cart.reduce((acc, cur) => {
@@ -147,11 +159,6 @@ const Checkout = () => {
             }
         }
     };
-
-    useEffect(() => {
-        stripeToken && handleBuyOnline();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stripeToken]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -385,22 +392,30 @@ const Checkout = () => {
                                                     {t('button.order')}
                                                 </Button>
                                             ) : (
-                                                <StripeCheckout
-                                                    name="MynhBakeStore"
-                                                    image={images.logoBlack}
-                                                    currency="VND"
-                                                    ComponentClass="div"
-                                                    allowRememberMe
-                                                    panelLabel={t('button.order')}
-                                                    description={`${t('checkout.paymentDescription')}${NumberWithCommas(
-                                                        estimate.finalPrice
-                                                    )}`}
-                                                    amount={estimate.finalPrice}
-                                                    token={onToken}
-                                                    stripeKey={process.env.REACT_APP_STRIPE}
-                                                >
-                                                    <Button loading={isLoadingBuy}>{t('button.order')}</Button>
-                                                </StripeCheckout>
+                                                <>
+                                                    <Button onclick={handleShowPaymentForm}>{t('button.order')}</Button>
+                                                    <Modal
+                                                        open={open}
+                                                        onCancel={() => {
+                                                            setOpen(false);
+                                                        }}
+                                                        centered
+                                                        footer={null}
+                                                    >
+                                                        {clientSecret && (
+                                                            <div className="">
+                                                                <Elements
+                                                                    stripe={stripePromise}
+                                                                    options={{
+                                                                        clientSecret,
+                                                                    }}
+                                                                >
+                                                                    <PaymentForm handleBuyOrder={handleBuyOnline} />
+                                                                </Elements>
+                                                            </div>
+                                                        )}
+                                                    </Modal>
+                                                </>
                                             )}
                                         </div>
                                     </div>
