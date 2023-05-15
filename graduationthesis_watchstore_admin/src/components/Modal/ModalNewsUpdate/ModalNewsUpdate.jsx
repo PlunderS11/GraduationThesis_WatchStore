@@ -94,7 +94,7 @@ const ModalNewsUpdate = (props) => {
                 destroyOnClose={true}
                 onCancel={handleCancel}
                 open={open}
-                title="THÊM MỚI BÀI VIẾT"
+                title="CẬP NHẬT BÀI VIẾT"
                 width={800}
                 centered
                 footer={[]}
