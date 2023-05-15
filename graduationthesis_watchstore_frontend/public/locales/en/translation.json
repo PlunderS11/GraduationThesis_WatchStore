@@ -16,7 +16,8 @@
         "orderCancel": "Cancel order",
         "loadMore": "Load More",
         "update": "Update",
-        "save": "Save"
+        "save": "Save",
+        "noLogin": "Please login"
     },
     "cart": {
         "checkout": "Checkout",
@@ -236,7 +237,8 @@
         "buySuccess": "Order Success",
         "orderHistoryTitle": "Please payment {{totalPrice}} upon delivery",
         "leadTime": "Expected delivery date",
-        "updateRank": "Member rank up"
+        "updateRank": "Member rank up",
+        "noAddress": "Please set up a delivery address"
     },
     "aboutUs": {
         "introduce": "Introduce",
@@ -306,7 +308,7 @@
         "notification": "Notification",
         "address": "Address",
         "voucher": "Voucher store",
-        "search":"Search Results",
+        "search": "Search Results",
         "changePassword": "Change password"
     },
     "errorPage": {

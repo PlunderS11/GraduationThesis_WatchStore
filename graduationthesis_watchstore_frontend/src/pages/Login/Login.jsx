@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import FacebookLogin from '@greatsumini/react-facebook-login';
 
 import axiosClient from '../../api/axiosClient';
 import InputField from '../../components/InputField/InputField';
@@ -14,6 +15,8 @@ import { setTokenUser } from '../../features/user/userSlice';
 import style from './Login.module.scss';
 import { Input, Modal, Spin } from 'antd';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 const cx = classNames.bind(style);
 
@@ -63,6 +66,25 @@ const Login = () => {
             }
         },
     });
+
+    const handleLoginFace = async response => {
+        setLoading(true);
+        try {
+            const res = await axiosClient.post('auth/loginFacebook', {
+                facebookId: response.id,
+                email: response.email,
+                name: response.name,
+            });
+            toast.success(t('login.success'));
+            await localStorage.setItem('mynhbake_token', res.data.token);
+            dispatch(setTokenUser(res.data.token));
+            navigate('/');
+        } catch (error) {
+            toast.error(t(`login.error.${error.response.status}`));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleVerifyOTP = async () => {
         try {
@@ -149,7 +171,34 @@ const Login = () => {
                                 {t('login.login')}
                             </Button>
                         </form>
-                        
+                        <div className={cx('login-with')}>
+                            <span>{t('login.orLogin')}</span>
+                        </div>
+                        <Button customClass={style}>
+                            <FontAwesomeIcon icon={faFacebookF} className={cx('icon')} />{' '}
+                            <FacebookLogin
+                                appId="1223201481633693"
+                                onFail={error => {
+                                    console.log('Login Failed!', error);
+                                }}
+                                onProfileSuccess={response => {
+                                    handleLoginFace(response);
+                                }}
+                                style={{
+                                    color: '#fff',
+                                    backgroundColor: '#000',
+                                    fontSize: '16px',
+                                    padding: '12px 24px',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                }}
+                                children="Facebook"
+                            />
+                        </Button>
+                        {/* <Button customClass={style}>
+                                <FontAwesomeIcon icon={faGoogle} className={cx('icon')} />
+                                <span className={cx('text')}>Google</span>
+                            </Button> */}
                         <div className={cx('register')}>
                             <span>{t('login.dontHaveAccount')}</span>{' '}
                             <Link to={'/register'}>{t('register.register')}</Link>

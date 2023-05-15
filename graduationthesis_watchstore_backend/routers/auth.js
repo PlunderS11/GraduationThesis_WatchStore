@@ -71,6 +71,7 @@ router.post('/register', async (req, res) => {
                 email: req.body.email,
                 password: CryptoJS.AES.encrypt(req.body.password, process.env.PASS_SECRET).toString(),
                 rank,
+                facebookId: '',
             });
             const user = await newUser.save();
             await SendMailUtil.verifyOTP(user._id, user.email, 'Verify Email');
@@ -117,6 +118,45 @@ router.post('/login', async (req, res) => {
                     res.status(200).json({ data: { token: accessToken }, message: 'success', status: 200 });
                 }
             }
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ data: {}, message: err, status: 500 });
+    }
+});
+
+//FACEBOOK LOGIN
+router.post('/loginFacebook', async (req, res) => {
+    const { facebookId, email, name } = req.body;
+    try {
+        const user = await User.findOne({ facebookId });
+        const rank = await Rank.findOne({ nameen: 'Unrank' }).exec();
+        if (user) {
+            const accessToken = await jwt.sign(
+                {
+                    id: user._id,
+                    role: user.role,
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '3d' }
+            );
+            res.status(200).json({ data: { token: accessToken }, message: 'success', status: 200 });
+        } else {
+            const newUser = await User.create({
+                username: name,
+                email,
+                facebookId,
+                rank,
+            });
+            const accessToken = await jwt.sign(
+                {
+                    id: newUser._id,
+                    role: newUser.role,
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '3d' }
+            );
+            res.status(200).json({ data: { token: accessToken }, message: 'success', status: 200 });
         }
     } catch (err) {
         console.log(err);

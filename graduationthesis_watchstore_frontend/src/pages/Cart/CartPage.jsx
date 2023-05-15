@@ -209,11 +209,12 @@ const CartPage = () => {
                                                                 navigate('/checkout');
                                                             } else {
                                                                 toast.info(t('productDetail.buynowFail'));
+                                                                navigate('/login');
                                                             }
                                                         }}
                                                         loading={loading}
                                                     >
-                                                        {t('cart.checkout')}
+                                                        {user.isLogin ? t('cart.checkout') : t('button.noLogin')}
                                                     </Button>
                                                 </div>
                                             </div>

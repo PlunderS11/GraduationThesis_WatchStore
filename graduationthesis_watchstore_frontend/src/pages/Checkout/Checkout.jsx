@@ -51,7 +51,10 @@ const Checkout = () => {
     ];
 
     useEffect(() => {
-        user.isLogin && totalItems > 0 && dispatch(fetchEstimate());
+        if (user.isLogin && totalItems > 0) {
+            dispatch(fetchEstimate());
+            dispatch(fetchUserInfor());
+        }
         localStorage.getItem('promotionCode') && setCoupon(JSON.parse(localStorage.getItem('promotionCode')));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -65,83 +68,83 @@ const Checkout = () => {
     };
 
     const handleBuy = async () => {
-        try {
+        if (user.user.address?.address === undefined) {
+            toast.info(t('checkout.noAddress'));
+            navigate('/account/address', { state: true });
+        } else {
             setIsLoadingBuy(true);
-            const resUser = await axiosClient.get('user/userInfo');
-            const res = await axiosClient.post('order', {
-                province: resUser.data.address.province,
-                district: resUser.data.address.district,
-                ward: resUser.data.address.ward,
-                promotionCode: coupon,
-                note,
-                products: cart.reduce((acc, cur) => {
-                    acc.push({
-                        productId: cur.product._id,
-                        quantity: cur.quantity,
-                    });
-                    return acc;
-                }, []),
-                paymentType: check,
-                phone: resUser.data.phone,
-                address: resUser.data.address.address,
-                username: resUser.data.username,
-                language: i18n.language,
-            });
-            dispatch(clearCart());
-            if (res.status === 201) {
-                toast.success(`${t('checkout.updateRank')} ${res.data.rank[`name${i18n.language}`]}`);
-                dispatch(fetchUserInfor());
-            } else {
+            try {
+                const resUser = await axiosClient.get('user/userInfo');
+                const res = await axiosClient.post('order', {
+                    province: resUser.data.address.province,
+                    district: resUser.data.address.district,
+                    ward: resUser.data.address.ward,
+                    promotionCode: coupon,
+                    note,
+                    products: cart.reduce((acc, cur) => {
+                        acc.push({
+                            productId: cur.product._id,
+                            quantity: cur.quantity,
+                        });
+                        return acc;
+                    }, []),
+                    paymentType: check,
+                    phone: resUser.data.phone,
+                    address: resUser.data.address.address,
+                    username: resUser.data.username,
+                    language: i18n.language,
+                });
+                dispatch(clearCart());
                 toast.success(t('checkout.buySuccess'));
+                navigate('/buysuccess');
+            } catch (error) {
+                toast.error(error.response.data.message);
+            } finally {
+                setIsLoadingBuy(false);
             }
-            navigate('/buysuccess');
-        } catch (error) {
-            toast.error(error.response.data.message);
-        } finally {
-            setIsLoadingBuy(false);
         }
     };
 
     const handleBuyOnline = async () => {
-        try {
+        if (user.user.address?.address) {
+            toast.info(t('checkout.noAddress'));
+            navigate('/account/address', { state: true });
+        } else {
             setIsLoadingBuy(true);
-            const resUser = await axiosClient.get('user/userInfo');
-            const res = await axiosClient.post('order/stripePayment', {
-                stripe: {
-                    tokenId: stripeToken.id,
-                    amount: estimate.finalPrice,
-                },
-                province: resUser.data.address.province,
-                district: resUser.data.address.district,
-                ward: resUser.data.address.ward,
-                promotionCode: coupon,
-                note,
-                products: cart.reduce((acc, cur) => {
-                    acc.push({
-                        productId: cur.product._id,
-                        quantity: cur.quantity,
-                    });
-                    return acc;
-                }, []),
-                paymentType: check,
-                phone: resUser.data.phone,
-                address: resUser.data.address.address,
-                username: resUser.data.username,
-                language: i18n.language,
-            });
-            dispatch(clearCart());
-            if (res.status === 201) {
-                toast.success(`${t('checkout.updateRank')} ${res.data.rank[`name${i18n.language}`]}`);
-                dispatch(fetchUserInfor());
-            } else {
+            try {
+                const resUser = await axiosClient.get('user/userInfo');
+                await axiosClient.post('order/stripePayment', {
+                    stripe: {
+                        tokenId: stripeToken.id,
+                        amount: estimate.finalPrice,
+                    },
+                    province: resUser.data.address.province,
+                    district: resUser.data.address.district,
+                    ward: resUser.data.address.ward,
+                    promotionCode: coupon,
+                    note,
+                    products: cart.reduce((acc, cur) => {
+                        acc.push({
+                            productId: cur.product._id,
+                            quantity: cur.quantity,
+                        });
+                        return acc;
+                    }, []),
+                    paymentType: check,
+                    phone: resUser.data.phone,
+                    address: resUser.data.address.address,
+                    username: resUser.data.username,
+                    language: i18n.language,
+                });
+                dispatch(clearCart());
                 toast.success(t('checkout.buySuccess'));
+                navigate('/buysuccess');
+            } catch (error) {
+                console.log(error);
+                toast.error(error.response.data.message);
+            } finally {
+                setIsLoadingBuy(false);
             }
-            navigate('/buysuccess');
-        } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
-        } finally {
-            setIsLoadingBuy(false);
         }
     };
 

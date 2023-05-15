@@ -87,7 +87,10 @@ const ProductDetail = () => {
             dispatch(addToCart({ product, quantity: 1 }));
             toast.success(t('productDetail.addToCart'));
             navigate('/checkout');
-        } else toast.info(t('productDetail.buynowFail'));
+        } else {
+            toast.info(t('productDetail.buynowFail'));
+            navigate('/login');
+        }
     };
     return (
         <Spin spinning={loading}>

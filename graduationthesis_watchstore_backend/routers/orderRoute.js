@@ -9,6 +9,7 @@ const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middlew
 const { estimate, leadtime, address } = require('../utils/config');
 const User = require('../models/userModel');
 const Rank = require('../models/rankModel');
+const SendMailUtil = require('../utils/sendEmail');
 const { ObjectId } = require('bson');
 
 const Notification = require('../models/notificationModel');
@@ -163,9 +164,20 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
             });
             await order.save();
 
-            // Check rank
-            const rank = await Rank.find();
-            var totalPriceOrderUser = await Order.aggregate([
+            const notification = {
+                title: 'Tiếp nhận đơn hàng',
+                content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+                shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+                mode: `private`,
+                user: req.user.id,
+                order: order._id,
+                from: 'admin',
+                type: 'order',
+                mode: 'private',
+                lastSendAt: moment().unix(),
+            };
+            await Notification.create(notification);
+            const oneSignals = await OneSignal.aggregate([
                 {
                     $lookup: {
                         from: 'users',
@@ -174,190 +186,65 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                         as: 'user',
                     },
                 },
-                {
-                    $unwind: '$user',
-                },
-                {
-                    $match: {
-                        'user._id': ObjectId(req.user.id),
+                { $unwind: '$user' },
+                { $match: { 'user.role': 'user' } },
+            ]);
+            if (oneSignals.length > 0) {
+                await OneSignalUtil.pushNotification({
+                    isAdmin: false,
+                    heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
+                    content:
+                        req.body.language === 'vi'
+                            ? `Đơn hàng #${order.code} vừa được tạo`
+                            : `The order #${order.code} just created`,
+                    data: {
+                        type: 'ORDER',
+                        orderId: order._id + '',
                     },
-                },
-                { $group: { _id: null, totalFinalPrice: { $sum: '$finalPrice' } } },
-                { $project: { totalFinalPrice: true, _id: false } },
-            ]).then(items => items[0].totalFinalPrice);
-
-            const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
-
-            //----------------------------------------------------------------
-            if (user.rank._id.toString() !== rs._id.toString()) {
-                await User.findByIdAndUpdate(req.user.id, {
-                    $set: { rank: rs },
+                    oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
+                    pathUrl: `/account/order-history/${order._id}`,
                 });
-                const notification = {
-                    title: 'Tiếp nhận đơn hàng',
-                    content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                    shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                    mode: `private`,
-                    user: req.user.id,
-                    order: order._id,
-                    from: 'admin',
-                    type: 'order',
-                    mode: 'private',
-                    lastSendAt: moment().unix(),
-                };
-                await Notification.create(notification);
-                const oneSignals = await OneSignal.aggregate([
-                    {
-                        $lookup: {
-                            from: 'users',
-                            localField: 'user',
-                            foreignField: '_id',
-                            as: 'user',
-                        },
-                    },
-                    { $unwind: '$user' },
-                    { $match: { 'user.role': 'user' } },
-                ]);
-                if (oneSignals.length > 0) {
-                    await OneSignalUtil.pushNotification({
-                        isAdmin: false,
-                        heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
-                        content:
-                            req.body.language === 'vi'
-                                ? `Đơn hàng #${order.code} vừa được tạo`
-                                : `The order #${order.code} just created`,
-                        data: {
-                            type: 'ORDER',
-                            orderId: order._id + '',
-                        },
-                        oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
-                        pathUrl: `/account/order-history/${order._id}`,
-                    });
-                }
-
-                const notificationAdmin = {
-                    title: 'Đơn hàng mới',
-                    content: `Đơn hàng #${order.code} vừa được tạo.`,
-                    shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
-                    mode: `private`,
-                    user: req.user.id,
-                    order: order._id,
-                    from: 'customer',
-                    type: 'order',
-                    mode: 'private',
-                    lastSendAt: moment().unix(),
-                };
-                await Notification.create(notificationAdmin);
-
-                const oneSignalsAdmin = await OneSignal.aggregate([
-                    {
-                        $lookup: {
-                            from: 'users',
-                            localField: 'user',
-                            foreignField: '_id',
-                            as: 'user',
-                        },
-                    },
-                    { $unwind: '$user' },
-                    { $match: { 'user.role': 'admin' } },
-                ]);
-                if (oneSignalsAdmin.length > 0) {
-                    await OneSignalUtil.pushNotification({
-                        isAdmin: true,
-                        heading: 'Đơn hàng mới',
-                        content: `Đơn hàng #${order.code} vừa được tạo`,
-                        data: {
-                            type: 'ORDER',
-                            orderId: order._id + '',
-                        },
-                        oneSignalPlayerIds: oneSignalsAdmin.map(e => e.oneSignalId),
-                        pathUrl: '/orders',
-                    });
-                }
-                res.status(201).json({ data: { order, rank: rs }, message: 'success', status: 201 });
-            } else {
-                const notification = {
-                    title: 'Tiếp nhận đơn hàng',
-                    content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                    shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                    mode: `private`,
-                    user: req.user.id,
-                    order: order._id,
-                    from: 'admin',
-                    type: 'order',
-                    mode: 'private',
-                    lastSendAt: moment().unix(),
-                };
-                await Notification.create(notification);
-                const oneSignals = await OneSignal.aggregate([
-                    {
-                        $lookup: {
-                            from: 'users',
-                            localField: 'user',
-                            foreignField: '_id',
-                            as: 'user',
-                        },
-                    },
-                    { $unwind: '$user' },
-                    { $match: { 'user.role': 'user' } },
-                ]);
-                if (oneSignals.length > 0) {
-                    await OneSignalUtil.pushNotification({
-                        isAdmin: false,
-                        heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
-                        content:
-                            req.body.language === 'vi'
-                                ? `Đơn hàng #${order.code} vừa được tạo`
-                                : `The order #${order.code} just created`,
-                        data: {
-                            type: 'ORDER',
-                            orderId: order._id + '',
-                        },
-                        oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
-                        pathUrl: `/account/order-history/${order._id}`,
-                    });
-                }
-                const notificationAdmin = {
-                    title: 'Đơn hàng mới',
-                    content: `Đơn hàng #${order.code} vừa được tạo.`,
-                    shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
-                    mode: `private`,
-                    user: req.user.id,
-                    order: order._id,
-                    from: 'customer',
-                    type: 'order',
-                    mode: 'private',
-                    lastSendAt: moment().unix(),
-                };
-                await Notification.create(notificationAdmin);
-
-                const oneSignalsAdmin = await OneSignal.aggregate([
-                    {
-                        $lookup: {
-                            from: 'users',
-                            localField: 'user',
-                            foreignField: '_id',
-                            as: 'user',
-                        },
-                    },
-                    { $unwind: '$user' },
-                    { $match: { 'user.role': 'admin' } },
-                ]);
-                if (oneSignalsAdmin.length > 0) {
-                    await OneSignalUtil.pushNotification({
-                        isAdmin: true,
-                        heading: 'Đơn hàng mới',
-                        content: `Đơn hàng #${order.code} vừa được tạo`,
-                        data: {
-                            type: 'ORDER',
-                            orderId: order._id + '',
-                        },
-                        oneSignalPlayerIds: oneSignalsAdmin.map(e => e.oneSignalId),
-                        pathUrl: '/orders',
-                    });
-                }
-                res.status(200).json({ data: { order }, message: 'success', status: 200 });
             }
+            const notificationAdmin = {
+                title: 'Đơn hàng mới',
+                content: `Đơn hàng #${order.code} vừa được tạo.`,
+                shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
+                mode: `private`,
+                user: req.user.id,
+                order: order._id,
+                from: 'customer',
+                type: 'order',
+                mode: 'private',
+                lastSendAt: moment().unix(),
+            };
+            await Notification.create(notificationAdmin);
+
+            const oneSignalsAdmin = await OneSignal.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user',
+                    },
+                },
+                { $unwind: '$user' },
+                { $match: { 'user.role': 'admin' } },
+            ]);
+            if (oneSignalsAdmin.length > 0) {
+                await OneSignalUtil.pushNotification({
+                    isAdmin: true,
+                    heading: 'Đơn hàng mới',
+                    content: `Đơn hàng #${order.code} vừa được tạo`,
+                    data: {
+                        type: 'ORDER',
+                        orderId: order._id + '',
+                    },
+                    oneSignalPlayerIds: oneSignalsAdmin.map(e => e.oneSignalId),
+                    pathUrl: '/orders',
+                });
+            }
+            res.status(200).json({ data: { order }, message: 'success', status: 200 });
         } else {
             res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
         }
@@ -714,13 +601,20 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
 // UPDATE STATUS ORDER
 router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate({
-            path: 'orderDetails',
-            populate: {
-                path: 'product',
-            },
-        })
-        .exec();
+        const order = await Order.findById(req.params.id)
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
+            .populate({
+                path: 'user',
+                populate: {
+                    path: 'rank',
+                },
+            })
+            .exec();
         var status = {};
         let title = '',
             body = '';
@@ -783,6 +677,59 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
             },
             { new: true }
         );
+
+        if (req.body.status === 'COMPLETE') {
+            // Check rank
+            const rank = await Rank.find();
+            var totalPriceOrderUser = await Order.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user',
+                    },
+                },
+                {
+                    $unwind: '$user',
+                },
+                {
+                    $match: {
+                        'user._id': ObjectId(order.user._id),
+                    },
+                },
+                { $group: { _id: null, totalFinalPrice: { $sum: '$finalPrice' } } },
+                { $project: { totalFinalPrice: true, _id: false } },
+            ]).then(items => items[0].totalFinalPrice);
+
+            const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
+            if (order.user.rank._id.toString() !== rs._id.toString()) {
+                await User.findByIdAndUpdate(order.user._id, {
+                    $set: { rank: rs },
+                });
+                // Send Email update rank
+                SendMailUtil.sendMail(
+                    order.user.email,
+                    'MynhBakeStore thông báo thăng hạng thành viên / MynhBakeStore Member promotion announcement',
+                    `<h4>Chủ đề: Chúc mừng bạn vừa thăng hạng thành công lên bậc <b>${rs.namevi}</b>!</h4>
+                    <br/>
+    <p>Chào <b>${order.user.username}!</b></p> <br/>         
+    <p>Chúc mừng bạn vừa thăng hạng thành công lên bậc <b>${rs.namevi}</b>!</p>
+    <p>Hãy kiểm ra <a href="https://graduationthesis-fe.vercel.app/account/voucher"><b>Kho voucher</b></a> để biết thêm ưu đãi dành cho bạn</p>
+    <p>Cảm ơn bạn đã luôn ủng hộ. Chúng tôi mong muốn được phục vụ bạn sớm nhất.</p>
+            
+    ---------------------------------------------------------------------------------------------------------------------------
+                
+    <h4>Subject: Congratulations on your successful promotion to <b>${rs.nameen}</b>!</h4>
+    <br/>
+    <p>Hello <b>${order.user.username}!</b></p> <br/>
+    <p>Congratulations on your successful promotion to <b>${rs.nameen}</b>!</p>
+    <p>Please check out <a href="https://graduationthesis-fe.vercel.app/account/voucher"><b>Voucher Repository</b></a> to discover additional benefits for you</p>
+    <p>Thank you for your continuous support. We look forward to serving you soon.</p>
+                `
+                );
+            }
+        }
 
         if (req.body.status === 'CANCEL' && order.paymentType === 'CASH') {
             await Order.findByIdAndUpdate(
@@ -881,13 +828,14 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
 // UPDATE STATUS PAYMENTS
 router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate({
-            path: 'orderDetails',
-            populate: {
-                path: 'product',
-            },
-        })
-        .exec();;
+        const order = await Order.findById(req.params.id)
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
+            .exec();
         const orderUpdate = await Order.findByIdAndUpdate(
             req.params.id,
             {
@@ -1158,7 +1106,7 @@ router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
                         $gte: new Date(year, month - 1, 1),
                         $lt: new Date(year, month, 1),
                     },
-                    'status.state': {$eq:'COMPLETE'},
+                    'status.state': { $eq: 'COMPLETE' },
                 },
             },
             {
@@ -1199,7 +1147,7 @@ router.get('/incomequantity', verifyTokenAndAdmin, async (req, res) => {
                         $gte: new Date(year, month - 1, 1),
                         $lt: new Date(year, month, 1),
                     },
-                    'status.state': {$eq:'COMPLETE'},
+                    'status.state': { $eq: 'COMPLETE' },
                 },
             },
             {
