@@ -81,8 +81,6 @@ router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
 router.post('/', verifyTokenAndAuthorization, async (req, res) => {
     try {
         const products = req.body.products;
-        const distancePrice = await estimate(req.body.district.DistrictID, req.body.ward.WardCode);
-        const lead = await leadtime(req.body.district.DistrictID, req.body.ward.WardCode);
 
         var promotion = null;
         var discountValue = 0;
@@ -157,10 +155,9 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                     cancelDate: new Date(),
                 },
                 originalPrice: productPrice,
-                shipPrice: distancePrice,
+                shipPrice: req.body.distancePrice,
                 discountPrice,
-                finalPrice: productPrice - discountPrice + distancePrice,
-                leadtime: new Date(lead * 1000).toISOString(),
+                finalPrice: productPrice - discountPrice + req.body.distancePrice,
             });
             await order.save();
 
@@ -254,304 +251,198 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
     }
 });
 
+// PAYMENT INTENT
+router.post('/payment-intent', verifyTokenAndAuthorization, async (req, res) => {
+    const amount = req.body.amount || 0;
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            currency: 'VND',
+            amount,
+            automatic_payment_methods: { enabled: true },
+        });
+
+        // Send publishable key and PaymentIntent details to client
+        res.status(200).json({
+            success: true,
+            data: { clientSecret: paymentIntent.client_secret },
+        });
+    } catch (e) {
+        return res.status(400).send({
+            error: {
+                message: e.message,
+            },
+        });
+    }
+});
+
 // POST ORDER ONLINE
 router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
     try {
-        stripe.charges.create(
-            {
-                source: req.body.stripe.tokenId,
-                amount: req.body.stripe.amount,
-                currency: 'VND',
-            },
-            async (stripeErr, stripeRes) => {
-                if (stripeErr) {
-                    res.status(500).json({ data: {}, message: 'striper' + stripeErr, status: 500 });
-                } else {
-                    const products = req.body.products;
-                    const distancePrice = await estimate(req.body.district.DistrictID, req.body.ward.WardCode);
-                    const lead = await leadtime(req.body.district.DistrictID, req.body.ward.WardCode);
+        const products = req.body.products;
 
-                    var promotion = null;
-                    var discountValue = 0;
-                    if (req.body.promotionCode.trim().length > 0) {
-                        promotion = await Promotion.findOne({ code: req.body.promotionCode });
-                    }
-                    if (promotion) {
-                        discountValue = promotion.value;
-                        const newUsers = [...promotion.users, req.user.id];
-                        await Promotion.findByIdAndUpdate(promotion._id, {
-                            $set: { users: newUsers },
-                        });
-                    }
-                    // check ton kho
-                    let check = true;
-                    for (let i = 0; i < products.length; i++) {
-                        const product = await Product.findById(products[i].productId);
-                        if (products[i].quantity > product.stock) {
-                            check = false;
-                            break;
-                        }
-                    }
-
-                    let orderDetails = [];
-                    let productPrice = 0;
-                    if (check) {
-                        for (let i = 0; i < products.length; i++) {
-                            const product = await Product.findById(products[i].productId);
-
-                            const orderDetail = new OrderDetail({
-                                product,
-                                quantity: products[i].quantity,
-                                originalPrice: product.originalPrice,
-                                finalPrice: product.finalPrice,
-                            });
-                            await orderDetail.save();
-                            await Product.findByIdAndUpdate(products[i].productId, {
-                                $set: {
-                                    sold: product.sold + products[i].quantity,
-                                    stock: product.stock - products[i].quantity,
-                                },
-                            });
-                            productPrice += product.finalPrice * products[i].quantity;
-                            orderDetails.push(orderDetail);
-                        }
-                        const user = await User.findById(req.user.id).populate('rank');
-                        const { password, ...orther } = user._doc;
-                        const discountPrice = (productPrice * discountValue) / 100;
-
-                        let order = new Order({
-                            user: { ...orther },
-                            promotion: promotion,
-                            orderDetails,
-                            recipient: {
-                                username: req.body.username,
-                                phone: req.body.phone,
-                                addressProvince: req.body.province,
-                                addressDistrict: req.body.district,
-                                addressWard: req.body.ward,
-                                address: req.body.address,
-                            },
-                            code: `DH${new Date().getTime()}`,
-                            note: req.body.note ? req.body.note : '',
-                            paymentStatus: 'COMPLETE',
-                            paymentType: req.body.paymentType,
-                            status: {
-                                state: 'PENDING',
-                                pendingDate: new Date(),
-                                packageDate: new Date(),
-                                deliveringDate: new Date(),
-                                completeDate: new Date(),
-                                cancelDate: new Date(),
-                            },
-                            originalPrice: productPrice,
-                            shipPrice: distancePrice,
-                            discountPrice,
-                            finalPrice: productPrice - discountPrice + distancePrice,
-                            leadtime: new Date(lead * 1000).toISOString(),
-                        });
-                        await order.save();
-
-                        // Check rank
-                        const rank = await Rank.find();
-                        var totalPriceOrderUser = await Order.aggregate([
-                            {
-                                $lookup: {
-                                    from: 'users',
-                                    localField: 'user',
-                                    foreignField: '_id',
-                                    as: 'user',
-                                },
-                            },
-                            {
-                                $unwind: '$user',
-                            },
-                            {
-                                $match: {
-                                    'user._id': ObjectId(req.user.id),
-                                },
-                            },
-                            { $group: { _id: null, totalFinalPrice: { $sum: '$finalPrice' } } },
-                            { $project: { totalFinalPrice: true, _id: false } },
-                        ]).then(items => items[0].totalFinalPrice);
-
-                        const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
-
-                        //----------------------------------------------------------------
-                        if (user.rank._id.toString() !== rs._id.toString()) {
-                            await User.findByIdAndUpdate(req.user.id, {
-                                $set: { rank: rs },
-                            });
-                            const notification = {
-                                title: 'Tiếp nhận đơn hàng',
-                                content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                                shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                                mode: `private`,
-                                user: req.user.id,
-                                order: order._id,
-                                from: 'admin',
-                                type: 'order',
-                                mode: 'private',
-                                lastSendAt: moment().unix(),
-                            };
-                            await Notification.create(notification);
-                            const oneSignals = await OneSignal.aggregate([
-                                {
-                                    $lookup: {
-                                        from: 'users',
-                                        localField: 'user',
-                                        foreignField: '_id',
-                                        as: 'user',
-                                    },
-                                },
-                                { $unwind: '$user' },
-                                { $match: { 'user.role': 'user' } },
-                            ]);
-                            if (oneSignals.length > 0) {
-                                await OneSignalUtil.pushNotification({
-                                    isAdmin: false,
-                                    heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
-                                    content:
-                                        req.body.language === 'vi'
-                                            ? `Đơn hàng #${order.code} vừa được tạo`
-                                            : `The order #${order.code} just created`,
-                                    data: {
-                                        type: 'ORDER',
-                                        orderId: order._id + '',
-                                    },
-                                    oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
-                                    pathUrl: `/account/order-history/${order._id}`,
-                                });
-                            }
-
-                            const notificationAdmin = {
-                                title: 'Đơn hàng mới',
-                                content: `Đơn hàng #${order.code} vừa được tạo.`,
-                                shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
-                                mode: `private`,
-                                user: req.user.id,
-                                order: order._id,
-                                from: 'customer',
-                                type: 'order',
-                                mode: 'private',
-                                lastSendAt: moment().unix(),
-                            };
-                            await Notification.create(notificationAdmin);
-
-                            const oneSignalsAdmin = await OneSignal.aggregate([
-                                {
-                                    $lookup: {
-                                        from: 'users',
-                                        localField: 'user',
-                                        foreignField: '_id',
-                                        as: 'user',
-                                    },
-                                },
-                                { $unwind: '$user' },
-                                { $match: { 'user.role': 'admin' } },
-                            ]);
-                            if (oneSignalsAdmin.length > 0) {
-                                await OneSignalUtil.pushNotification({
-                                    isAdmin: true,
-                                    heading: 'Đơn hàng mới',
-                                    content: `Đơn hàng #${order.code} vừa được tạo`,
-                                    data: {
-                                        type: 'ORDER',
-                                        orderId: order._id + '',
-                                    },
-                                    oneSignalPlayerIds: oneSignalsAdmin.map(e => e.oneSignalId),
-                                    pathUrl: '/orders',
-                                });
-                            }
-                            res.status(201).json({ data: { order, rank: rs }, message: 'success', status: 201 });
-                        } else {
-                            const notification = {
-                                title: 'Tiếp nhận đơn hàng',
-                                content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                                shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
-                                mode: `private`,
-                                user: req.user.id,
-                                order: order._id,
-                                from: 'admin',
-                                type: 'order',
-                                mode: 'private',
-                                lastSendAt: moment().unix(),
-                            };
-                            await Notification.create(notification);
-                            const oneSignals = await OneSignal.aggregate([
-                                {
-                                    $lookup: {
-                                        from: 'users',
-                                        localField: 'user',
-                                        foreignField: '_id',
-                                        as: 'user',
-                                    },
-                                },
-                                { $unwind: '$user' },
-                                { $match: { 'user.role': 'user' } },
-                            ]);
-                            if (oneSignals.length > 0) {
-                                await OneSignalUtil.pushNotification({
-                                    isAdmin: false,
-                                    heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
-                                    content:
-                                        req.body.language === 'vi'
-                                            ? `Đơn hàng #${order.code} vừa được tạo`
-                                            : `The order #${order.code} just created`,
-                                    data: {
-                                        type: 'ORDER',
-                                        orderId: order._id + '',
-                                    },
-                                    oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
-                                    pathUrl: `/account/order-history/${order._id}`,
-                                });
-                            }
-                            const notificationAdmin = {
-                                title: 'Đơn hàng mới',
-                                content: `Đơn hàng #${order.code} vừa được tạo.`,
-                                shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
-                                mode: `private`,
-                                user: req.user.id,
-                                order: order._id,
-                                from: 'customer',
-                                type: 'order',
-                                mode: 'private',
-                                lastSendAt: moment().unix(),
-                            };
-                            await Notification.create(notificationAdmin);
-
-                            const oneSignalsAdmin = await OneSignal.aggregate([
-                                {
-                                    $lookup: {
-                                        from: 'users',
-                                        localField: 'user',
-                                        foreignField: '_id',
-                                        as: 'user',
-                                    },
-                                },
-                                { $unwind: '$user' },
-                                { $match: { 'user.role': 'admin' } },
-                            ]);
-                            if (oneSignalsAdmin.length > 0) {
-                                await OneSignalUtil.pushNotification({
-                                    isAdmin: true,
-                                    heading: 'Đơn hàng mới',
-                                    content: `Đơn hàng #${order.code} vừa được tạo`,
-                                    data: {
-                                        type: 'ORDER',
-                                        orderId: order._id + '',
-                                    },
-                                    oneSignalPlayerIds: oneSignalsAdmin.map(e => e.oneSignalId),
-                                    pathUrl: '/orders',
-                                });
-                            }
-                            res.status(200).json({ data: { order }, message: 'success', status: 200 });
-                        }
-                    } else {
-                        res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
-                    }
-                }
+        var promotion = null;
+        var discountValue = 0;
+        if (req.body.promotionCode.trim().length > 0) {
+            promotion = await Promotion.findOne({ code: req.body.promotionCode });
+        }
+        if (promotion) {
+            discountValue = promotion.value;
+            const newUsers = [...promotion.users, req.user.id];
+            await Promotion.findByIdAndUpdate(promotion._id, {
+                $set: { users: newUsers },
+            });
+        }
+        // check ton kho
+        let check = true;
+        for (let i = 0; i < products.length; i++) {
+            const product = await Product.findById(products[i].productId);
+            if (products[i].quantity > product.stock) {
+                check = false;
+                break;
             }
-        );
+        }
+
+        let orderDetails = [];
+        let productPrice = 0;
+        if (check) {
+            for (let i = 0; i < products.length; i++) {
+                const product = await Product.findById(products[i].productId);
+
+                const orderDetail = new OrderDetail({
+                    product,
+                    quantity: products[i].quantity,
+                    originalPrice: product.originalPrice,
+                    finalPrice: product.finalPrice,
+                });
+                await orderDetail.save();
+                await Product.findByIdAndUpdate(products[i].productId, {
+                    $set: {
+                        sold: product.sold + products[i].quantity,
+                        stock: product.stock - products[i].quantity,
+                    },
+                });
+                productPrice += product.finalPrice * products[i].quantity;
+                orderDetails.push(orderDetail);
+            }
+            const user = await User.findById(req.user.id).populate('rank');
+            const { password, ...orther } = user._doc;
+            const discountPrice = (productPrice * discountValue) / 100;
+
+            let order = new Order({
+                user: { ...orther },
+                promotion: promotion,
+                orderDetails,
+                recipient: {
+                    username: req.body.username,
+                    phone: req.body.phone,
+                    addressProvince: req.body.province,
+                    addressDistrict: req.body.district,
+                    addressWard: req.body.ward,
+                    address: req.body.address,
+                },
+                code: `DH${new Date().getTime()}`,
+                note: req.body.note ? req.body.note : '',
+                paymentStatus: 'COMPLETE',
+                paymentType: req.body.paymentType,
+                status: {
+                    state: 'PENDING',
+                    pendingDate: new Date(),
+                    packageDate: new Date(),
+                    deliveringDate: new Date(),
+                    completeDate: new Date(),
+                    cancelDate: new Date(),
+                },
+                originalPrice: productPrice,
+                shipPrice: req.body.distancePrice,
+                discountPrice,
+                finalPrice: productPrice - discountPrice + req.body.distancePrice,
+            });
+
+            await order.save();
+            const notification = {
+                title: 'Tiếp nhận đơn hàng',
+                content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+                shortContent: `Đơn hàng #${order.code} đã được tiếp nhận.`,
+                mode: `private`,
+                user: req.user.id,
+                order: order._id,
+                from: 'admin',
+                type: 'order',
+                mode: 'private',
+                lastSendAt: moment().unix(),
+            };
+            await Notification.create(notification);
+            const oneSignals = await OneSignal.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user',
+                    },
+                },
+                { $unwind: '$user' },
+                { $match: { 'user.role': 'user' } },
+            ]);
+            if (oneSignals.length > 0) {
+                await OneSignalUtil.pushNotification({
+                    isAdmin: false,
+                    heading: req.body.language === 'vi' ? 'Đơn hàng mới' : 'New order',
+                    content:
+                        req.body.language === 'vi'
+                            ? `Đơn hàng #${order.code} vừa được tạo`
+                            : `The order #${order.code} just created`,
+                    data: {
+                        type: 'ORDER',
+                        orderId: order._id + '',
+                    },
+                    oneSignalPlayerIds: oneSignals.map(e => e.oneSignalId),
+                    pathUrl: `/account/order-history/${order._id}`,
+                });
+            }
+            const notificationAdmin = {
+                title: 'Đơn hàng mới',
+                content: `Đơn hàng #${order.code} vừa được tạo.`,
+                shortContent: `Đơn hàng #${order.code} vừa được tạo.`,
+                mode: `private`,
+                user: req.user.id,
+                order: order._id,
+                from: 'customer',
+                type: 'order',
+                mode: 'private',
+                lastSendAt: moment().unix(),
+            };
+            await Notification.create(notificationAdmin);
+
+            const oneSignalsAdmin = await OneSignal.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user',
+                    },
+                },
+                { $unwind: '$user' },
+                { $match: { 'user.role': 'admin' } },
+            ]);
+            if (oneSignalsAdmin.length > 0) {
+                await OneSignalUtil.pushNotification({
+                    isAdmin: true,
+                    heading: 'Đơn hàng mới',
+                    content: `Đơn hàng #${order.code} vừa được tạo`,
+                    data: {
+                        type: 'ORDER',
+                        orderId: order._id + '',
+                    },
+                    oneSignalPlayerIds: oneSignalsAdmin.map(e => e.oneSignalId),
+                    pathUrl: '/orders',
+                });
+            }
+            res.status(200).json({ data: { order }, message: 'success', status: 200 });
+        } else {
+            res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });
@@ -568,8 +459,11 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
                     path: 'product',
                 },
             })
+            .populate('promotion')
+            .populate('user')
             .exec();
         if (order.status.state === 'PENDING' || order.status.state === 'PACKAGE') {
+            // update stock
             for (let i = 0; i < order.orderDetails.length; i++) {
                 const element = order.orderDetails[i];
                 await Product.findByIdAndUpdate(element.product._id, {
@@ -577,6 +471,13 @@ router.post('/cancel', verifyTokenAndAuthorization, async (req, res) => {
                         sold: element.product.sold - element.quantity,
                         stock: element.product.stock + element.quantity,
                     },
+                });
+            }
+            // refund promotion
+            if (order.discountPrice > 0) {
+                const newUsers = order.promotion.users.filter(item => item !== order.user._id.toString());
+                await Promotion.findByIdAndUpdate(order.promotion._id.toString(), {
+                    $set: { users: newUsers },
                 });
             }
             await Order.findByIdAndUpdate(req.body.orderId, {
@@ -608,6 +509,7 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                     path: 'product',
                 },
             })
+            .populate('promotion')
             .populate({
                 path: 'user',
                 populate: {
@@ -741,6 +643,7 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 },
                 { new: true }
             );
+            // update stock
             for (let i = 0; i < order.orderDetails.length; i++) {
                 const element = order.orderDetails[i];
                 await Product.findByIdAndUpdate(element.product._id, {
@@ -748,6 +651,13 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                         sold: element.product.sold - element.quantity,
                         stock: element.product.stock + element.quantity,
                     },
+                });
+            }
+            // refund promotion
+            if (order.discountPrice > 0) {
+                const newUsers = order.promotion.users.filter(item => item !== order.user._id.toString());
+                await Promotion.findByIdAndUpdate(order.promotion._id.toString(), {
+                    $set: { users: newUsers },
                 });
             }
         } else if (req.body.status === 'CANCEL' && order.paymentType === 'ONLINE') {
@@ -760,6 +670,7 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 },
                 { new: true }
             );
+            // update stock
             for (let i = 0; i < order.orderDetails.length; i++) {
                 const element = order.orderDetails[i];
                 await Product.findByIdAndUpdate(element.product._id, {
@@ -767,6 +678,13 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                         sold: element.product.sold - element.quantity,
                         stock: element.product.stock + element.quantity,
                     },
+                });
+            }
+            // refund promotion
+            if (order.discountPrice > 0) {
+                const newUsers = order.promotion.users.filter(item => item !== order.user._id.toString());
+                await Promotion.findByIdAndUpdate(order.promotion._id.toString(), {
+                    $set: { users: newUsers },
                 });
             }
         }
@@ -835,6 +753,13 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
                     path: 'product',
                 },
             })
+            .populate('promotion')
+            .populate({
+                path: 'user',
+                populate: {
+                    path: 'rank',
+                },
+            })
             .exec();
         const orderUpdate = await Order.findByIdAndUpdate(
             req.params.id,
@@ -859,6 +784,7 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
                 },
                 { new: true }
             );
+            // update stock
             for (let i = 0; i < order.orderDetails.length; i++) {
                 const element = order.orderDetails[i];
                 await Product.findByIdAndUpdate(element.product._id, {
@@ -866,6 +792,13 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
                         sold: element.product.sold - element.quantity,
                         stock: element.product.stock + element.quantity,
                     },
+                });
+            }
+            // refund promotion
+            if (order.discountPrice > 0) {
+                const newUsers = order.promotion.users.filter(item => item !== order.user._id.toString());
+                await Promotion.findByIdAndUpdate(order.promotion._id.toString(), {
+                    $set: { users: newUsers },
                 });
             }
         }

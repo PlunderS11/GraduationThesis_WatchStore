@@ -102,7 +102,7 @@ const OrderSchema = mongoose.Schema(
         },
         leadtime: {
             type: String,
-            required: true,
+            // required: true,
         },
         dateOrdered: {
             type: Date,
