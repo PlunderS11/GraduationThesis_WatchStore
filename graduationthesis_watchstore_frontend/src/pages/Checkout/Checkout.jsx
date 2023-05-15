@@ -44,7 +44,7 @@ const Checkout = () => {
 
     const getSecretClientPayment = async () => {
         const { data } = await axiosClient.post('order/payment-intent', {
-            amount: 100000,
+            amount: estimate.finalPrice,
         });
         return data.clientSecret;
     };
@@ -322,7 +322,7 @@ const Checkout = () => {
                                             </div>
                                             <div className={cx('form-calculate-title')}>
                                                 <Link to={'/cart'} className={cx('link')}>
-                                                    Chỉnh sửa giỏ hàng
+                                                    {t('checkout.changeCart')}
                                                 </Link>
                                             </div>
                                             <Divider style={{ margin: '0' }} />

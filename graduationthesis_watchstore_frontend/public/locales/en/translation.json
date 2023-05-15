@@ -238,7 +238,8 @@
         "orderHistoryTitle": "Please payment {{totalPrice}} upon delivery",
         "leadTime": "Expected delivery date",
         "updateRank": "Member rank up",
-        "noAddress": "Please set up a delivery address"
+        "noAddress": "Please set up a delivery address",
+        "changeCart": "Edit cart"
     },
     "aboutUs": {
         "introduce": "Introduce",

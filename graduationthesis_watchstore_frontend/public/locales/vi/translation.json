@@ -238,7 +238,8 @@
         "orderHistoryTitle": "Vui lòng thanh toán {{totalPrice}} khi nhận hàng",
         "leadTime": "Dự kiến nhận hàng vào ngày",
         "updateRank": "Thăng hạng thành viên lên",
-        "noAddress": "Vui lòng thiết lập địa chỉ nhận hàng"
+        "noAddress": "Vui lòng thiết lập địa chỉ nhận hàng",
+        "changeCart": "Chỉnh sửa giỏ hàng"
     },
     "aboutUs": {
         "introduce": "Giới thiệu",
