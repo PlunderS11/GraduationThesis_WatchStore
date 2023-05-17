@@ -160,7 +160,10 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
 //GET PRODUCT UNDELETED
 router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const products_undeleted = await Product.find({ isDelete: false }).populate('collectionObj').sort({createdAt: -1}).exec();
+        const products_undeleted = await Product.find({ isDelete: false })
+            .populate('collectionObj')
+            .sort({ createdAt: -1 })
+            .exec();
 
         res.status(200).json({ data: { products_undeleted: products_undeleted }, message: 'success', status: 200 });
     } catch (error) {
@@ -172,7 +175,10 @@ router.get('/undeleted/', verifyTokenAndAdmin, async (req, res) => {
 //GET PRODUCT DELETED
 router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
     try {
-        const products_deleted = await Product.find({ isDelete: true }).populate('collectionObj').sort({createdAt: -1}).exec();
+        const products_deleted = await Product.find({ isDelete: true })
+            .populate('collectionObj')
+            .sort({ createdAt: -1 })
+            .exec();
 
         res.status(200).json({ data: { products_deleted: products_deleted }, message: 'success', status: 200 });
     } catch (error) {
@@ -185,7 +191,7 @@ router.get('/deleted/', verifyTokenAndAdmin, async (req, res) => {
 router.get('/home', async (req, res) => {
     let product = [];
     try {
-        let sellingProducts = await Product.find().sort('-sold').limit(3);
+        let sellingProducts = await Product.find().sort('-sold').limit(4);
         let manProducts = await Product.find({ sex: { $in: ['m'] } });
         let womanProducts = await Product.find({ sex: { $in: ['w'] } });
         product.push(sellingProducts, manProducts, womanProducts);
@@ -290,8 +296,7 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
 });
 
 router.post('/test', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
-    console.log(req.body,req.files);
-   
+    console.log(req.body, req.files);
 });
 
 module.exports = router;

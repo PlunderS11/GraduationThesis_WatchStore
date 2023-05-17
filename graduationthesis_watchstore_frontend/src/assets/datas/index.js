@@ -60,21 +60,6 @@ const menuFooter = [
                 link: '/blogs',
             },
             {
-                titlevi: 'Câu hỏi thường gặp',
-                titleen: 'FAQ',
-                link: '/',
-            },
-            {
-                titlevi: 'Thanh toán & giao nhận',
-                titleen: 'Payment & shipping',
-                link: '/',
-            },
-            {
-                titlevi: 'Chế độ bảo hành',
-                titleen: 'Warranty policy',
-                link: '/',
-            },
-            {
                 titlevi: 'Liên hệ',
                 titleen: 'Contact',
                 link: '/',

@@ -4,8 +4,10 @@
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;
-    z-index: 9;
+    z-index: 99;
+    -webkit-backface-visibility: hidden;
 
     &.shrink {
         .middle,
@@ -13,6 +15,16 @@
         .searchBox,
         .cart-icon {
             display: none;
+        }
+    }
+
+    &.shrink {
+        @include mobile {
+            .middle,
+            .logo,
+            .cart-icon {
+                display: block;
+            }
         }
     }
 }
@@ -37,7 +49,6 @@
 
 .topbar {
     background-color: #000000;
-
     .inner {
         @include flex(space-between, center);
     }
@@ -48,11 +59,72 @@
     @include flex(unset, center);
 }
 
+.menu-reponsive {
+    display: none;
+    font-size: 25px;
+    color: #fff;
+    margin-left: -10px;
+
+    @include mobile {
+        display: block;
+    }
+}
+
+.menu-options-reponsive {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition-duration: 0.8s;
+    text-align: center;
+
+    &.show {
+        height: auto;
+        bottom: 0;
+    }
+
+    .menu-options-list {
+        margin-top: 6rem;
+    }
+
+    .menu-options-item {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+        margin-bottom: 3rem;
+
+        a {
+            font-size: 3rem;
+            color: $text-light;
+            transition: color 0.4s ease;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.menu-options-close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: $text-light;
+    font-size: 3rem;
+}
+
 .logo-home {
+    position: relative;
     width: 100px;
     height: 50px;
     padding: 5px 10px;
-    position: relative;
+
+    @include mobile {
+        margin-left: 5px;
+    }
 
     img {
         width: 100%;
@@ -90,6 +162,14 @@
     }
 }
 
+@include mobile {
+    .slogun,
+    .hotline,
+    .navigation {
+        display: none;
+    }
+}
+
 .right-item {
     position: relative;
     color: $text-light;
@@ -119,6 +199,10 @@
             background-color: $text-light;
         }
     }
+
+    @include mobile {
+        padding: 2px 8px;
+    }
 }
 .flag {
     margin-left: 12px;
@@ -134,6 +218,10 @@
             border-radius: 5px;
         }
     }
+    @include mobile {
+        margin-left: 5px;
+        margin-right: -15px;
+    }
 }
 
 .header-main {
@@ -145,8 +233,23 @@
     padding: 30px 0;
     transition: display 0.5s ease;
 
+    @include mobile {
+        padding: 10px 0;
+    }
+
     .inner {
         @include flex(space-between, center);
+
+        @include mobile {
+            .searchBox {
+                display: none;
+            }
+            .logo {
+                width: 100px;
+                height: 50px;
+                margin: 0;
+            }
+        }
     }
 }
 

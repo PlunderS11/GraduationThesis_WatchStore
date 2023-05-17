@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { MenuUnfoldOutlined } from '@ant-design/icons';
 
 import { images } from '../../../assets/images';
 import { menuHeader } from '../../../assets/datas';
@@ -19,10 +20,12 @@ const Header = () => {
     const location = useLocation();
     const { t } = useTranslation();
     const [shrink, setShrinke] = useState(false);
+    const [show, setShow] = useState(false);
 
     const userLogin = useSelector(state => state.user);
 
     useEffect(() => {
+        setShow(false);
         const shrinkHeader = () => {
             if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
                 setShrinke(true);
@@ -41,6 +44,21 @@ const Header = () => {
                 <div className={cx('container')}>
                     <div className={cx('inner')}>
                         <div className={cx('topbar-left')}>
+                            <>
+                                <MenuUnfoldOutlined className={cx('menu-reponsive')} onClick={() => setShow(true)} />
+                                <div className={cx('menu-options-reponsive', { show: show })}>
+                                    <div className={cx('menu-options-list')}>
+                                        {menuHeader.map((item, index) => (
+                                            <li key={index} className={cx('menu-options-item')}>
+                                                <Link to={item.link}>{t(`header.${item.title}`)}</Link>
+                                            </li>
+                                        ))}
+                                    </div>
+                                    <div className={cx('menu-options-close')} onClick={() => setShow(false)}>
+                                        X
+                                    </div>
+                                </div>
+                            </>
                             <Link to={'/'} className={cx('logo-home')}>
                                 <img src={images.logoWhite} alt="Mynh" />
                             </Link>

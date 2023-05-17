@@ -54,11 +54,17 @@
 .content {
     position: absolute;
     @include flex(flex-end, unset);
+    left: 0;
     right: 0;
     bottom: 0;
     margin-right: 100px;
     margin-bottom: 100px;
     text-align: center;
+    @include mobile {
+        margin-right: 0;
+        margin-bottom: 50px;
+        flex-direction: column;
+    }
 }
 
 .info {
@@ -67,6 +73,10 @@
 
     @include tablet {
         width: 100%;
+    }
+
+    @include mobile {
+        margin-right: 0px;
     }
 
     & > * ~ * {
@@ -80,13 +90,23 @@
     line-height: 1;
 
     @include tablet {
-        font-size: 4rem;
+        font-size: 3rem;
+    }
+    @include tablet {
+        font-size: 3rem;
     }
 }
 
 .slogun {
     font-size: 35px;
     font-weight: 700;
+
+    @include tablet {
+        font-size: 3rem;
+    }
+    @include tablet {
+        font-size: 3rem;
+    }
 }
 
 .poster {
@@ -101,8 +121,16 @@
         transition: transform 0.7s ease;
 
         @include tablet {
-            display: none;
+            font-size: 3rem;
         }
+        @include tablet {
+            margin-top: 3rem;
+            width: 150px;
+        }
+    }
+
+    @include mobile {
+        // display: none;
     }
 }
 

@@ -36,7 +36,6 @@ const Home = () => {
             dispatch(changeProgress(100));
         }
     }, [productStatus, dispatch]);
-
     return (
         <div className={cx('home')}>
             {/*Hero_slide*/}
@@ -61,7 +60,10 @@ const Home = () => {
             <div className="selling">
                 <div className={cx('container')}>
                     {sellingProducts.length > 0 && (
-                        <ProductByCategory title={t('home.selling')} listProduct={sellingProducts} />
+                        <ProductByCategory
+                            title={t('home.selling')}
+                            listProduct={window.innerWidth < 450 ? sellingProducts : [...sellingProducts].slice(0, -1)}
+                        />
                     )}
                 </div>
             </div>

@@ -1,3 +1,4 @@
+@use './breakpoint' as *;
 //Font
 @font-face {
     font-family: 'Gotham Light';
@@ -12,6 +13,28 @@
 @font-face {
     font-family: 'Gotham Bold';
     src: url('../../assets/fonts/SVN_Gotham_Bold.woff');
+}
+
+html {
+    font-size: 100%;
+
+    @include tablet {
+        font-size: 80%;
+        .container {
+            width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    @include mobile {
+        font-size: 60%;
+        .container {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
 }
 
 //Init css

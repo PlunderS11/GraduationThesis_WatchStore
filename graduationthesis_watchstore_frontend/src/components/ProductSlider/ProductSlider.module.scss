@@ -7,6 +7,10 @@
 .slides {
     width: 300px;
 
+    @include mobile {
+        width: 200px;
+    }
+
     .slide {
         border: none;
     }

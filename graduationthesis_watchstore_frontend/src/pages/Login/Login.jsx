@@ -16,7 +16,7 @@ import style from './Login.module.scss';
 import { Input, Modal, Space, Spin } from 'antd';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { faFacebookF } from '@fortawesome/free-brands-svg-icons';
 
 const cx = classNames.bind(style);
 

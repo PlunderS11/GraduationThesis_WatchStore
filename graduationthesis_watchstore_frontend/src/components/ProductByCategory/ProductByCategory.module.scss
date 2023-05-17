@@ -25,7 +25,15 @@
     display: flex;
     flex-wrap: wrap;
 }
+
 .product-item {
     width: calc(100% / var(--column));
     padding: 10px;
+
+    @include tablet {
+        // font-size: 3rem;
+    }
+    @include tablet {
+        width: calc(100% / 2);
+    }
 }

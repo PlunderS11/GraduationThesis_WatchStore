@@ -4,6 +4,14 @@
     margin-top: 50px;
 }
 
+@include mobile {
+    .sex-block,
+    .about-block {
+        flex-direction: column;
+        margin-bottom: 5rem;
+    }
+}
+
 .sex-block {
     display: flex;
 
@@ -11,6 +19,10 @@
     .product-slider {
         width: 50%;
         @include flex(center, center);
+
+        @include mobile {
+            width: 100%;
+        }
     }
 
     .category {
@@ -74,6 +86,10 @@
     .about-content,
     .photo {
         width: 50%;
+        @include mobile {
+            width: 100%;
+            margin-top: 2rem;
+        }
     }
 
     .about-content {

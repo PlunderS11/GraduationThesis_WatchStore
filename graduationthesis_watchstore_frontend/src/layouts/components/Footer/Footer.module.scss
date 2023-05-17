@@ -7,12 +7,23 @@
 .menu {
     @include flex(center, unset);
     margin-bottom: 70px;
+
+    @include mobile {
+        flex-wrap: wrap;
+        // flex-direction: column;
+    }
 }
 
 .block {
     width: 20%;
     text-align: center;
     padding: 0 15px;
+
+    @include mobile {
+        width: 50%;
+        padding: 0;
+        margin-bottom: 2rem;
+    }
 
     .title {
         font-weight: normal;

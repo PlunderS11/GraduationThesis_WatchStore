@@ -8,6 +8,7 @@ export default function PaymentForm({ handleBuyOrder }) {
     const { t } = useTranslation();
     const stripe = useStripe();
     const elements = useElements();
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -27,8 +28,14 @@ export default function PaymentForm({ handleBuyOrder }) {
             redirect: 'if_required',
         });
 
-        if (data.paymentIntent.status == 'succeeded') {
-            await handleBuyOrder();
+        if (data.paymentIntent.status === 'succeeded') {
+            setLoading(true);
+            try {
+                await handleBuyOrder();
+            } catch (error) {
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -36,7 +43,7 @@ export default function PaymentForm({ handleBuyOrder }) {
         <form id="payment-form" onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
             <PaymentElement id="payment-element" />
             <button disabled={!stripe || !elements} id="submit" style={{ marginTop: '10px' }}>
-                <Button>{t('button.order')}</Button>
+                <Button loading={loading}>{t('button.order')}</Button>
             </button>
         </form>
     );
