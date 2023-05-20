@@ -2,4 +2,14 @@
 
 .product-categories {
     margin: 300px 0 50px 0;
+
+    @include mobile {
+        margin: 150px 0 50px 0;
+    }
+}
+
+.button {
+    @include mobile {
+        font-size: 2rem;
+    }
 }

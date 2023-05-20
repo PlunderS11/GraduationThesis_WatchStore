@@ -1,0 +1,136 @@
+@use '../../../../components/GlobalStyles/' as *;
+
+.bg {
+    background: #ffffff;
+    border: 1px solid #e1e1e1;
+    box-shadow: 0px 6px 10px -2px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.id {
+    display: flex;
+    align-items: center;
+}
+
+.id__code {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex: 1;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #2d261f;
+}
+
+.id__code-icon {
+    width: 20px;
+    height: 21px;
+    background-image: url('../../../../assets/images/order.svg');
+}
+
+.id__price {
+    // font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: $text-dark;
+}
+
+.product {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 12px;
+}
+
+.product__thumbnail {
+}
+
+.product__text {
+    width: 100%;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #2d261f;
+}
+
+.product__text-name {
+    height: 40px;
+}
+
+.product__text-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    gap: 8px;
+}
+
+.product__text-price {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    padding: 0px;
+    gap: 4px;
+}
+
+.product__text-price-final {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 12px;
+    display: flex;
+    align-items: center;
+    color: $text-dark;
+}
+
+.product__text-price-origin {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    text-decoration-line: line-through;
+    color: #acbfc2;
+}
+
+.product__text-quantity {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: #4c6769;
+}
+
+.cta {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    gap: 16px;
+}
+
+.cta__leadtime {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 12px;
+
+    p {
+        color: #4c6769;
+        margin-bottom: 8px;
+    }
+
+    span {
+        color: $text-dark;
+    }
+}
+
+.cta__btn {
+}

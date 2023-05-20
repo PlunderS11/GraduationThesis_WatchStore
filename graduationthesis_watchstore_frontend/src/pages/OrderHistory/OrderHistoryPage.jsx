@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Moment from 'react-moment';
 import { useParams } from 'react-router-dom';
-import { Card, Col, Divider, Modal, Row, Spin, Steps, Table } from 'antd';
+import { Card, Col, Divider, Image, Modal, Row, Spin, Steps, Table } from 'antd';
 import * as moment from 'moment';
 import classNames from 'classnames/bind';
 import { Trans, useTranslation } from 'react-i18next';
@@ -21,7 +21,6 @@ const OrderHistoryPage = () => {
     const params = useParams();
 
     const [modalOpen, setModalOpen] = useState(false);
-    const [cancel, setCancel] = useState(false);
     const [order, setOrder] = useState({});
     const [totalPrice, setTotalPrice] = useState();
     const [step, setStep] = useState();
@@ -68,10 +67,8 @@ const OrderHistoryPage = () => {
         try {
             setModalOpen(false);
             setLoading(true);
-            const res = await axiosClient.post('order/cancel/', { orderId: order._id });
-            if (res.status === 200) {
-                setCancel(true);
-            }
+            await axiosClient.post('order/cancel/', { orderId: order._id });
+            handleGetOrderHistory();
         } catch (error) {
         } finally {
             setLoading(false);
@@ -164,20 +161,21 @@ const OrderHistoryPage = () => {
                                             <span style={{ fontWeight: '600' }}></span>
                                         </div>
                                         <div className={cx('body__info-header-btn')}>
-                                            <Button>{t('button.contactStore')}</Button>
-                                            {order?.status.state !== 'CANCEL' &&
-                                                order?.status.state !== 'COMPLETE' &&
-                                                order?.status.state !== 'DELIVERING' &&
-                                                cancel === false && (
-                                                    <Button onclick={() => setModalOpen(true)}>
-                                                        {t('button.orderCancel')}
-                                                    </Button>
-                                                )}
+                                            <Button customClass={style}>{t('button.contactStore')}</Button>
+                                            {(order?.status.state === 'PENDING' ||
+                                                order?.status.state === 'PACKAGE') && (
+                                                <Button customClass={style} onclick={() => setModalOpen(true)}>
+                                                    {t('button.orderCancel')}
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
                                     <div className={cx('body__info-body')}>
                                         <Row>
-                                            <Col span={10} style={{ padding: '0 0.5rem' }}>
+                                            <Col
+                                                span={window.innerWidth < 450 ? 24 : 10}
+                                                style={{ padding: '0 0.5rem' }}
+                                            >
                                                 <div className={cx('body__info-body-address')}>
                                                     <h2 style={{ textAlign: 'center' }}>
                                                         {t('header.userOption.orderInfo')}
@@ -197,7 +195,7 @@ const OrderHistoryPage = () => {
                                                     </div>
                                                 </div>
                                             </Col>
-                                            <Col span={14}>
+                                            <Col span={window.innerWidth < 450 ? 24 : 14}>
                                                 <div className={cx('body__info-body-process')}>
                                                     <div className={cx('body__info-body-process-step')}>
                                                         <Steps
@@ -205,7 +203,7 @@ const OrderHistoryPage = () => {
                                                             current={step}
                                                             direction="vertical"
                                                             items={
-                                                                cancel || order?.status.state === 'CANCEL'
+                                                                order?.status.state === 'CANCEL'
                                                                     ? [
                                                                           {
                                                                               title: t('cart.status.cancel'),
@@ -263,13 +261,36 @@ const OrderHistoryPage = () => {
                                 </div>
                                 <div className={cx('body__product')}>
                                     <div className={cx('body__info')}>
-                                        <Table
-                                            rowKey={item => item._id}
-                                            columns={columns}
-                                            dataSource={order.orderDetails}
-                                            pagination={{ position: [] }}
-                                            className={cx('orderHistoryTable')}
-                                        />
+                                        {window.innerWidth < 450 ? (
+                                            order.orderDetails.map((item, i) => (
+                                                <div className={cx('product')}>
+                                                    <div className={cx('product__thumbnail')}>
+                                                        <Image width={64} src={item.product.images[0]} fallback="" />
+                                                    </div>
+                                                    <div className={cx('product__text')}>
+                                                        <div className={cx('product__text-name')}>
+                                                            {item.product.name}
+                                                        </div>
+                                                        <div className={cx('product__text-content')}>
+                                                            <div className={cx('product__text-price')}>
+                                                                {NumberWithCommas(item.product.finalPrice)}đ
+                                                            </div>
+                                                            <div className={cx('product__text-quantity')}>
+                                                                x{item.quantity}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <Table
+                                                rowKey={item => item._id}
+                                                columns={columns}
+                                                dataSource={order.orderDetails}
+                                                pagination={{ position: [] }}
+                                                className={cx('orderHistoryTable')}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                                 <div className={cx('body__product')}>
@@ -294,7 +315,10 @@ const OrderHistoryPage = () => {
                                                 </div>
                                             }
                                             bordered={false}
-                                            style={{ width: '100%', padding: '15px 30px' }}
+                                            style={{
+                                                width: '100%',
+                                                padding: window.innerWidth < 450 ? '' : '15px 30px',
+                                            }}
                                         >
                                             <div className={cx('body-cart-item')}>
                                                 <div className={cx('body-cart-item-title')}>

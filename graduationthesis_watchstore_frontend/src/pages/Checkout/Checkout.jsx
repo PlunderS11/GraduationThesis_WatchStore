@@ -188,7 +188,10 @@ const Checkout = () => {
                 {totalItems > 0 ? (
                     <div className="container">
                         <Row>
-                            <Col span={14} style={{ paddingRight: '15px' }}>
+                            <Col
+                                span={window.innerWidth < 450 ? 24 : 14}
+                                style={{ paddingRight: window.innerWidth < 450 ? '0px' : '15px' }}
+                            >
                                 <div className={cx('note')}>
                                     <div className={cx('body')}>
                                         <div className={cx('body-title')}>{t('cart.note')}</div>
@@ -241,11 +244,16 @@ const Checkout = () => {
                                                 <input
                                                     type="text"
                                                     className={cx('modal__input')}
-                                                    placeholder="Nhập Mã Khuyến Mãi"
+                                                    placeholder=""
                                                     value={coupon}
                                                     onChange={e => setCoupon(e.target.value)}
                                                 />
-                                                <Button onclick={handleOk}>Áp dụng</Button>
+                                                <Button
+                                                    style={{ fontSize: '1.3rem', fontWeight: 600 }}
+                                                    onclick={handleOk}
+                                                >
+                                                    {t('button.apply')}
+                                                </Button>
                                             </div>
                                             <div className={cx('modal__text')}>
                                                 <div className={cx('modal__label')}>{t('cart.promotionCode')}</div>
@@ -293,7 +301,10 @@ const Checkout = () => {
                                     </div>
                                 </div>
                             </Col>
-                            <Col span={10} style={{ paddingLeft: '15px' }}>
+                            <Col
+                                span={window.innerWidth < 450 ? 24 : 10}
+                                style={{ paddingLeft: window.innerWidth < 450 ? '0px' : '15px' }}
+                            >
                                 <div className={cx('note')}>
                                     <div className={cx('body')}>
                                         <div className={cx('body-title')}>{t('checkout.itemsPrice')}</div>
@@ -388,12 +399,14 @@ const Checkout = () => {
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             {check === 'CASH' ? (
-                                                <Button loading={isLoadingBuy} onclick={handleBuy}>
+                                                <Button customClass={styles} loading={isLoadingBuy} onclick={handleBuy}>
                                                     {t('button.order')}
                                                 </Button>
                                             ) : (
                                                 <>
-                                                    <Button onclick={handleShowPaymentForm}>{t('button.order')}</Button>
+                                                    <Button customClass={styles} onclick={handleShowPaymentForm}>
+                                                        {t('button.order')}
+                                                    </Button>
                                                     <Modal
                                                         open={open}
                                                         onCancel={() => {

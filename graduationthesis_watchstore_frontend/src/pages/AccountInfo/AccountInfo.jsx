@@ -13,6 +13,8 @@ import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import Notification from './Notification/Notification';
 import Voucher from './Voucher/Voucher';
 import ChangePassword from './ChangePassword/ChangePassword';
+import { useDispatch } from 'react-redux';
+import { logOut } from '../../features/user/userSlice';
 
 const cx = classNames.bind(style);
 
@@ -20,6 +22,7 @@ const AccountInfo = () => {
     const { t } = useTranslation();
     const params = useParams();
     const { pathname } = useLocation();
+    const dispatch = useDispatch();
 
     return (
         <div className={cx('accountInfo-page')}>
@@ -27,7 +30,7 @@ const AccountInfo = () => {
                 <div className="container">
                     <MyBreadcrumb urlParams={t(`breadcrumbs.${params.category}`)} detail />
                     <Row>
-                        <Col span={6}>
+                        <Col span={window.innerWidth < 450 ? 0 : 6}>
                             <div className={cx('menu')}>
                                 <div className={cx('menu-nav')}>
                                     <div className={cx('menu-title')}>
@@ -39,14 +42,19 @@ const AccountInfo = () => {
                                                 key={i}
                                                 className={cx('menu-list-item', { focus: item.path === pathname })}
                                             >
-                                                <Link to={item.path}>{t(`header.userOption.${item.name}`)}</Link>
+                                                <Link
+                                                    to={item.path}
+                                                    onClick={() => item.path === '/' && dispatch(logOut())}
+                                                >
+                                                    {t(`header.userOption.${item.name}`)}
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
                             </div>
                         </Col>
-                        <Col span={18}>
+                        <Col span={window.innerWidth < 450 ? 24 : 18}>
                             {params.category === 'profile' && <Profile />}
                             {params.category === 'orders' && <OrderPage />}
                             {params.category === 'notification' && <Notification />}

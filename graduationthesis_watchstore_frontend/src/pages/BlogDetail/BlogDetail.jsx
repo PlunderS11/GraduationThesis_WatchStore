@@ -5,7 +5,7 @@ import axiosClient from '../../api/axiosClient';
 import style from './BlogDetail.module.scss';
 import classNames from 'classnames/bind';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
-import { Spin } from 'antd';
+import { Image, Spin } from 'antd';
 
 const cx = classNames.bind(style);
 
@@ -40,6 +40,8 @@ const BlogDetail = () => {
             </div>
             <div className="container">
                 <div className={cx('blog-body')}>
+                    <Image src={blog?.image} width={'100%'} />
+
                     <div className={cx('blog-body__header')}>
                         <div className={cx('blog-body-title')}>{blog?.title}</div>
                         <div className={cx('blog-body-meta')}>

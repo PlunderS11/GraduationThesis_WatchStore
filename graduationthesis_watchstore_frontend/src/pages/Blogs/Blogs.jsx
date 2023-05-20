@@ -51,14 +51,20 @@ const Blogs = () => {
                                     style={{ width: '100%' }}
                                     bodyStyle={{ padding: 0 }}
                                     cover={
-                                        <div className={cx('refBuyProductPage-cover')}>
+                                        <div className={cx('cover')}>
                                             <ImageCustom src={item.image} />
                                             <div>
                                                 <span>{new Date(item.createdAt).toLocaleString()}</span>
                                                 <Descriptions
                                                     column={1}
                                                     title={
-                                                        <div style={{ fontSize: 25, lineHeight: '24px' }}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: 25,
+                                                                lineHeight: '30px',
+                                                                whiteSpace: 'normal',
+                                                            }}
+                                                        >
                                                             {item.title}
                                                         </div>
                                                     }
@@ -70,8 +76,14 @@ const Blogs = () => {
                                                             {item.description}
                                                         </div>
                                                     </Descriptions.Item>
-                                                    <Descriptions.Item>
-                                                        <Button to={`/blog/${item._id}`}>{t('button.loadMore')}</Button>
+                                                    <Descriptions.Item
+                                                        contentStyle={{
+                                                            justifyContent: window.innerWidth < 450 ? 'center' : 'left',
+                                                        }}
+                                                    >
+                                                        <Button customClass={style} to={`/blog/${item._id}`}>
+                                                            {t('button.loadMore')}
+                                                        </Button>
                                                     </Descriptions.Item>
                                                 </Descriptions>
                                             </div>

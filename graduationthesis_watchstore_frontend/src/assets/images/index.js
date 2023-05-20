@@ -17,14 +17,30 @@ const images = {
     errorBoundary: require('../images/undraw_bug_fixing_oc7a.png'),
 };
 
-const imagesSlide = {
-    bannerHomePage: require('../images/rosa-bannerhomepage.jpg'),
-    bannerHomePage1: require('../images/rosa-bannerhomepage1.jpg'),
-    bannerHomePage2: require('../images/rosa-bannerhomepage2.jpg'),
-    bannerHomePage3: require('../images/rosa-bannerhomepage3.jpg'),
-    bannerHomePage4: require('../images/rosa-bannerhomepage4.jpg'),
-    bannerHomePage6: require('../images/rosa-bannerhomepage6.jpg'),
-    bannerHomePage7: require('../images/rosa-bannerhomepage7.jpg'),
-    bannerHomePage8: require('../images/rosa-bannerhomepage8.jpg'),
-};
+const imagesSlide = [
+    {
+        backGround: require('../images/rosa-bannerhomepage.jpg'),
+        image: require('../images/product_images/1.png'),
+    },
+    {
+        backGround: require('../images/rosa-bannerhomepage1.jpg'),
+        image: require('../images/product_images/2.jpg'),
+    },
+    {
+        backGround: require('../images/rosa-bannerhomepage2.jpg'),
+        image: require('../images/product_images/3.png'),
+    },
+    {
+        backGround: require('../images/rosa-bannerhomepage3.jpg'),
+        image: require('../images/product_images/4.jpg'),
+    },
+    {
+        backGround: require('../images/rosa-bannerhomepage4.jpg'),
+        image: require('../images/product_images/5.jpg'),
+    },
+    {
+        backGround: require('../images/rosa-bannerhomepage5.jpg'),
+        image: require('../images/product_images/6.jpg'),
+    },
+];
 export { images, imagesSlide };

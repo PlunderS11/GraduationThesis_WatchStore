@@ -17,14 +17,16 @@
         "loadMore": "Load More",
         "update": "Update",
         "save": "Save",
-        "noLogin": "Please login"
+        "noLogin": "Please login",
+        "apply": "Apply",
+        "orderComplete": "Received"
     },
     "cart": {
         "checkout": "Checkout",
         "noItem": "You have not selected any products!",
         "emptyCart": "Empty Cart",
         "total": "Total",
-        "storePromotion": "promotional",
+        "storePromotion": "Promotional",
         "promotionCode": "Promotion Code",
         "promotioPrice": "Promotional money is reduced",
         "promotioNull": "No discount code",
@@ -239,7 +241,9 @@
         "leadTime": "Expected delivery date",
         "updateRank": "Member rank up",
         "noAddress": "Please set up a delivery address",
-        "changeCart": "Edit cart"
+        "changeCart": "Edit cart",
+        "orderStatus": "Order status",
+        "orderMoreProduct": "and {{quantity}} more products"
     },
     "aboutUs": {
         "introduce": "Introduce",

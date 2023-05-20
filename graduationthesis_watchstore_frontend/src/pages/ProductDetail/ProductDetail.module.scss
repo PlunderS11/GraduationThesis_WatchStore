@@ -2,10 +2,18 @@
 
 .product-detail-page {
     margin-top: 300px;
+
+    @include mobile {
+        margin: 150px 0 50px 0;
+    }
 }
 
 .product-detail {
     display: flex;
+
+    @include mobile {
+        flex-direction: column;
+    }
 }
 
 .image-detail {
@@ -15,33 +23,54 @@
     .slides {
         width: 100%;
     }
+
+    @include mobile {
+        width: 100%;
+    }
 }
 
 .button {
     width: 100%;
+
+    @include mobile {
+        font-size: 1.3rem;
+    }
 }
 
 .content-detail {
     width: 55%;
+
     .name {
         font-family: 'Gotham Light';
-        font-size: 24px;
+        font-size: 30px;
         text-transform: capitalize;
         margin-bottom: 12px;
         font-weight: 300;
+
+        @include mobile {
+            font-size: 2.5rem;
+        }
     }
 
     .price {
-        font-size: 24px;
+        font-size: 30px;
         font-style: italic;
         margin-bottom: 30px;
+
+        @include mobile {
+            font-size: 2.5rem;
+        }
     }
 
     .description,
     .note {
-        font-size: 13px;
+        font-size: 18px;
         line-height: 1.5;
         margin-bottom: 30px;
+
+        @include mobile {
+            font-size: 1.8rem;
+        }
     }
 
     .buy {
@@ -49,12 +78,28 @@
         margin-bottom: 30px;
         * ~ * {
             margin-left: 10px;
+
+            @include mobile {
+                margin: 10px 0 0 0;
+            }
+        }
+
+        @include mobile {
+            flex-direction: column;
         }
     }
 
     .features {
-        font-size: 13px;
+        font-size: 15px;
         list-style: disc;
         line-height: 1.5;
+
+        @include mobile {
+            margin-left: 15px;
+        }
+    }
+
+    @include mobile {
+        width: 100%;
     }
 }

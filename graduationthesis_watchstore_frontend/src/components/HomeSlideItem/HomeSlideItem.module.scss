@@ -45,7 +45,7 @@
     }
 
     &.active > .content > .poster {
-        img {
+        .image {
             transform: scale(1);
         }
     }
@@ -60,10 +60,12 @@
     margin-right: 100px;
     margin-bottom: 100px;
     text-align: center;
+
     @include mobile {
         margin-right: 0;
         margin-bottom: 50px;
         flex-direction: column;
+        align-items: center;
     }
 }
 
@@ -81,6 +83,10 @@
 
     & > * ~ * {
         margin-top: 2rem;
+
+        @include mobile {
+            margin-top: 1rem;
+        }
     }
 }
 
@@ -105,32 +111,37 @@
         font-size: 3rem;
     }
     @include tablet {
-        font-size: 3rem;
+        font-size: 2.8rem;
     }
 }
 
 .poster {
     position: relative;
 
-    img {
-        width: 300px;
-        border-radius: 10px;
-        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
-        transform: scale(0);
-        transition: transform 0.7s ease;
-
-        @include tablet {
-            font-size: 3rem;
-        }
-        @include tablet {
-            margin-top: 3rem;
-            width: 150px;
-        }
-    }
-
     @include mobile {
         // display: none;
+    }
+}
+.image {
+    margin: 0;
+    width: 300px;
+    height: 300px; /* You must set a specified height */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+    transform: scale(0);
+    transition: transform 0.7s ease;
+
+    @include tablet {
+        font-size: 3rem;
+    }
+    @include mobile {
+        margin-top: 3rem;
+        width: 150px;
+        height: 150px;
     }
 }
 

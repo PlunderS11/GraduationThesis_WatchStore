@@ -65,7 +65,7 @@ function UserOption({ user }) {
             >
                 <div className={cx('user-options')}>
                     <FontAwesomeIcon icon={faUser} className={cx('icon')} />
-                    <p className={cx('name')}>{user?.username}</p>
+                    <span className={cx('name')}>{user?.username}</span>
                     <div className={cx('icon')}>
                         <img src={user.rank?.icon} alt="" />
                     </div>

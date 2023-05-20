@@ -37,13 +37,13 @@ function ProductSlider({ listData, navigation = false, autoplay = false, image =
                 loop={true}
                 className={cx('slides', customClass?.['slides'])}
                 spaceBetween={12}
-                speed={1000}
+                speed={2000}
                 tag="div"
                 wrapperTag="ul"
                 autoplay={
                     autoplay
                         ? {
-                              delay: 1000,
+                              delay: 3000,
                               disableOnInteraction: false,
                               pauseOnMouseEnter: true,
                           }
@@ -88,7 +88,7 @@ function ProductSlider({ listData, navigation = false, autoplay = false, image =
                 <Swiper
                     onSwiper={setThumbsSwiper}
                     spaceBetween={10}
-                    slidesPerView={4}
+                    slidesPerView={3}
                     watchSlidesProgress={true}
                     modules={[Thumbs]}
                     className={cx('slides-thumbs')}

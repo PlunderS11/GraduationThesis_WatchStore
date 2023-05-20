@@ -45,9 +45,11 @@ const Home = () => {
                     grabCursor={true}
                     spaceBetween={0}
                     slidesPerView={1}
-                    autoplay={{ delay: 5000 }}
+                    autoplay={{ delay: 3000 }}
+                    speed={1500}
+                    loop={true}
                 >
-                    {Object.values(imagesSlide).map((item, i) => (
+                    {imagesSlide.map((item, i) => (
                         <SwiperSlide key={i}>
                             {({ isActive }) => <HomeSlideItem item={item} className={cx(isActive ? 'active' : '')} />}
                         </SwiperSlide>

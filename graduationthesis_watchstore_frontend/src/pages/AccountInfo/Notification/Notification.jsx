@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import style from './Notification.module.scss';
 import axiosClient from '../../../api/axiosClient';
-import NotiItem from './components/NotiItem/NotiItem';
+import NotiItem from './components/NotiItem';
 import Button from '../../../components/Button/Button';
 import { Spin } from 'antd';
 import classNames from 'classnames/bind';
@@ -13,7 +13,7 @@ const cx = classNames.bind(style);
 const Notification = props => {
     const { t } = useTranslation();
     const [noti, setNoti] = useState([]);
-    const [all, setAll] = useState();
+    const [visibleUsers, setVisibleUsers] = useState(10);
     const [notiSeen, setNotiSeen] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -23,8 +23,7 @@ const Notification = props => {
             const res = await axiosClient.get('notification');
             const lst = res.data.notifications;
             const lstSeen = lst.filter(item => item.isSeen === false).length;
-            setAll(lst);
-            setNoti(lst.slice(0, 5));
+            setNoti(lst);
             setNotiSeen(lstSeen);
         } catch (error) {
         } finally {
@@ -34,18 +33,8 @@ const Notification = props => {
     useEffect(() => {
         getAllNotification();
     }, []);
-
-    // const handleSeenAllNoti = async () => {
-    //     try {
-    //         await axiosClient.put('notification/seenAll');
-    //         getAllNotification();
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-
     const handleLoadmore = () => {
-        setNoti([...noti, ...all]);
+        setVisibleUsers(prevVisibleUsers => prevVisibleUsers + 10);
     };
 
     return (
@@ -61,12 +50,16 @@ const Notification = props => {
                         )} (${notiSeen})`}</div>
                         {/* <Button onclick={handleSeenAllNoti}>Đọc tất cả</Button> */}
                     </div>
-                    {noti.map(item => (
+                    {noti.slice(0, visibleUsers).map(item => (
                         <NotiItem key={item._id} seen={item?.isSeen} noti={item} />
                     ))}
-                    <div style={{ textAlign: 'center' }}>
-                        <Button onclick={handleLoadmore}>{t('button.loadMore')}</Button>
-                    </div>
+                    {noti.length > visibleUsers && (
+                        <div style={{ textAlign: 'center' }}>
+                            <Button customClass={style} onclick={handleLoadmore}>
+                                {t('button.loadMore')}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </Spin>

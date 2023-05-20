@@ -17,7 +17,9 @@
         "loadMore": "Xem thêm",
         "update": "Cập nhật",
         "save": "Lưu",
-        "noLogin": "Vui lòng đăng nhập"
+        "noLogin": "Vui lòng đăng nhập",
+        "apply": "Áp dụng",
+        "orderComplete": "Đã nhận"
     },
     "cart": {
         "checkout": "Thanh toán",
@@ -239,7 +241,9 @@
         "leadTime": "Dự kiến nhận hàng vào ngày",
         "updateRank": "Thăng hạng thành viên lên",
         "noAddress": "Vui lòng thiết lập địa chỉ nhận hàng",
-        "changeCart": "Chỉnh sửa giỏ hàng"
+        "changeCart": "Chỉnh sửa giỏ hàng",
+        "orderStatus": "Trạng thái đơn hàng",
+        "orderMoreProduct": "và {{quantity}} sản phẩm nữa"
     },
     "aboutUs": {
         "introduce": "Giới thiệu",

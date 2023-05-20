@@ -1,5 +1,11 @@
+@use '../../components/GlobalStyles/' as *;
+
 .blogdetail-page {
     margin-top: 300px;
+
+    @include mobile {
+        margin: 150px 0 50px 0;
+    }
 }
 
 .blog-body {

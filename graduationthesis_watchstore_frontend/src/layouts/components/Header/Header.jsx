@@ -12,6 +12,7 @@ import Search from '../../../components/Search/Search';
 import Cart from '../../../components/Cart/Cart';
 import UserOption from '../../../components/UserOption/UserOption';
 import style from './Header.module.scss';
+import { Popover } from 'antd';
 
 const cx = classNames.bind(style);
 
@@ -21,11 +22,13 @@ const Header = () => {
     const { t } = useTranslation();
     const [shrink, setShrinke] = useState(false);
     const [show, setShow] = useState(false);
+    const [visiblePopover, setVisiblePopover] = useState(false);
 
     const userLogin = useSelector(state => state.user);
 
     useEffect(() => {
         setShow(false);
+        setVisiblePopover(false);
         const shrinkHeader = () => {
             if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
                 setShrinke(true);
@@ -38,6 +41,22 @@ const Header = () => {
             window.removeEventListener('scroll', shrinkHeader);
         };
     }, [location.pathname]);
+
+    // handle scroll to close popover notification
+    useEffect(() => {
+        const handleClosePopover = () => {
+            setVisiblePopover(() => window.scrollY <= 50 && false);
+        };
+        window.addEventListener('scroll', handleClosePopover);
+        return () => {
+            window.removeEventListener('scroll', handleClosePopover);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [document.body.scrollTop]);
+    const handleOpenChange = newOpen => {
+        setVisiblePopover(newOpen);
+    };
+
     return (
         <div className={cx('header', { 'home-page': location.pathname === '/' }, { shrink: shrink })} ref={headerRef}>
             <div className={cx('topbar')}>
@@ -63,7 +82,7 @@ const Header = () => {
                                 <img src={images.logoWhite} alt="Mynh" />
                             </Link>
                             <div className={cx('slogun')}>{t('header.slogan')}</div>
-                            <div className={cx('hotline')}>Hotline: 0123456789</div>
+                            <div className={cx('hotline')}>Hotline: 0888 244 212</div>
                         </div>
                         <div className={cx('topbar-right')}>
                             {!userLogin.isLogin ? (
@@ -99,6 +118,16 @@ const Header = () => {
                     <div className={cx('container')}>
                         <div className={cx('inner')}>
                             <Search customClass={style} />
+                            <Popover
+                                trigger={'click'}
+                                placement="bottomLeft"
+                                open={visiblePopover}
+                                onOpenChange={handleOpenChange}
+                                overlayClassName={cx('headerPopover')}
+                                content={<Search customClass={style} />}
+                            >
+                                <div className={cx('searchIconMobile')}></div>
+                            </Popover>
                             <Link to={'/'} className={cx('logo')}>
                                 <img src={images.logoBlack} alt="Dyoss Logo" />
                             </Link>

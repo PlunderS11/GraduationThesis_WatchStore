@@ -162,7 +162,9 @@ const ProductCategory = () => {
                                 ></Select>
                             </Descriptions.Item>
                             <Descriptions.Item contentStyle={{ justifyContent: 'center' }}>
-                                <Button onclick={handleSearch}>{t('button.search')}</Button>
+                                <Button customClass={style} onclick={handleSearch}>
+                                    {t('button.search')}
+                                </Button>
                             </Descriptions.Item>
                         </Descriptions>
                     </div>

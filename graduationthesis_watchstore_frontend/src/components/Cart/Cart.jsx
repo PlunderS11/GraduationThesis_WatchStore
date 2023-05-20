@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(style);
 
-function Cart({ customClass, open }) {
+function Cart({ customClass }) {
     const { t } = useTranslation();
     const location = useLocation();
     const dispatch = useDispatch();
@@ -201,7 +201,10 @@ function Cart({ customClass, open }) {
                             onclick={() => {
                                 if (user.isLogin) {
                                     navigate('/checkout');
-                                } else toast.info(t('productDetail.buynowFail'));
+                                } else {
+                                    navigate('/login');
+                                    toast.info(t('productDetail.buynowFail'));
+                                }
                             }}
                         >
                             {t('cart.checkout')}

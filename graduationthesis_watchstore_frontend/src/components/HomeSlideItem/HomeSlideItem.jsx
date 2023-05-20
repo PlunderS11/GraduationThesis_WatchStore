@@ -12,7 +12,7 @@ const HomeSlideItem = props => {
         <div
             className={cx('item', { [props.className]: props.className })}
             style={{
-                backgroundImage: `url(${props.item})`,
+                backgroundImage: `url(${props.item.backGround})`,
             }}
         >
             <div className={cx('content')}>
@@ -21,10 +21,7 @@ const HomeSlideItem = props => {
                     <div className={cx('slogun')}>{t('home.slogan')}</div>
                 </div>
                 <div className={cx('poster')}>
-                    <img
-                        src="https://www.dyoss.com/app/uploads/2018/08/upweb_gocnghieng12_rosegold-3-600x600.jpg"
-                        alt="12"
-                    />
+                    <div className={cx('image')} style={{ backgroundImage: `url(${props.item.image})` }} />
                 </div>
             </div>
         </div>

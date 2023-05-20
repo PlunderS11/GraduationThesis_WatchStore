@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popconfirm, Spin, Table } from 'antd';
+import { Divider, Image, Popconfirm, Space, Spin, Table } from 'antd';
 import ImageCustom from '../../components/ImageCustom/ImageCustom';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
@@ -15,6 +15,8 @@ import { removeItem, selectCartItems, selectTotalItems, selectTotalPrice, update
 import { useTranslation } from 'react-i18next';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import { toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(style);
 
@@ -71,116 +73,177 @@ const CartPage = () => {
                 {totalItems > 0 ? (
                     <div className="page">
                         <div className="container">
-                            <div className={cx('product')}>
-                                <Table
-                                    rowKey={item => item.product._id}
-                                    dataSource={products}
-                                    bordered
-                                    pagination={{ position: [] }}
-                                >
-                                    <Column
-                                        title={t('table.image')}
-                                        render={(value, record, index) => (
-                                            <div style={{ width: '80px' }}>
-                                                <Link
-                                                    to={`/product/${record.product._id}`}
-                                                    className={cx('product-image')}
-                                                >
-                                                    <ImageCustom src={record.product.images[0]} />
-                                                </Link>
-                                            </div>
-                                        )}
-                                    />
-                                    <Column
-                                        title={t('table.product')}
-                                        render={(value, record, index) => (
-                                            <div className={cx('product-info')}>
-                                                <Link to={`/product/${record.product._id}`}>{record.product.name}</Link>
-                                            </div>
-                                        )}
-                                    />
-                                    <Column
-                                        title={t('table.price')}
-                                        align="right"
-                                        render={(value, record, index) => (
-                                            <span>{NumberWithCommas(record.product.finalPrice)}&nbsp;₫</span>
-                                        )}
-                                    />
-                                    <Column
-                                        title={t('table.quantity')}
-                                        align="center"
-                                        dataIndex={'quantity'}
-                                        render={(text, record, index) => {
-                                            return (
-                                                <div className={cx('action__btnCount')} style={{ marginLeft: '22%' }}>
-                                                    <div
-                                                        className={cx('btnCount-btnSub')}
-                                                        onClick={() => text > 1 && handleDecrease(record.product)}
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 448 512"
-                                                            width={15}
-                                                            height={15}
+                            <div className={cx('products')}>
+                                {window.innerWidth < 450 ? (
+                                    products.map((item, i) => (
+                                        <div key={i}>
+                                            <div className={cx('product')}>
+                                                <div className={cx('product__thumbnail')}>
+                                                    <Image width={64} src={item.product.images[0]} fallback="" />
+                                                </div>
+                                                <div className={cx('product__text')}>
+                                                    <div className={cx('product__text-name')}>{item.product.name}</div>
+                                                    <div className={cx('product__text-content')}>
+                                                        <div className={cx('product__text-price')}>
+                                                            {NumberWithCommas(item.product.finalPrice)}đ
+                                                        </div>
+                                                        <Space>
+                                                            <FontAwesomeIcon
+                                                                className={cx('product__text-quantity-btn')}
+                                                                icon={faSquareMinus}
+                                                                onClick={() =>
+                                                                    item.quantity > 1 && handleDecrease(item.product)
+                                                                }
+                                                            />
+                                                            <div className={cx('product__text-quantity')}>
+                                                                {item.quantity}
+                                                            </div>
+                                                            <FontAwesomeIcon
+                                                                className={cx('product__text-quantity-btn')}
+                                                                icon={faSquarePlus}
+                                                                onClick={() => handleIncrease(item.product)}
+                                                            />
+                                                        </Space>
+                                                        <Popconfirm
+                                                            placement="top"
+                                                            title={t('antd.popconfirm.title')}
+                                                            description={t('antd.popconfirm.description')}
+                                                            onConfirm={() => handleRemoveCart(item.product)}
+                                                            okText={t('antd.popconfirm.okText')}
+                                                            cancelText={t('antd.popconfirm.cancelText')}
                                                         >
-                                                            <path d="M416 256c0 17.7-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
-                                                        </svg>
-                                                    </div>
-                                                    <input
-                                                        id={String(index)}
-                                                        type="text"
-                                                        className={cx('btnCount-input')}
-                                                        value={text}
-                                                    />
-                                                    <div
-                                                        className={cx('btnCount-btnAdd')}
-                                                        onClick={() => handleIncrease(record.product)}
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 448 512"
-                                                            width={15}
-                                                            height={15}
-                                                        >
-                                                            <path d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z" />
-                                                        </svg>
+                                                            <button className={cx('menu-item-btn')}>
+                                                                <DeleteOutlined style={{ fontSize: 20 }} />
+                                                            </button>
+                                                        </Popconfirm>
                                                     </div>
                                                 </div>
-                                            );
-                                        }}
-                                    />
-                                    <Column
-                                        title={t('table.total')}
-                                        align="right"
-                                        render={(value, record, index) => (
-                                            <div>
-                                                <span style={{ color: '#ff424e' }}>
-                                                    {NumberWithCommas(record.product.finalPrice * record.quantity)}
-                                                    &nbsp;₫
-                                                </span>
-                                                <Popconfirm
-                                                    placement="top"
-                                                    title={t('antd.popconfirm.title')}
-                                                    description={t('antd.popconfirm.description')}
-                                                    onConfirm={() => handleRemoveCart(record.product)}
-                                                    okText={t('antd.popconfirm.okText')}
-                                                    cancelText={t('antd.popconfirm.cancelText')}
-                                                >
-                                                    <button className={cx('menu-item-btn')}>
-                                                        <DeleteOutlined style={{ fontSize: 20 }} />
-                                                    </button>
-                                                </Popconfirm>
                                             </div>
-                                        )}
-                                    />
-                                </Table>
+                                            <Divider
+                                                style={{ margin: 5, borderBlockStart: '3px solid rgba(5, 5, 5, 0.1)' }}
+                                            />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <Table
+                                        rowKey={item => item.product._id}
+                                        dataSource={products}
+                                        bordered
+                                        pagination={{ position: [] }}
+                                    >
+                                        <Column
+                                            title={t('table.image')}
+                                            render={(value, record, index) => (
+                                                <div style={{ width: '80px' }}>
+                                                    <Link
+                                                        to={`/product/${record.product._id}`}
+                                                        className={cx('product-image')}
+                                                    >
+                                                        <ImageCustom src={record.product.images[0]} />
+                                                    </Link>
+                                                </div>
+                                            )}
+                                        />
+                                        <Column
+                                            title={t('table.product')}
+                                            render={(value, record, index) => (
+                                                <div className={cx('product-info')}>
+                                                    <Link to={`/product/${record.product._id}`}>
+                                                        {record.product.name}
+                                                    </Link>
+                                                </div>
+                                            )}
+                                        />
+                                        <Column
+                                            title={t('table.price')}
+                                            align="right"
+                                            render={(value, record, index) => (
+                                                <span>{NumberWithCommas(record.product.finalPrice)}&nbsp;₫</span>
+                                            )}
+                                        />
+                                        <Column
+                                            title={t('table.quantity')}
+                                            align="center"
+                                            dataIndex={'quantity'}
+                                            render={(text, record, index) => {
+                                                return (
+                                                    <div
+                                                        className={cx('action__btnCount')}
+                                                        style={{ marginLeft: '22%' }}
+                                                    >
+                                                        <div
+                                                            className={cx('btnCount-btnSub')}
+                                                            onClick={() => text > 1 && handleDecrease(record.product)}
+                                                        >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                viewBox="0 0 448 512"
+                                                                width={15}
+                                                                height={15}
+                                                            >
+                                                                <path d="M416 256c0 17.7-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
+                                                            </svg>
+                                                        </div>
+                                                        <input
+                                                            id={String(index)}
+                                                            type="text"
+                                                            className={cx('btnCount-input')}
+                                                            value={text}
+                                                        />
+                                                        <div
+                                                            className={cx('btnCount-btnAdd')}
+                                                            onClick={() => handleIncrease(record.product)}
+                                                        >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                viewBox="0 0 448 512"
+                                                                width={15}
+                                                                height={15}
+                                                            >
+                                                                <path d="M240 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H176V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H384c17.7 0 32-14.3 32-32s-14.3-32-32-32H240V80z" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }}
+                                        />
+                                        <Column
+                                            title={t('table.total')}
+                                            align="right"
+                                            render={(value, record, index) => (
+                                                <div>
+                                                    <span style={{ color: '#ff424e' }}>
+                                                        {NumberWithCommas(record.product.finalPrice * record.quantity)}
+                                                        &nbsp;₫
+                                                    </span>
+                                                    <Popconfirm
+                                                        placement="top"
+                                                        title={t('antd.popconfirm.title')}
+                                                        description={t('antd.popconfirm.description')}
+                                                        onConfirm={() => handleRemoveCart(record.product)}
+                                                        okText={t('antd.popconfirm.okText')}
+                                                        cancelText={t('antd.popconfirm.cancelText')}
+                                                    >
+                                                        <button className={cx('menu-item-btn')}>
+                                                            <DeleteOutlined style={{ fontSize: 20 }} />
+                                                        </button>
+                                                    </Popconfirm>
+                                                </div>
+                                            )}
+                                        />
+                                    </Table>
+                                )}
                             </div>
                             <div className={cx('actions')}>
                                 <div>
                                     <div className={cx('checkout')}>
                                         <div className={cx('checkout-button')}>
-                                            <Button to="/">{t('button.keepShopping')}</Button>
-                                            <Button to="/account/orders">{t('button.gotoOrderHistory')}</Button>
+                                            <Button customClass={style} to="/">
+                                                {t('button.keepShopping')}
+                                            </Button>
+                                            <Button customClass={style} to="/account/orders">
+                                                {t('button.gotoOrderHistory')}
+                                            </Button>
                                         </div>
                                         <div className={cx('checkout-form')}>
                                             <div className={cx('checkout-form-body')}>
@@ -204,6 +267,7 @@ const CartPage = () => {
                                                 </div>
                                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                                     <Button
+                                                        customClass={style}
                                                         onclick={() => {
                                                             if (user.isLogin) {
                                                                 navigate('/checkout');

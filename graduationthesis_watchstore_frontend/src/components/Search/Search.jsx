@@ -30,6 +30,12 @@ function Search({ customClass }) {
                 placeholder={t('search.placeHolder')}
                 value={keyword}
                 onChange={e => setKeyword(e.target.value)}
+                onKeyDown={ev => {
+                    if (ev.code === 'Enter') {
+                        navigate(`/search?name=${keyword}`, { state: { keyword } });
+                        setKeyword('');
+                    }
+                }}
             />
             <button
                 className={cx('searchButton', customClass?.['searchButton'])}

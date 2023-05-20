@@ -66,8 +66,8 @@ const Profile = () => {
                         form={form}
                         style={{ width: '100%' }}
                     >
-                        <Row>
-                            <Col span={11}>
+                        <Row gutter={12}>
+                            <Col span={window.innerWidth < 450 ? 24 : 12}>
                                 <Form.Item
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
                                     label={t('register.username')}
@@ -75,7 +75,24 @@ const Profile = () => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                {window.innerWidth < 450 && (
+                                    <>
+                                        <Form.Item
+                                            style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                            label={t('register.sex')}
+                                            name="gender"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                        <Form.Item
+                                            style={{ fontSize: '20px', fontWeight: 'bold' }}
+                                            label="Email"
+                                            name="email"
+                                        >
+                                            <Input disabled />
+                                        </Form.Item>
+                                    </>
+                                )}
                                 <Form.Item
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
                                     label={t('register.phone')}
@@ -104,8 +121,7 @@ const Profile = () => {
                                     </Button>
                                 </Form.Item>
                             </Col>
-                            <Col span={2}></Col>
-                            <Col span={11}>
+                            <Col span={window.innerWidth < 450 ? 0 : 12}>
                                 <Form.Item
                                     style={{ fontSize: '20px', fontWeight: 'bold' }}
                                     label={t('register.sex')}

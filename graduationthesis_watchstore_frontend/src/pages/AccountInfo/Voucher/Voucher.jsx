@@ -16,6 +16,7 @@ const Voucher = () => {
     const { t } = useTranslation();
     const [promotionAvailable, setPromotionAvailable] = useState([]);
     const [promotionUsed, setPromotionUsed] = useState([]);
+    const [visibleVoucher, setVisibleVoucher] = useState(10);
     const [loading, setLoading] = useState(false);
 
     const getAllNotification = async () => {
@@ -34,7 +35,7 @@ const Voucher = () => {
     }, []);
 
     const handleLoadmore = () => {
-        // setNoti([...noti, ...all]);
+        setVisibleVoucher(pre => pre + 10);
     };
     return (
         <Spin spinning={loading}>
@@ -51,7 +52,7 @@ const Voucher = () => {
                                 label: <span>{t('accountInfo.noused')}</span>,
                                 children: (
                                     <Card>
-                                        {promotionAvailable.map(item => (
+                                        {promotionAvailable.slice(0, visibleVoucher).map(item => (
                                             <Card.Grid key={item._id} className={cx('card')}>
                                                 <Card
                                                     bordered={false}
@@ -95,7 +96,7 @@ const Voucher = () => {
                                 label: <span>{t('accountInfo.used')}</span>,
                                 children: (
                                     <Card>
-                                        {promotionUsed.map(item => (
+                                        {promotionUsed.slice(0, visibleVoucher).map(item => (
                                             <Card.Grid key={item._id} className={cx('card')}>
                                                 <Card
                                                     bordered={false}
@@ -136,9 +137,13 @@ const Voucher = () => {
                             },
                         ]}
                     />
-                    <div style={{ textAlign: 'center' }}>
-                        <Button onclick={handleLoadmore}>{t('button.loadMore')}</Button>
-                    </div>
+                    {promotionAvailable.length > visibleVoucher && (
+                        <div style={{ textAlign: 'center' }}>
+                            <Button customClass={style} onclick={handleLoadmore}>
+                                {t('button.loadMore')}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </Spin>

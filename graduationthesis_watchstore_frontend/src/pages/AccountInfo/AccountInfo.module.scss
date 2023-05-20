@@ -2,6 +2,10 @@
 
 .accountInfo-page {
     margin-top: 300px;
+
+    @include mobile {
+        margin: 150px 0 50px 0;
+    }
 }
 
 .content {
@@ -12,6 +16,10 @@
     width: 100%;
     height: 100%;
     padding: 0 15px;
+
+    @include mobile {
+        display: none;
+    }
 }
 
 .menu-nav {

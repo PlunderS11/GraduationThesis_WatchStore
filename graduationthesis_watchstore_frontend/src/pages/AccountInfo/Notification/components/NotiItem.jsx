@@ -3,8 +3,8 @@ import React from 'react';
 import style from './NotiItem.module.scss';
 import { Divider } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { images } from '../../../../../assets/images';
-import axiosClient from '../../../../../api/axiosClient';
+import { images } from '../../../../assets/images';
+import axiosClient from '../../../../api/axiosClient';
 import classNames from 'classnames/bind';
 import moment from 'moment';
 
