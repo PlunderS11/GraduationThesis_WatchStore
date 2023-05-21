@@ -77,6 +77,54 @@ router.post('/estimate', verifyTokenAndAuthorization, async (req, res) => {
     }
 });
 
+router.post('/test', verifyTokenAndAuthorization, async (req, res) => {
+    try {
+        const order = await Order.findById('6469cdfae82aef79bcf26961')
+            .populate({
+                path: 'orderDetails',
+                populate: {
+                    path: 'product',
+                },
+            })
+            .populate('promotion')
+            .populate({
+                path: 'user',
+                populate: {
+                    path: 'rank',
+                },
+            })
+            .exec();
+        console.log(ObjectId(order.user._id));
+        const oneSignals = await OneSignal.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            { $unwind: '$user' },
+            {
+                $match: {
+                    $and: [
+                        {
+                            'user.role': 'user',
+                        },
+                        {
+                            'user._id': order.user._id,
+                        },
+                    ],
+                },
+            },
+        ]);
+        res.status(200).json({ data: {}, message: { oneSignals }, status: 200 });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ data: {}, message: error.message, status: 500 });
+    }
+});
+
 // POST ORDER
 router.post('/', verifyTokenAndAuthorization, async (req, res) => {
     try {
@@ -160,6 +208,7 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 finalPrice: productPrice - discountPrice + req.body.distancePrice,
             });
             await order.save();
+            res.status(200).json({ data: { order }, message: 'success', status: 200 });
 
             const notification = {
                 title: 'Tiếp nhận đơn hàng',
@@ -184,7 +233,18 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                     },
                 },
                 { $unwind: '$user' },
-                { $match: { 'user.role': 'user' } },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                'user.role': 'user',
+                            },
+                            {
+                                'user._id': ObjectId(req.user.id),
+                            },
+                        ],
+                    },
+                },
             ]);
             if (oneSignals.length > 0) {
                 await OneSignalUtil.pushNotification({
@@ -215,7 +275,7 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                 lastSendAt: moment().unix(),
             };
             await Notification.create(notificationAdmin);
-
+            // ADMIN
             const oneSignalsAdmin = await OneSignal.aggregate([
                 {
                     $lookup: {
@@ -241,7 +301,6 @@ router.post('/', verifyTokenAndAuthorization, async (req, res) => {
                     pathUrl: '/orders',
                 });
             }
-            res.status(200).json({ data: { order }, message: 'success', status: 200 });
         } else {
             res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
         }
@@ -384,7 +443,18 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                     },
                 },
                 { $unwind: '$user' },
-                { $match: { 'user.role': 'user', 'user._id': req.user.id } },
+                {
+                    $match: {
+                        $and: [
+                            {
+                                'user.role': 'user',
+                            },
+                            {
+                                'user._id': ObjectId(req.user.id),
+                            },
+                        ],
+                    },
+                },
             ]);
             if (oneSignals.length > 0) {
                 await OneSignalUtil.pushNotification({
@@ -443,7 +513,11 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                 });
             }
         } else {
-            res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
+            res.status(301).json({
+                data: {},
+                message: req.body.language === 'vi' ? 'Mặt hàng hiện đã hết' : 'Item is currently out of stock',
+                status: 301,
+            });
         }
     } catch (error) {
         console.log(error);
@@ -703,9 +777,19 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 },
             },
             { $unwind: '$user' },
-            { $match: { 'user.role': 'user', 'user._id': order.user._id } },
+            {
+                $match: {
+                    $and: [
+                        {
+                            'user.role': 'user',
+                        },
+                        {
+                            'user._id': order.user._id,
+                        },
+                    ],
+                },
+            },
         ]);
-
         const data = {
             orderId: order._id + '',
             type: 'order',
@@ -897,7 +981,18 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
                 },
             },
             { $unwind: '$user' },
-            { $match: { 'user.role': 'user', 'user._id': order.user._id } },
+            {
+                $match: {
+                    $and: [
+                        {
+                            'user.role': 'user',
+                        },
+                        {
+                            'user._id': order.user._id,
+                        },
+                    ],
+                },
+            },
         ]);
 
         const data = {
