@@ -88,13 +88,31 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            res.status(404).json({ data: {}, message: 'User not found!', status: 404 });
+            res.status(404).json({
+                data: {},
+                message: req.body.language === 'vi' ? 'Không tìm thấy tài khoản' : 'User not found!',
+                status: 404,
+            });
+        } else if (user.isDelete) {
+            res.status(406).json({
+                data: {},
+                message:
+                    req.body.language === 'vi' ? 'Tài khoản của bạn bị hạn chế' : 'Your account is restricted mode',
+                status: 406,
+            });
         } else {
             const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SECRET);
             const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
             const inputPassword = req.body.password;
             if (originalPassword != inputPassword) {
-                res.status(500).json({ data: {}, message: 'Wrong Password', status: 500 });
+                res.status(500).json({
+                    data: {},
+                    message:
+                        req.body.language === 'vi'
+                            ? 'Tài khoản hoặc mật khẩu không đúng'
+                            : 'Incorrect account or password',
+                    status: 500,
+                });
             } else {
                 if (!user.verified) {
                     let token = await OTP.findOne({ userId: user._id });
@@ -103,7 +121,10 @@ router.post('/login', async (req, res) => {
                     }
                     return res.status(200).send({
                         data: { userId: user._id },
-                        message: 'An Email sent to your account please verify',
+                        message:
+                            req.body.language === 'vi'
+                                ? 'Một Email gửi đến tài khoản của bạn xin vui lòng xác minh'
+                                : 'An Email sent to your account please verify',
                         status: 210,
                     });
                 } else {
@@ -132,15 +153,24 @@ router.post('/loginFacebook', async (req, res) => {
         const user = await User.findOne({ facebookId });
         const rank = await Rank.findOne({ nameen: 'Unrank' }).exec();
         if (user) {
-            const accessToken = await jwt.sign(
-                {
-                    id: user._id,
-                    role: user.role,
-                },
-                process.env.JWT_SECRET,
-                { expiresIn: '3d' }
-            );
-            res.status(200).json({ data: { token: accessToken }, message: 'success', status: 200 });
+            if (user.isDelete) {
+                res.status(406).json({
+                    data: {},
+                    message:
+                        req.body.language === 'vi' ? 'Tài khoản của bạn bị hạn chế' : 'Your account is restricted mode',
+                    status: 406,
+                });
+            } else {
+                const accessToken = await jwt.sign(
+                    {
+                        id: user._id,
+                        role: user.role,
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '3d' }
+                );
+                res.status(200).json({ data: { token: accessToken }, message: 'success', status: 200 });
+            }
         } else {
             const newUser = await User.create({
                 username: name,

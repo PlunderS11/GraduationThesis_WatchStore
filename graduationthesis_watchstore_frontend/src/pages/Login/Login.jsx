@@ -17,6 +17,7 @@ import { Input, Modal, Space, Spin } from 'antd';
 import MyBreadcrumb from '../../components/Breadcrumb/MyBreadcrumb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons';
+import i18n from '../../i18n';
 
 const cx = classNames.bind(style);
 
@@ -48,6 +49,7 @@ const Login = () => {
                 const res = await axiosClient.post('auth/login', {
                     email: email,
                     password: password,
+                    language: i18n.language,
                 });
                 if (res.status === 210) {
                     toast.error(t(`login.error.${res.status}`));
@@ -74,6 +76,7 @@ const Login = () => {
                 facebookId: response.id,
                 email: response.email,
                 name: response.name,
+                language: i18n.language,
             });
             toast.success(t('login.success'));
             await localStorage.setItem('mynhbake_token', res.data.token);

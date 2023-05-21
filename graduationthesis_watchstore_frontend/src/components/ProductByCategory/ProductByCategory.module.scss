@@ -16,6 +16,10 @@
     margin-bottom: 24px;
     letter-spacing: 2px;
     font-family: 'Gotham Light';
+
+    @include mobile {
+        font-size: 20px;
+    }
 }
 
 .description {

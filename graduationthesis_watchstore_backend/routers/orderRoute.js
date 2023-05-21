@@ -359,6 +359,8 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
             });
 
             await order.save();
+            res.status(200).json({ data: { order }, message: 'success', status: 200 });
+
             const notification = {
                 title: 'Tiếp nhận đơn hàng',
                 content: `Đơn hàng #${order.code} đã được tiếp nhận.`,
@@ -382,7 +384,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                     },
                 },
                 { $unwind: '$user' },
-                { $match: { 'user.role': 'user' } },
+                { $match: { 'user.role': 'user', 'user._id': req.user.id } },
             ]);
             if (oneSignals.length > 0) {
                 await OneSignalUtil.pushNotification({
@@ -400,6 +402,7 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                     pathUrl: `/account/order-history/${order._id}`,
                 });
             }
+            // ADMIN
             const notificationAdmin = {
                 title: 'Đơn hàng mới',
                 content: `Đơn hàng #${order.code} vừa được tạo.`,
@@ -439,7 +442,6 @@ router.post('/stripePayment', verifyTokenAndAuthorization, async (req, res) => {
                     pathUrl: '/orders',
                 });
             }
-            res.status(200).json({ data: { order }, message: 'success', status: 200 });
         } else {
             res.status(301).json({ data: {}, message: 'Mặt hàng hiện đã hết', status: 301 });
         }
@@ -689,6 +691,7 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 });
             }
         }
+        res.status(200).json({ data: { collection: orderUpdate }, message: 'success', status: 200 });
         //-----------------------------------------------------------
         const oneSignal = await OneSignal.aggregate([
             {
@@ -700,7 +703,7 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
                 },
             },
             { $unwind: '$user' },
-            { $match: { 'user.role': 'user' } },
+            { $match: { 'user.role': 'user', 'user._id': order.user._id } },
         ]);
 
         const data = {
@@ -736,8 +739,6 @@ router.put('/status/update/:id', verifyTokenAndAdmin, async (req, res) => {
             await notificationSave.save();
         }
         //-----------------------------------------------------------
-
-        res.status(200).json({ data: { collection: orderUpdate }, message: 'success', status: 200 });
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
@@ -771,6 +772,21 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
             },
             { new: true }
         );
+        let title = '',
+            body = '';
+        const storeName = 'MynhBakeStore';
+        switch (req.body.status) {
+            case 'COMPLETE':
+                title = 'Đơn hàng đã được giao';
+                body = `Đơn hàng #${order.code} của Quý Khách Hàng đã giao hoàn tất. ${storeName} xin tiếp nhận mọi đóng góp, khiếu nại qua Hotline và khẩn trương xác minh, phản hồi đến Quý Khách Hàng `;
+                break;
+            case 'CANCEL':
+                title = 'Đơn hàng đã được hủy';
+                body = `Đơn hàng #${order.code} của Quý Khách Hàng vừa bị hủy.`;
+                break;
+            default:
+                break;
+        }
         if (req.body.status === 'CANCEL') {
             await Order.findByIdAndUpdate(
                 req.params.id,
@@ -817,8 +833,103 @@ router.put('/statusPayment/update/:id', verifyTokenAndAdmin, async (req, res) =>
                 },
                 { new: true }
             );
+
+            // Check rank
+            const rank = await Rank.find();
+            var totalPriceOrderUser = await Order.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user',
+                    },
+                },
+                {
+                    $unwind: '$user',
+                },
+                {
+                    $match: {
+                        'user._id': ObjectId(order.user._id),
+                    },
+                },
+                { $group: { _id: null, totalFinalPrice: { $sum: '$finalPrice' } } },
+                { $project: { totalFinalPrice: true, _id: false } },
+            ]).then(items => items[0].totalFinalPrice);
+
+            const rs = rank.find(r => r.minValue < totalPriceOrderUser && totalPriceOrderUser < r.maxValue);
+            if (order.user.rank._id.toString() !== rs._id.toString()) {
+                await User.findByIdAndUpdate(order.user._id, {
+                    $set: { rank: rs },
+                });
+                // Send Email update rank
+                SendMailUtil.sendMail(
+                    order.user.email,
+                    'MynhBakeStore thông báo thăng hạng thành viên / MynhBakeStore Member promotion announcement',
+                    `<h4>Chủ đề: Chúc mừng bạn vừa thăng hạng thành công lên bậc <b>${rs.namevi}</b>!</h4>
+                        <br/>
+        <p>Chào <b>${order.user.username}!</b></p> <br/>         
+        <p>Chúc mừng bạn vừa thăng hạng thành công lên bậc <b>${rs.namevi}</b>!</p>
+        <p>Hãy kiểm ra <a href="https://graduationthesis-fe.vercel.app/account/voucher"><b>Kho voucher</b></a> để biết thêm ưu đãi dành cho bạn</p>
+        <p>Cảm ơn bạn đã luôn ủng hộ. Chúng tôi mong muốn được phục vụ bạn sớm nhất.</p>
+                
+        ---------------------------------------------------------------------------------------------------------------------------
+                    
+        <h4>Subject: Congratulations on your successful promotion to <b>${rs.nameen}</b>!</h4>
+        <br/>
+        <p>Hello <b>${order.user.username}!</b></p> <br/>
+        <p>Congratulations on your successful promotion to <b>${rs.nameen}</b>!</p>
+        <p>Please check out <a href="https://graduationthesis-fe.vercel.app/account/voucher"><b>Voucher Repository</b></a> to discover additional benefits for you</p>
+        <p>Thank you for your continuous support. We look forward to serving you soon.</p>
+                    `
+                );
+            }
         }
         res.status(200).json({ data: { orderUpdate: orderUpdate }, message: 'success', status: 200 });
+        //-----------------------------------------------------------
+        const oneSignal = await OneSignal.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            { $unwind: '$user' },
+            { $match: { 'user.role': 'user', 'user._id': order.user._id } },
+        ]);
+
+        const data = {
+            orderId: order._id + '',
+            type: 'order',
+        };
+
+        const notification = {
+            title: title,
+            content: body,
+            shortContent: body,
+            mode: `private`,
+            user: order.user._id,
+            order: order._id,
+            from: 'admin',
+            type: 'order',
+            mode: 'private',
+            lastSendAt: moment().unix(),
+        };
+        const notificationSave = await Notification.create(notification);
+        if (oneSignal.length > 0) {
+            await OneSignalUtil.pushNotification({
+                isAdmin: false,
+                heading: title,
+                content: body,
+                data,
+                pathUrl: `/account/order-history/${order._id}`,
+                oneSignalPlayerIds: oneSignal.map(e => e.oneSignalId),
+            });
+            notificationSave.lastSendAt = moment().unix();
+            await notificationSave.save();
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ data: {}, message: error.messagerror, status: 500 });
