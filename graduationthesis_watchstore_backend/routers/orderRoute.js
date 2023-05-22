@@ -5,6 +5,7 @@ const Order = require('../models/orderModel');
 const OrderDetail = require('../models/orderDetailModel');
 const Promotion = require('../models/promotionModel');
 const Product = require('../models/productModel');
+const Depot = require('../models/depotModel');
 const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middleware/verifyToken');
 const { estimate, leadtime, address } = require('../utils/config');
 const User = require('../models/userModel');
@@ -1237,7 +1238,6 @@ router.get('/income', verifyTokenAndAdmin, async (req, res) => {
 router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
     const year = req.query.year;
     const month = req.query.month;
-
     try {
         const income = await Order.aggregate([
             {
@@ -1256,8 +1256,24 @@ router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
                 },
             },
         ]);
+        const spending = await Depot.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: new Date(year, month - 1, 1),
+                        $lt: new Date(year, month, 1),
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$totalImport' },
+                },
+            },
+        ]);
 
-        res.status(200).json({ data: { income: income }, message: 'success', status: 200 });
+        res.status(200).json({ data: { revenue: { income, spending } }, message: 'success', status: 200 });
     } catch (err) {
         res.status(500).json({ data: {}, message: err.message, status: 500 });
     }
