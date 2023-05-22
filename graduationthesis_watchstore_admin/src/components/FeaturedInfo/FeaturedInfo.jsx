@@ -21,13 +21,15 @@ export default function FeaturedInfo() {
     const currentYear = currentDate.getFullYear();
 
     const [income, setIncome] = useState();
+    const [spending, setSpending] = useState();
     const [quantity, setQuantity] = useState();
 
     const getIncome = async () => {
         setLoadingIncome(true);
         try {
             const res = await axiosClient.get(`/order/incomeorder?year=${currentYear}&month=${currentMonth}`);
-            setIncome(res.data.income[0].total);
+            setIncome(res.data.revenue.income[0].total);
+            setSpending(res.data.revenue.spending[0].total);
         } catch {
         } finally {
             setLoadingIncome(false);
@@ -58,10 +60,15 @@ export default function FeaturedInfo() {
         const d = new Date(value);
         try {
             const res = await axiosClient.get(`/order/incomeorder?year=${d.getFullYear()}&month=${d.getMonth() + 1}`);
-            if (JSON.stringify(res.data.income) !== '[]') {
-                setIncome(res.data.income[0].total);
+            if (JSON.stringify(res.data.revenue.income) !== '[]') {
+                setIncome(res.data.revenue.income[0].total);
             } else {
                 setIncome(0);
+            }
+            if (JSON.stringify(res.data.revenue.spending) !== '[]') {
+                setSpending(res.data.revenue.spending[0].total);
+            } else {
+                setSpending(0);
             }
         } finally {
             setLoadingIncome(false);
@@ -101,10 +108,21 @@ export default function FeaturedInfo() {
                         picker="month"
                         onChange={handleChangeIncomeTime}
                     />
-                    {income !== undefined && (
-                        <div className={cx('featured-money-container')}>
-                            <span className={cx('featured-money')}>{NumberWithCommas(income)} VNĐ</span>
-                        </div>
+                    {income !== undefined && spending !== undefined && (
+                        <>
+                            <div className={cx('featured-money-container')}>
+                                <label className={cx('featured-lable')}>Tổng thu: </label>
+                                <span className={cx('featured-money')}>{NumberWithCommas(income)}</span>
+                            </div>
+                            <div className={cx('featured-money-container')}>
+                                <label className={cx('featured-lable')}>Tổng chi: </label>
+                                <span className={cx('featured-money')}>{NumberWithCommas(spending)}</span>
+                            </div>
+                            <div className={cx('featured-money-container')}>
+                                <label className={cx('featured-lable')}>Lợi nhuận: </label>
+                                <span className={cx('featured-money')}>{NumberWithCommas(income - spending)}</span>
+                            </div>
+                        </>
                     )}
                 </Spin>
             </div>

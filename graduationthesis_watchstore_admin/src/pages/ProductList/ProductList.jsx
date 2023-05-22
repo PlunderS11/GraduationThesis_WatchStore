@@ -17,6 +17,8 @@ import * as moment from 'moment';
 import ModalProductSale from '~/components/Modal/ModalProductSale/ModalProductSale';
 import ModalProduct from '~/components/Modal/ModalProduct/ModalProduct';
 import ModalProductNew from '~/components/Modal/ModalProductNew/ModalProductNew';
+import ModalDepot from '~/components/Modal/ModalDebot/ModalDebot';
+import ModalDebotHistory from '~/components/Modal/ModalDebotHistory/ModalDebotHistory';
 
 const cx = classNames.bind(styles);
 
@@ -32,6 +34,8 @@ export default function ProductList() {
     const [openDetail, setOpenDetail] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
     const [openNew, setOpenNew] = useState(false);
+    const [openDepot, setOpenDepot] = useState(false);
+    const [openDepotHistory, setOpenDepotHistory] = useState(false);
 
     const fecthData = async () => {
         setLoading(true);
@@ -265,21 +269,10 @@ export default function ProductList() {
                             <li>
                                 <button
                                     className={cx('product-list-edit')}
-                                    // onClick={() => {
-                                    //     setOpenUpdate(true);
-                                    //     setId(params.row._id);
-                                    // }}
-                                >
-                                    Nhập hàng
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    className={cx('product-list-edit')}
-                                    // onClick={() => {
-                                    //     setOpenUpdate(true);
-                                    //     setId(params.row._id);
-                                    // }}
+                                    onClick={() => {
+                                        setOpenDepotHistory(true);
+                                        setId(params.row._id);
+                                    }}
                                 >
                                     Lịch sử nhập
                                 </button>
@@ -434,10 +427,10 @@ export default function ProductList() {
                             <li>
                                 <button
                                     className={cx('product-list-edit')}
-                                    // onClick={() => {
-                                    //     setOpenUpdate(true);
-                                    //     setId(params.row._id);
-                                    // }}
+                                    onClick={() => {
+                                        setOpenDepot(true);
+                                        setId(params.row._id);
+                                    }}
                                 >
                                     Nhập hàng
                                 </button>
@@ -445,10 +438,10 @@ export default function ProductList() {
                             <li>
                                 <button
                                     className={cx('product-list-edit')}
-                                    // onClick={() => {
-                                    //     setOpenUpdate(true);
-                                    //     setId(params.row._id);
-                                    // }}
+                                    onClick={() => {
+                                        setOpenDepotHistory(true);
+                                        setId(params.row._id);
+                                    }}
                                 >
                                     Lịch sử nhập
                                 </button>
@@ -539,6 +532,22 @@ export default function ProductList() {
                     id={id}
                     onResetId={() => setId('')}
                 ></ModalProduct>
+            )}
+            {id !== '' && (
+                <ModalDepot
+                    open={openDepot}
+                    onClose={() => setOpenDepot(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalDepot>
+            )}
+            {id !== '' && (
+                <ModalDebotHistory
+                    open={openDepotHistory}
+                    onClose={() => setOpenDepotHistory(false)}
+                    id={id}
+                    onResetId={() => setId('')}
+                ></ModalDebotHistory>
             )}
             <ModalProductNew open={openNew} onClose={() => setOpenNew(false)}></ModalProductNew>
         </>
