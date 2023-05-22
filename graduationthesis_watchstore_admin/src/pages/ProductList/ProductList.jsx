@@ -38,8 +38,7 @@ export default function ProductList() {
         try {
             const res_deleted = await axiosClient.get('product/deleted/');
             for (let i = 0; i < res_deleted.data.products_deleted.length; i++) {
-                res_deleted.data.products_undeleted[i].colName =
-                    res_deleted.data.products_undeleted[i].collectionObj.name;
+                res_deleted.data.products_deleted[i].colName = res_deleted.data.products_deleted[i].collectionObj.name;
                 if (res_deleted.data.products_deleted[i].type === 'watch') {
                     res_deleted.data.products_deleted[i].type_vi = 'Đồng hồ';
                 } else if (res_deleted.data.products_deleted[i].type === 'strap') {
@@ -265,6 +264,28 @@ export default function ProductList() {
                             </li>
                             <li>
                                 <button
+                                    className={cx('product-list-edit')}
+                                    // onClick={() => {
+                                    //     setOpenUpdate(true);
+                                    //     setId(params.row._id);
+                                    // }}
+                                >
+                                    Nhập hàng
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    // onClick={() => {
+                                    //     setOpenUpdate(true);
+                                    //     setId(params.row._id);
+                                    // }}
+                                >
+                                    Lịch sử nhập
+                                </button>
+                            </li>
+                            <li>
+                                <button
                                     className={cx('product-list-restore-button')}
                                     onClick={() => showRestoreConfirm(params.row._id)}
                                 >
@@ -412,6 +433,28 @@ export default function ProductList() {
                             </li>
                             <li>
                                 <button
+                                    className={cx('product-list-edit')}
+                                    // onClick={() => {
+                                    //     setOpenUpdate(true);
+                                    //     setId(params.row._id);
+                                    // }}
+                                >
+                                    Nhập hàng
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className={cx('product-list-edit')}
+                                    // onClick={() => {
+                                    //     setOpenUpdate(true);
+                                    //     setId(params.row._id);
+                                    // }}
+                                >
+                                    Lịch sử nhập
+                                </button>
+                            </li>
+                            <li>
+                                <button
                                     className={cx('product-list-delete-button')}
                                     onClick={() => showDeleteConfirm(params.row._id)}
                                 >
@@ -470,7 +513,7 @@ export default function ProductList() {
                             <Grid
                                 headers={columns_undeleted}
                                 datas={productsUneleted}
-                                rowHeight={135}
+                                rowHeight={175}
                                 pagesize={10}
                                 hideToolbar={false}
                             />
@@ -478,7 +521,7 @@ export default function ProductList() {
                             <Grid
                                 headers={columns_deleted}
                                 datas={productsDeleted}
-                                rowHeight={135}
+                                rowHeight={175}
                                 pagesize={10}
                                 hideToolbar={false}
                             />

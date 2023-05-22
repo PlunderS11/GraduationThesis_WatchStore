@@ -71,7 +71,7 @@ const ModalProduct = (props) => {
             featuresen: [].concat(product.featuresen).join(';'),
             note: product.note + '',
             sold: product.sold,
-            stock: product.stock,
+            // stock: product.stock,
             isDelete: product.isDelete,
         },
         validationSchema: Yup.object({
@@ -87,7 +87,7 @@ const ModalProduct = (props) => {
             descriptionen: Yup.string().required('Nhập mô tả tiếng Anh'),
             featuresvi: Yup.string().required('Nhập tính năng tiếng Việt'),
             featuresen: Yup.string().required('Nhập tính năng tiếng Anh'),
-            stock: Yup.number().required('Nhập tồn kho').min(1, 'Tồn kho phải lớn hơn 0'),
+            // stock: Yup.number().required('Nhập tồn kho').min(1, 'Tồn kho phải lớn hơn 0'),
         }),
         onSubmit: async (values) => {
             const {
@@ -105,7 +105,7 @@ const ModalProduct = (props) => {
                 featuresen,
                 note,
                 sold,
-                stock,
+                // stock,
                 isDelete,
             } = values;
             // console.log(values);
@@ -135,7 +135,7 @@ const ModalProduct = (props) => {
             // formData.append('featuresen', [...featuresen.split(';')]);
             formData.append('note', note);
             formData.append('sold', sold);
-            formData.append('stock', stock);
+            // formData.append('stock', stock);
             formData.append('isDelete', isDelete);
 
             setLoading(true);
@@ -366,7 +366,7 @@ const ModalProduct = (props) => {
                                 />
                             </div>
 
-                            <div className={cx('add-product-item')}>
+                            {/* <div className={cx('add-product-item')}>
                                 <InputField
                                     type="number"
                                     id="stock"
@@ -380,7 +380,7 @@ const ModalProduct = (props) => {
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                 />
-                            </div>
+                            </div> */}
                             <div className={cx('add-product-item')}>
                                 <InputField
                                     type="textarea"
