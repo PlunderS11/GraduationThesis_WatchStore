@@ -69,7 +69,7 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
                     originalPrice: Number(req.body.originalPrice),
                     finalPrice: Number(req.body.originalPrice),
                     sold: 0,
-                    stock: Number(req.body.stock),
+                    stock: 0,
                     isDelete: req.body.isDelete,
                 });
                 await newProduct.save();
