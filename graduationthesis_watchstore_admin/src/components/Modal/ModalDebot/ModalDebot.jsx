@@ -35,7 +35,10 @@ const ModalDebot = (props) => {
             importPrice: '',
         },
         validationSchema: Yup.object({
-            quantity: Yup.number().required('Nhập tên danh mục').min(1, 'Số lượng nhập phải lớn hơn 0'),
+            quantity: Yup.number()
+                .required('Nhập tên danh mục')
+                .min(1, 'Số lượng nhập phải lớn hơn 0')
+                .max(100, 'Số lượng nhập phải nhỏ hơn hoặc bằng 100'),
             importPrice: Yup.number().required('Nhập mô tả tiếng Anh').min(1, 'Giá nhập phải lớn hơn 0'),
         }),
         onSubmit: async (values) => {
@@ -105,6 +108,9 @@ const ModalDebot = (props) => {
                                     onBlur={formik.handleBlur}
                                 />
                             </div>
+                            <p style={{ fontStyle: 'italic', color: 'red' }}>
+                                Lưu ý nhập đúng dữ liệu, không thể chỉnh sửa sau khi nhập!
+                            </p>
                             <Button type="submit" customClass={styles}>
                                 Nhập hàng
                             </Button>
