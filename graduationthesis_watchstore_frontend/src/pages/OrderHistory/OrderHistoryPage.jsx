@@ -325,7 +325,12 @@ const OrderHistoryPage = () => {
                                                     {t('cart.totalProduct')}
                                                 </div>
                                                 <div className={cx('body-cart-item-price')}>
-                                                    {NumberWithCommas(order.finalPrice)}&nbsp;₫
+                                                    {NumberWithCommas(
+                                                        order.orderDetails.reduce((acc, cur)=> {
+                                                            acc += cur.originalPrice
+                                                            return acc
+                                                        },0)
+                                                    )}&nbsp;₫
                                                 </div>
                                             </div>
                                             <div className={cx('body-cart-item')}>
