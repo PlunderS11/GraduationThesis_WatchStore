@@ -98,7 +98,7 @@ const OrderHistoryPage = () => {
             align: 'right',
             render: (value, record, index) => (
                 <div key={value.id} className={cx('cart-product-info')}>
-                    {NumberWithCommas(value.finalPrice)}&nbsp;₫
+                    {NumberWithCommas(record.finalPrice)}&nbsp;₫
                 </div>
             ),
         },
@@ -119,7 +119,7 @@ const OrderHistoryPage = () => {
             render: (value, record, index) => (
                 <div key={value.id} className={cx('cart-product-info')}>
                     <span style={{ color: '#ff424e' }}>
-                        {NumberWithCommas(value.finalPrice * record.quantity)}&nbsp;₫
+                        {NumberWithCommas(record.finalPrice * record.quantity)}&nbsp;₫
                     </span>
                 </div>
             ),
@@ -273,7 +273,7 @@ const OrderHistoryPage = () => {
                                                         </div>
                                                         <div className={cx('product__text-content')}>
                                                             <div className={cx('product__text-price')}>
-                                                                {NumberWithCommas(item.product.finalPrice)}đ
+                                                                {NumberWithCommas(item.finalPrice)}đ
                                                             </div>
                                                             <div className={cx('product__text-quantity')}>
                                                                 x{item.quantity}
@@ -325,7 +325,12 @@ const OrderHistoryPage = () => {
                                                     {t('cart.totalProduct')}
                                                 </div>
                                                 <div className={cx('body-cart-item-price')}>
-                                                    {NumberWithCommas(order.finalPrice)}&nbsp;₫
+                                                    {NumberWithCommas(
+                                                        order.orderDetails.reduce((acc, cur)=> {
+                                                            acc += cur.originalPrice
+                                                            return acc
+                                                        },0)
+                                                    )}&nbsp;₫
                                                 </div>
                                             </div>
                                             <div className={cx('body-cart-item')}>

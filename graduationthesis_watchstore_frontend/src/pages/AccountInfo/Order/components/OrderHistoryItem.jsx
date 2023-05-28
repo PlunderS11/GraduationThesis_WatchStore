@@ -47,7 +47,7 @@ const OrderHistoryItem = ({ orderHistory }) => {
                     <div className={cx('product__text-name')}>{orderHistory.orderDetails[0].product.name}</div>
                     <div className={cx('product__text-content')}>
                         <div className={cx('product__text-price')}>
-                            {NumberWithCommas(orderHistory.orderDetails[0].product.finalPrice)}đ
+                            {NumberWithCommas(orderHistory.orderDetails[0].finalPrice)}đ
                         </div>
                         <div className={cx('product__text-quantity')}>x{orderHistory.orderDetails[0].quantity}</div>
                     </div>
