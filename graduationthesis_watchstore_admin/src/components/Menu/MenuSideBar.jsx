@@ -111,6 +111,7 @@ const MenuSideBar = () => {
                           getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
                               getItem('Sản phẩm', ['4', '/products']),
                               getItem('Danh mục', ['5', '/collections']),
+                              getItem('Lịch sử nhập kho', ['6', '/depots']),
                           ]),
                           {
                               type: 'divider',
@@ -126,8 +127,8 @@ const MenuSideBar = () => {
                               type: 'divider',
                           },
                           getItem('Quản lý đơn hàng', 'sub5', <AttachMoney />, [
-                              getItem('Đơn hàng', ['6', '/orders']),
-                              getItem('Khuyến mãi', ['7', '/promotions']),
+                              getItem('Đơn hàng', ['7', '/orders']),
+                              getItem('Khuyến mãi', ['8', '/promotions']),
                           ]),
                           {
                               type: 'divider',
@@ -149,6 +150,7 @@ const MenuSideBar = () => {
                           getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
                               getItem('Sản phẩm', ['3', '/products']),
                               getItem('Danh mục', ['4', '/collections']),
+                              getItem('Lịch sử nhập kho', ['5', '/depots']),
                           ]),
                           {
                               type: 'divider',
@@ -164,8 +166,8 @@ const MenuSideBar = () => {
                               type: 'divider',
                           },
                           getItem('Quản lý đơn hàng', 'sub5', <AttachMoney />, [
-                              getItem('Đơn hàng', ['5', '/orders']),
-                              getItem('Khuyến mãi', ['6', '/promotions']),
+                              getItem('Đơn hàng', ['6', '/orders']),
+                              getItem('Khuyến mãi', ['7', '/promotions']),
                           ]),
                           {
                               type: 'divider',

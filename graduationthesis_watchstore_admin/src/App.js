@@ -22,6 +22,7 @@ import OneSignal from 'react-onesignal';
 import axiosClient from './api/axiosClient';
 import NotificationList from './pages/NotificationList/NotificationList';
 import MyErrorBoundary from './layouts/ErrorBoundary/ErrorBoundary';
+import DepotList from './pages/DepotList/DepotList';
 
 function App() {
     const user = useSelector((state) => state.user);
@@ -254,6 +255,25 @@ function App() {
                                                 <MenuSideBar />
                                             </div>
                                             <NotificationList />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <Navigate to="/login" replace />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/depots"
+                            element={
+                                user.user.role === 'admin' || user.user.role === 'staff' ? (
+                                    <>
+                                        <Topbar />
+                                        <div className="container">
+                                            <div className="sidebar">
+                                                {/* <Sidebar /> */}
+                                                <MenuSideBar />
+                                            </div>
+                                            <DepotList />
                                         </div>
                                     </>
                                 ) : (
