@@ -2,23 +2,9 @@ const mongoose = require('mongoose');
 
 const DepotSchema = mongoose.Schema(
     {
-        product: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product',
-            required: true,
-        },
-        quantity: {
-            type: Number,
-            required: true,
-        },
-        importPrice: {
-            type: Number,
-            required: true,
-        },
-        totalImport: {
-            type: Number,
-            required: true,
-        },
+        depotDetails: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DepotDetail', required: true }],
+        importUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
+        note: { type: String, required: true },
     },
     { timestamps: true }
 );
