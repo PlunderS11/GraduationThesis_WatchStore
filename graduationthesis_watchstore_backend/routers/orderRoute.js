@@ -1266,9 +1266,20 @@ router.get('/incomeorder', verifyTokenAndAdmin, async (req, res) => {
                 },
             },
             {
+                $lookup: {
+                    from: 'depotdetails',
+                    localField: 'depotDetails',
+                    foreignField: '_id',
+                    as: 'depotDetails',
+                },
+            },
+            {
+                $unwind: '$depotDetails',
+            },
+            {
                 $group: {
                     _id: null,
-                    total: { $sum: '$totalImport' },
+                    total: { $sum: { $multiply: ['$depotDetails.importPrice', '$depotDetails.quantity'] } },
                 },
             },
         ]);

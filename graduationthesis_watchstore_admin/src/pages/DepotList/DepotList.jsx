@@ -22,7 +22,7 @@ export default function DepotList() {
     const { confirm } = Modal;
 
     const [depots, setDepots] = useState([]);
-    const [id, setId] = useState('');
+    const [depotSelect, setDepotSelect] = useState({});
     const [open, setOpen] = useState(false);
     const [status, setStatus] = useState('');
 
@@ -69,23 +69,9 @@ export default function DepotList() {
             type: 'date',
 
             valueFormatter: function (params) {
-                return moment(params.value).format('DD/MM/YYYY');
+                return moment(params.value).format('DD/MM/YYYY, hh:mm');
             },
         },
-        {
-            field: 'updatedAt',
-            align: 'center',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            headerName: 'Ngày cập nhật',
-            width: 160,
-            type: 'date',
-
-            valueFormatter: function (params) {
-                return moment(params.value).format('DD/MM/YYYY');
-            },
-        },
-
         {
             field: 'action',
             align: 'center',
@@ -97,21 +83,16 @@ export default function DepotList() {
             disableExport: true,
             renderCell: (params) => {
                 return (
-                    <>
-                        <ul>
-                            <li>
-                                <button
-                                    className={cx('new-list-edit')}
-                                    onClick={() => {
-                                        // setOpenUpdate(true);
-                                        // setId(params.row._id);
-                                    }}
-                                >
-                                    Chi tiết
-                                </button>
-                            </li>
-                        </ul>
-                    </>
+                    <button
+                        className={cx('new-list-edit')}
+                        onClick={() => {
+                            setDepotSelect(params.row);
+                            setStatus('update');
+                            setOpen(true);
+                        }}
+                    >
+                        Chi tiết
+                    </button>
                 );
             },
         },
@@ -127,7 +108,9 @@ export default function DepotList() {
                     <Button
                         customClass={styles}
                         onClick={() => {
+                            setStatus('create');
                             setOpen(true);
+                            setDepotSelect({});
                         }}
                     >
                         Nhập kho
@@ -138,7 +121,15 @@ export default function DepotList() {
                     </div>
                 </Spin>
             </div>
-            <ModalDepotImport status={status} open={open} onClose={() => setOpen(false)} />
+            <ModalDepotImport
+                depot={depotSelect}
+                status={status}
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                    fecthData();
+                }}
+            />
         </>
     );
 }
