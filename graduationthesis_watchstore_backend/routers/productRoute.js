@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const { verifyTokenAndAdmin } = require('../middleware/verifyToken');
 const Product = require('../models/productModel');
 const Collection = require('../models/collectionModel');
+const HistoryPrice = require('../models/historyPriceModel');
 
 dotenv.config();
 
@@ -86,25 +87,34 @@ router.post('/', verifyTokenAndAdmin, upload.array('images', 10), async (req, re
 router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
     const images = req.files;
     if (images?.length > 0) {
-        var images_url = [];
-        for (let i = 0; i < images.length; i++) {
-            const image = images[i].mimetype;
-            const fileType = image.split('/')[1];
-            var filePath = `${uuid() + Date.now().toString()}.${fileType}`;
-            const uploadS3 = {
-                Bucket: 'mynh-bake-store',
-                Key: filePath,
-                Body: images[i].buffer,
-            };
-            try {
-                await s3.upload(uploadS3).promise();
-                images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
-            } catch (error) {
-                return res.status(500).json({ data: {}, message: 'Lỗi S3', status: 500 });
-            }
-        }
-
         try {
+            var images_url = [];
+            for (let i = 0; i < images.length; i++) {
+                const image = images[i].mimetype;
+                const fileType = image.split('/')[1];
+                var filePath = `${uuid() + Date.now().toString()}.${fileType}`;
+                const uploadS3 = {
+                    Bucket: 'mynh-bake-store',
+                    Key: filePath,
+                    Body: images[i].buffer,
+                };
+                try {
+                    await s3.upload(uploadS3).promise();
+                    images_url.push(`${CLOUD_FRONT_URL}${filePath}`);
+                } catch (error) {
+                    return res.status(500).json({ data: {}, message: 'Lỗi S3', status: 500 });
+                }
+            }
+            const product = await Product.findById(req.params.id).exec();
+            if (product.finalPrice !== req.body.finalPrice) {
+                const historyPrice = {
+                    product,
+                    user: req.user.id,
+                    oldPrice: product.finalPrice,
+                    newPrice: req.body.finalPrice,
+                };
+                await HistoryPrice.create(historyPrice);
+            }
             const updateProduct = await Product.findByIdAndUpdate(
                 req.params.id,
                 {
@@ -120,6 +130,16 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
         }
     } else {
         try {
+            const product = await Product.findById(req.params.id).exec();
+            if (product.finalPrice !== req.body.finalPrice) {
+                const historyPrice = {
+                    product,
+                    user: req.user.id,
+                    oldPrice: product.finalPrice,
+                    newPrice: req.body.finalPrice,
+                };
+                await HistoryPrice.create(historyPrice);
+            }
             const updateProduct = await Product.findByIdAndUpdate(
                 req.params.id,
                 {
