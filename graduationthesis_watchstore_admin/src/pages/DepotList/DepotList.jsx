@@ -1,17 +1,13 @@
 import classNames from 'classnames/bind';
 import styles from './DepotList.module.scss';
 import { useLocation } from 'react-router-dom';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Modal, Spin } from 'antd';
+import { Spin } from 'antd';
 import { useState, useEffect } from 'react';
 import * as moment from 'moment';
 
 import Button from '~/components/Button/Button';
 import axiosClient from '~/api/axiosClient';
-import { toast } from 'react-toastify';
 import Grid from '~/components/Grid/Grid';
-import ModalNews from '~/components/Modal/ModalNews/ModalNews';
-import ModalNewsUpdate from '~/components/Modal/ModalNewsUpdate/ModalNewsUpdate';
 import ModalDepotImport from '~/components/Modal/ModalDepotImport/ModalDepotImport';
 
 const cx = classNames.bind(styles);
@@ -19,7 +15,6 @@ const cx = classNames.bind(styles);
 export default function DepotList() {
     const [loading, setLoading] = useState(false);
     const location = useLocation();
-    const { confirm } = Modal;
 
     const [depots, setDepots] = useState([]);
     const [depotSelect, setDepotSelect] = useState({});
@@ -47,14 +42,14 @@ export default function DepotList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Mã phiếu',
-            width: 325,
+            width: 350,
         },
         {
             field: 'importUser',
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Người tạo',
-            width: 325,
+            width: 350,
             renderCell: (param) => {
                 return param.row.importUser.username;
             },
@@ -65,7 +60,7 @@ export default function DepotList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Ngày tạo',
-            width: 160,
+            width: 300,
             type: 'date',
 
             valueFormatter: function (params) {
@@ -78,7 +73,7 @@ export default function DepotList() {
             headerAlign: 'center',
             headerClassName: 'super-app-theme--header',
             headerName: 'Hành động',
-            width: 150,
+            width: 270,
             filterable: false,
             disableExport: true,
             renderCell: (params) => {
@@ -117,7 +112,7 @@ export default function DepotList() {
                     </Button>
 
                     <div className={cx('grid')}>
-                        <Grid headers={columns} datas={depots} rowHeight={135} pagesize={10} hideToolbar={false} />
+                        <Grid headers={columns} datas={depots} rowHeight={63} pagesize={10} hideToolbar={false} />
                     </div>
                 </Spin>
             </div>

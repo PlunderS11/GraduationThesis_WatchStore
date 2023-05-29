@@ -111,7 +111,7 @@ const MenuSideBar = () => {
                           getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
                               getItem('Sản phẩm', ['4', '/products']),
                               getItem('Danh mục', ['5', '/collections']),
-                              getItem('Lịch sử nhập kho', ['6', '/depots']),
+                              getItem('Kho', ['6', '/depots']),
                           ]),
                           {
                               type: 'divider',
@@ -150,7 +150,7 @@ const MenuSideBar = () => {
                           getItem('Quản lý sản phẩm', 'sub3', <Storefront />, [
                               getItem('Sản phẩm', ['3', '/products']),
                               getItem('Danh mục', ['4', '/collections']),
-                              getItem('Lịch sử nhập kho', ['5', '/depots']),
+                              getItem('Kho', ['5', '/depots']),
                           ]),
                           {
                               type: 'divider',

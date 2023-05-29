@@ -1,16 +1,11 @@
-import classNames from 'classnames/bind';
-import { InputNumber, Spin } from 'antd';
-import styles from './ModalDepotImport.module.scss';
+import { InputNumber } from 'antd';
 import { useEffect, useState } from 'react';
 import { Button, Col, Form, Input, message, Modal, Row, Select, Table } from 'antd';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import Column from 'antd/es/table/Column';
-import InputField from '~/components/InputField/InputField';
 import TextArea from 'antd/es/input/TextArea';
 import axiosClient from '~/api/axiosClient';
 import moment from 'moment';
-
-const cx = classNames.bind(styles);
 
 const ModalDepotImport = (props) => {
     const { depot, open, onClose, status } = props;
@@ -52,10 +47,11 @@ const ModalDepotImport = (props) => {
                 createdDate: moment(depot?.createdAt).format('DD/MM/YYYY, hh:mm'),
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [status, open]);
 
     const createData = async () => {
-        const valid = await form.validateFields();
+        // const valid = await form.validateFields();
         const data = {
             products: form.getFieldsValue().products.reduce((acc, cur) => {
                 acc.push({
@@ -70,7 +66,7 @@ const ModalDepotImport = (props) => {
         };
         setLoading(true);
         try {
-            const res = await axiosClient.post('depot/', data);
+            await axiosClient.post('depot/', data);
             message.success('Tạo phiếu nhập thành công!');
             onClose?.();
         } finally {
@@ -101,7 +97,12 @@ const ModalDepotImport = (props) => {
                 status === 'create' ? createData() : handleCancel();
             }}
             footer={[
-                <Button key="back" onClick={() => {}}>
+                <Button
+                    key="back"
+                    onClick={() => {
+                        handleCancel();
+                    }}
+                >
                     Hủy
                 </Button>,
                 <Button
