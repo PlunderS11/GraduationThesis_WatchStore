@@ -14,6 +14,7 @@ const postRoute = require('./routers/postRoute');
 const notificationRoute = require('./routers/notificationRoute');
 const oneSignalRoute = require('./routers/oneSignalRoute');
 const depotRoute = require('./routers/depotRoute');
+const historyPriceRoute = require('./routers/historyPriceRoute');
 
 connectDB();
 
@@ -33,5 +34,6 @@ app.use('/api/post', postRoute);
 app.use('/api/notification', notificationRoute);
 app.use('/api/onesignal', oneSignalRoute);
 app.use('/api/depot', depotRoute);
+app.use('/api/historyPrice', historyPriceRoute);
 
 app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));

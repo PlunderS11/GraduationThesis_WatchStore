@@ -106,12 +106,12 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
                 }
             }
             const product = await Product.findById(req.params.id).exec();
-            if (product.finalPrice !== req.body.finalPrice) {
+            if (product.finalPrice !== Number(req.body.finalPrice)) {
                 const historyPrice = {
                     product,
                     user: req.user.id,
                     oldPrice: product.finalPrice,
-                    newPrice: req.body.finalPrice,
+                    newPrice: Number(req.body.finalPrice),
                 };
                 await HistoryPrice.create(historyPrice);
             }
@@ -131,12 +131,12 @@ router.put('/:id', verifyTokenAndAdmin, upload.array('images', 10), async (req, 
     } else {
         try {
             const product = await Product.findById(req.params.id).exec();
-            if (product.finalPrice !== req.body.finalPrice) {
+            if (product.finalPrice !== Number(req.body.finalPrice)) {
                 const historyPrice = {
                     product,
                     user: req.user.id,
                     oldPrice: product.finalPrice,
-                    newPrice: req.body.finalPrice,
+                    newPrice: Number(req.body.finalPrice),
                 };
                 await HistoryPrice.create(historyPrice);
             }
@@ -313,10 +313,6 @@ router.put('/restore/:id', verifyTokenAndAdmin, async (req, res) => {
         console.log(error);
         res.status(500).json({ data: {}, message: error.message, status: 500 });
     }
-});
-
-router.post('/test', verifyTokenAndAdmin, upload.array('images', 10), async (req, res) => {
-    console.log(req.body, req.files);
 });
 
 module.exports = router;

@@ -18,7 +18,7 @@ import ModalProductSale from '~/components/Modal/ModalProductSale/ModalProductSa
 import ModalProduct from '~/components/Modal/ModalProduct/ModalProduct';
 import ModalProductNew from '~/components/Modal/ModalProductNew/ModalProductNew';
 import ModalDepot from '~/components/Modal/ModalDebot/ModalDebot';
-import ModalDebotHistory from '~/components/Modal/ModalDebotHistory/ModalDebotHistory';
+import ModalHistoryPrice from '~/components/Modal/ModalHistoryPrice/ModalHistoryPrice';
 
 const cx = classNames.bind(styles);
 
@@ -428,22 +428,11 @@ export default function ProductList() {
                                 <button
                                     className={cx('product-list-edit')}
                                     onClick={() => {
-                                        setOpenDepot(true);
-                                        setId(params.row._id);
-                                    }}
-                                >
-                                    Nhập hàng
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    className={cx('product-list-edit')}
-                                    onClick={() => {
                                         setOpenDepotHistory(true);
                                         setId(params.row._id);
                                     }}
                                 >
-                                    Lịch sử nhập
+                                    Lịch sử đổi giá
                                 </button>
                             </li>
                             <li>
@@ -542,12 +531,12 @@ export default function ProductList() {
                 ></ModalDepot>
             )}
             {id !== '' && (
-                <ModalDebotHistory
+                <ModalHistoryPrice
                     open={openDepotHistory}
                     onClose={() => setOpenDepotHistory(false)}
                     id={id}
                     onResetId={() => setId('')}
-                ></ModalDebotHistory>
+                ></ModalHistoryPrice>
             )}
             <ModalProductNew open={openNew} onClose={() => setOpenNew(false)}></ModalProductNew>
         </>
